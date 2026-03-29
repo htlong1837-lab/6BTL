@@ -50,9 +50,29 @@ public class Auction{
         }
     }
 
-    public void endAuction() {}
+    public void endAuction() {
+        if (status == AuctionStatus.FINISHED) return;
 
-    public void checkAndClose() {}
+        status = AuctionStatus.FINISHED;
+
+        System.out.println("Auction ended");
+    }
+
+    if (highestBidder != null) {
+        System.out.println( " Winner : " + highestBidder.name);
+        System.out.println( " Final price : " + currentPrice);
+
+    }
+
+    else {
+        System.out.println( " No bids placed ");
+    }
+
+    public void checkAndClose() {
+        if ( status == AuctionStatus.RUNNING && System.currentTImeMillis() > endTime ){
+           endAuction(); 
+        }
+    }
 
     public double getCurrentPrice() {}
 
