@@ -36,7 +36,7 @@ public class Auction{
     public boolean placeBid(User bidder , double amount) {
         if (status != AuctionStatus.RUNNING) {
             System.out.println("Auction is not running");
-            return False
+            return false;
         }
 
         if (System.currentTimeMillis() > endTime){
