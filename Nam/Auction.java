@@ -74,7 +74,17 @@ public class Auction{
         }
     }
 
-    public double getCurrentPrice() {}
+    public double getCurrentPrice() {
+        return currentPrice;
+    }
 
-// trả thằng cao nhất với lịch sử trả chó nx
+    public User getHighestBidder() {
+        return highestBidder;
+    }
+
+    public List<BidTransaction> getBidHistory(){
+        return bidHistory;
+    }
+
+
 }
