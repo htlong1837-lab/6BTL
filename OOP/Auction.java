@@ -81,22 +81,11 @@ public class Auction{
     }
 
     public void checkAndClose() {
-        if ( status == AuctionStatus.RUNNING && System.currentTImeMillis() > endTime ){
+        if ( status == AuctionStatus.RUNNING && System.currentTimeMillis() > endTime ){
            endAuction(); 
         }
     }
 
-    public double getCurrentPrice() {
-        return currentPrice;
-    }
-
-    public User getHighestBidder() {
-        return highestBidder;
-    }
-
-    public List<BidTransaction> getBidHistory(){
-        return bidHistory;
-    }
     public Item getItem()                        { return item; }
     public Seller getSeller()                    { return seller; }
     public double getCurrentPrice()              { return currentPrice; }

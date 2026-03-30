@@ -1,92 +1,42 @@
-import java.util.ArrayList;
+
+// sai hết admin
 import java.util.List;
-import java.util.Scanner;
-
-// Lớp trừu tượng Admin
-abstract class Admin {
-    protected String adminname;
-    protected String edu;
-
-    public Admin(String adminname, String edu) {
-        this.adminname = adminname;
-        this.edu = edu;
+ 
+public class Admin extends User {
+ 
+    public Admin(String id, String name, String email, String password) {
+        super(id, name, email, password);
     }
-
-
-
-    // Phương thức trừu tượng – mỗi admin sẽ có cách đấu giá khác nhau
-    public abstract void auction();
-
-    public String getAdminname() {
-        return adminname;
-    }
-}
-
-// Admin 1: Đấu giá theo kiểu trực tiếp
-class TranLuongLinh extends Admin {
-    public TranLuongLinh() {
-        super("Trần Lương Linh", "Cornell");
-    }
-
-
-    public void auction() {
-        System.out.println("Trần Lương Linh: Đấu giá trực tiếp");
-        // Giả lập đấu giá
-    }
-}
-
-// Admin 2: Đấu giá theo kiểu bỏ phiếu
-class LePheDo extends Admin {
-    public LePheDo() {
-        super("Lê Phê Đô", "UET");
-    }
-
-
-    public void auction() {
-        System.out.println("Lê Phê Đô : Đấu giá bỏ phiếu");
-
-    }
-}
-
-
-
-
-// Lớp quản lý đấu giá
-class AuctionManager {
-    private List<Admin> admins;
-
-    public AuctionManager() {
-        admins = new ArrayList<>();
-        admins.add(new TranLuongLinh());
-        admins.add(new LePheDo());
-
-    }
-
-    public void showAdmins() {
-        System.out.println("Danh sách admin:");
-        for (int i = 0; i < admins.size(); i++) {
-            System.out.println((i + 1) + ". " + admins.get(i).getAdminname());
+ 
+    /** Xóa một phiên đấu giá khỏi danh sách */
+    public void removeAuction(List<Auction> auctions, Auction target) {
+        if (auctions.remove(target)) {
+            System.out.println("[Admin] Auction for \"" + target.getItem().getName() + "\" has been removed.");
+        } else {
+            System.out.println("[Admin] Auction not found.");
         }
     }
-
-    public void startAuction() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Chọn admin (1or2): ");
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // consume newline
-
-        if (choice < 1 || choice > admins.size()) {
-            System.out.println("Lựa chọn không hợp lệ!");
-            return;
+ 
+    /** Khóa tài khoản người dùng (ví dụ khi vi phạm) */
+    public void banUser(User user) {
+        System.out.println("[Admin] User \"" + user.getName() + "\" has been banned.");
+        // TODO: thêm trường isActive vào User nếu cần xử lý thật
+    }
+ 
+    /** Xem toàn bộ phiên đấu giá */
+    public void listAllAuctions(List<Auction> auctions) {
+        System.out.println("[Admin] All auctions (" + auctions.size() + "):");
+        for (Auction a : auctions) {
+            System.out.println("  - " + a.getItem().getName()
+                    + " | Status: " + a.getStatus()
+                    + " | Current price: " + a.getCurrentPrice());
         }
-
-
+    }
+ 
+    @Override
+    public void printInfo() {
+        super.printInfo();
+        System.out.println("[Admin account – full system access]");
     }
 }
-public class Main {
-    public static void main(String[] args) {
-        AuctionManager manager = new AuctionManager();
-        manager.showAdmins();
-        manager.startAuction();
-    }
-}
+ 
