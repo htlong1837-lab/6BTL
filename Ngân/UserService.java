@@ -13,7 +13,7 @@ public class UserService {
     // Tránh email trùng lặp
     private Set<String> emails = new HashSet<>();
 
-    //Mật khảu hợp lệ
+    //Mật khẩu hợp lệ
     private boolean isStrongPassword(String password){
         if(password == null || password.length() < 8){
             return false;
@@ -36,12 +36,16 @@ public class UserService {
          return hasDigit && hasLower && hasUpper;
     }
 
+    // mã hoá mật khẩu: String -> code(số) -> mã lạ
+    private String hashPassword(String password) {
+        return Integer.toHexString(password.hashCode());
+    }
 
-    // Đăng kí người dùng + kiểm tra tính hợp lệ
+    // ------- Đăng kí người dùng + kiểm tra tính hợp lệ --------
     public String signUp(String username, String email, String password, String confirmPassword){
         
-        // Tên hợp lệ
-        if(username == null){
+        // Tên hợp lệ, tránh để trống và nhập chuỗi rỗng
+        if(username == null || username.isBlank()){
             return "Tên người dùng không được để trống.";
         }
 
@@ -65,23 +69,41 @@ public class UserService {
         if(!password.equals(confirmPassword)){
             return "Mật khẩu xác nhận không khớp";
         }
-        // Tạo ID
-        String userid = UUID.randomUUID().toString();
 
-        // 5. Hash password
-        String passwordHash = hashPassword(password);
+            // Tạo ID
+            String userid = UUID.randomUUID().toString();
 
-        // 6. Tạo user
-        User user = new User(userId, username, email, passwordHash);
+            // Hash password
+            String passwordHash = hashPassword(password);
 
-        // 7. Lưu
-        usersByUsername.put(username, user);
-        emails.add(email);
+            // Tạo user
+            User user = new User(userid, username, email, passwordHash);
 
-        return "Đăng ký thành công!";
-    }
-
-
+            // Lưu
+            usersByUsername.put(username, user);
+            emails.add(email);
+            
+            return "Đăng ký thành công!";
     }
     
+    //------------- Đăng nhập ----------------
+    public String login(String username, String password) {
+
+        // Kiểm tra tồn tại
+        if (!usersByUsername.containsKey(username)) {
+            return "Tài khoản không tồn tại";
+        }
+
+        User user = usersByUsername.get(username);
+
+        //Hash password nhập vào
+        String inputHash = hashPassword(password);
+
+        // So sánh
+        if (!user.getPasswordHash().equals(inputHash)) {
+            return "Sai mật khẩu";
+        }
+
+        return "Đăng nhập thành công!";
+    }
 }
