@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import main.java.com.auction.bid.model.BidTransaction;
+import main.java.com.auction.item.model.Item;
+import main.java.com.auction.user.model.Seller;
+import main.java.com.auction.user.model.User;
 
 public class Auction {
 
@@ -52,15 +55,76 @@ public class Auction {
 // nếu hết thời gian
         if (System.currentTimeMillis() > endTime) {
             endAuction(); // tí định nghĩa
+            return false;
         }        
 
+// giá ko hợp lệ 
+        if ( amount <= currentPrice){
+            System.out.println("bids too low");
+            return false;
+        }
+
+        currentPrice = amount;
+        highestBidder = bidder;
+
+        
+        BidTransaction bid = new BidTransaction(bidder , amount , System.currentTimeMillis() );
+
+        bidHistory.add(bid);
+
+        System.out.println(bidder.getName() + " bid " + amount);
+
+        return true;
     }
 
-    public void endAuction(){}
+    public void endAuction(){
+        if (status == AuctionStatus.FINISHED) return ;
 
-    public void checkAndClose() {}
+        status = AuctionStatus.FINISHED ;
 
-    public void User getHighestBidder(){}
+        System.out.println("Auction ended: " + item.getName());
+        
+        if (highestBidder != null){
+            System.out.println("Winner: " + highestBidder.getName());
+            System.out.println("Final price: " + currentPrice);
+        }
+        else {
+            System.out.println("No bids placed");
+        }
+    }
 
-    public void 
+    public void checkAndClose() {
+        if (status == AuctionStatus.RUNNING && System.currentTimeMillis() > endTime){
+            endAuction();
+        }
+    }
+
+        
+    public void User getHighestBidder() {
+        return highestBidder;
+    }
+
+    public List<BidTransaction> getBidHistory() {
+            return bidHistory;
+        }
+
+    public AuctionStatus geStatus() {
+        return status ;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public Seller getSeller() {
+        return seller;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
 }
