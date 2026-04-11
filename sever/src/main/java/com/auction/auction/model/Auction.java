@@ -45,7 +45,7 @@ public class Auction {
     }
 
 // đặt giá 
-    public synchronized boolean placeBid(User bidder ,double amount ) {
+    public synchronized boolean placeBid(User bidder ,double amount ) {// chặn hành trường hợp 2 thằng cùng đặt giá
 // neu phiên chưa chạy
         if (status != AuctionStatus.RUNNING) {
             System.out.println(" Phiên đấu giá chưa chạy");
@@ -100,7 +100,7 @@ public class Auction {
     }
 
         
-    public void User getHighestBidder() {
+    public User getHighestBidder() {
         return highestBidder;
     }
 
@@ -108,7 +108,7 @@ public class Auction {
             return bidHistory;
         }
 
-    public AuctionStatus geStatus() {
+    public AuctionStatus getStatus() {
         return status ;
     }
 
