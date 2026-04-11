@@ -9,17 +9,14 @@ public class AuctionDAOImpl implements AuctionDAO {
 
     private List<Auction> auctions = new ArrayList<>();
 
-    @Override
     public void save(Auction auction) {
         auctions.add(auction);
     }
 
-    @Override
     public List<Auction> findAll() {
         return auctions;
     }
-
-    @Override
+//trả về toàn bộ phiên đấu giá
     public Auction findById(int index) {
         if (index >= 0 && index < auctions.size()) {
             return auctions.get(index);
@@ -27,7 +24,6 @@ public class AuctionDAOImpl implements AuctionDAO {
         return null;
     }
 
-    @Override
     public void delete(Auction auction) {
         auctions.remove(auction);
     }

@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface AuctionDAO {
      
-    void save(Auction auction);
+    void save(Auction auction); // lưu trữ 
     List<Auction> findAll();
 
     Auction findById(int index);
