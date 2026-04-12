@@ -1,6 +1,6 @@
-package main.java.com.auction.auction.dao;
+package com.auction.auction.dao;
 
-import main.java.com.auction.auction.model.Auction;
+import com.auction.auction.model.Auction;
 
 import java.util.ArrayList;
 import java.util.List;

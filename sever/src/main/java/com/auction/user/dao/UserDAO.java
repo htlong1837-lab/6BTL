@@ -1,4 +1,4 @@
-package main.java.com.auction.user.dao;
+package com.auction.user.dao;
 //Interface
 
 public interface UserDAO {

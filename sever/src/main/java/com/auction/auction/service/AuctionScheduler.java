@@ -1,6 +1,6 @@
-package main.java.com.auction.auction.service;
+package com.auction.auction.service;
 
-import main.java.com.auction.auction.model.Auction;
+import com.auction.auction.model.Auction;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;

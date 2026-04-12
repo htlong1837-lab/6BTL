@@ -1,4 +1,5 @@
-package main.java.com.auction.user.model;
+package com.auction.user.model;
+import com.auction.common.model.Entity;
 
 public abstract class User extends Entity {
     protected String name;
@@ -11,6 +12,7 @@ public abstract class User extends Entity {
         this.name = name;
         this.email = email;
         this.passwordHash = passwordHash;
+        this.balance = 0.0;
     }
 
     // Getters

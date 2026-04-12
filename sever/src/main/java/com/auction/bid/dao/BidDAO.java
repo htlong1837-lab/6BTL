@@ -1,4 +1,4 @@
-package main.java.com.auction.bid.dao;
+package com.auction.bid.dao;
 
 public class BidDAO {
     

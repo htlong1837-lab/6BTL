@@ -1,4 +1,4 @@
-package main.java.com.auction.bid.controller;
+package com.auction.bid.controller;
 
 public class BidController {
     

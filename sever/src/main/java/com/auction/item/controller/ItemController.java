@@ -1,4 +1,4 @@
-package main.java.com.auction.item.controller;
+package com.auction.item.controller;
 
 public class ItemController {
     

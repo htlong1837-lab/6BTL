@@ -1,4 +1,4 @@
-package main.java.com.auction.user.controller;
+package com.auction.user.controller;
 //handleLogin, handleRegister, ...
 public class UserController {
     

@@ -1,4 +1,4 @@
-package main.java.com.auction.item.dao;
+package com.auction.item.dao;
 
 public class ItemDAOImpl {
     

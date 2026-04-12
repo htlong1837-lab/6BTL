@@ -1,4 +1,4 @@
-package main.java.com.auction.exception;
+package com.auction.exception;
 
 public class UserNotFoundException {
     

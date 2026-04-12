@@ -1,4 +1,4 @@
-package main.java.com.auction.item.service;
+package com.auction.item.service;
 // CRUD items, validate
 public class ItemService {
     

@@ -1,10 +1,10 @@
-package main.java.com.auction.auction.controller;
+package com.auction.auction.controller;
 
-import main.java.com.auction.auction.model.Auction;
-import main.java.com.auction.auction.service.AuctionService;
-import main.java.com.auction.user.model.User;
-import main.java.com.auction.user.model.Seller;
-import main.java.com.auction.item.model.Item;
+import com.auction.auction.model.Auction;
+import com.auction.auction.service.AuctionService;
+import com.auction.user.model.User;
+import com.auction.user.model.Seller;
+import com.auction.item.model.Item;
 
 import java.util.List;
 

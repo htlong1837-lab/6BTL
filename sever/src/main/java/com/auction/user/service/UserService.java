@@ -1,4 +1,4 @@
-package main.java.com.auction.user.service;
+package com.auction.user.service;
 //signUp, login, ban, validate
 
 import com.auction.user.dao.UserDAO;

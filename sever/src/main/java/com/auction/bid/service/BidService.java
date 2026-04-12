@@ -1,6 +1,5 @@
-package main.java.com.auction.bid.service;
+package com.auction.bid.service;
 //placeBid (synchronized), validate
-package com.auction.user.service;
 
 import com.auction.user.model.Bidder;
 import java.util.ArrayList;

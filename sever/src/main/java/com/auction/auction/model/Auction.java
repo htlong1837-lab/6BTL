@@ -1,12 +1,12 @@
-package main.java.com.auction.auction.model;
+package com.auction.auction.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import main.java.com.auction.bid.model.BidTransaction;
-import main.java.com.auction.item.model.Item;
-import main.java.com.auction.user.model.Seller;
-import main.java.com.auction.user.model.User;
+import com.auction.bid.model.BidTransaction;
+import com.auction.item.model.Item;
+import com.auction.user.model.Seller;
+import com.auction.user.model.User;
 
 public class Auction {
 
