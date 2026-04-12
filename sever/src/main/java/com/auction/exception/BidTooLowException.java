@@ -1,5 +1,8 @@
 package com.auction.exception;
-
-public class BidTooLowException {
+// giá thấp hơn hiện tại
+public class BidTooLowException extends AuctionException {
+    public BidTooLowException(String message) {
+        super(message);
+    }
     
 }
