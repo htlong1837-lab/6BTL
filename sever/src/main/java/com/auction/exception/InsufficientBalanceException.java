@@ -1,5 +1,8 @@
 package com.auction.exception;
-
-public class InsufficientBalanceException {
+// ko đủ lúa
+public class InsufficientBalanceException extends AuctionException {
+    public InsufficientBalanceException(String message) {
+        super(message);
+    }
     
 }

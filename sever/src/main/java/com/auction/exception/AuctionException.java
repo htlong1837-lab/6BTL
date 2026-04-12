@@ -1,6 +1,9 @@
 package com.auction.exception;
-//base
+//base bắt lỗi chung
 
-public class AuctionException {
+public class AuctionException extends Exception {
+    public AuctionException(String message) {
+        super(message);
+    }
     
 }

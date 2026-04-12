@@ -68,7 +68,7 @@ public class Auction {
         highestBidder = bidder;
 
         
-        BidTransaction bid = new BidTransaction(bidder , amount , System.currentTimeMillis() );
+        BidTransaction bid = new BidTransaction(bidder.getId(), bidder.getName(), item.getId(), amount, System.currentTimeMillis());
 
         bidHistory.add(bid);
 
