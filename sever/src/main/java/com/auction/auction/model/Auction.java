@@ -20,7 +20,7 @@ public class Auction {
 
     private long startTime;
     private long endTime;
-
+    private List<AutoBid> autoBids = new ArrayList<>();
 
 // contructor
     public Auction(Item item , Seller seller , long durationMillis) {
@@ -75,6 +75,8 @@ public class Auction {
         System.out.println(bidder.getName() + " bid " + amount);
 
         return true;
+
+        processAutoBids();
     }
 
     public void endAuction(){
@@ -127,4 +129,40 @@ public class Auction {
     public long getEndTime() {
         return endTime;
     }
+
+    public void registerAutoBid(AutoBid autoBid) {
+    autoBids.add(autoBid);
+    }
+
+    private void processAutoBids() {
+
+    boolean updated;
+
+    do {
+        updated = false;
+
+        for (AutoBid auto : autoBids) {
+
+            // nếu user đang dẫn đầu thì bỏ qua
+            if (auto.getUser().equals(highestBidder)) continue;
+
+            double nextBid = currentPrice + auto.getIncrement();
+
+            if (nextBid <= auto.getMaxBid()) {
+
+                currentPrice = nextBid;
+                highestBidder = auto.getUser();
+
+                bidHistory.add(new BidTransaction(auto.getUser(),nextBid,System.currentTimeMillis()));
+
+                System.out.println("[AUTO] "
+                        + auto.getUser().getName()
+                        + " bid " + nextBid);
+
+                updated = true;
+            }
+        }
+
+    } while (updated);
+}
 }

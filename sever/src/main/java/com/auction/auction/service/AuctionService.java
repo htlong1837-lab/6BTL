@@ -51,4 +51,8 @@ public class AuctionService {
     public void deleteAuction(Auction auction) {
         auctionDAO.delete(auction);
     }
+
+    public void registerAutoBid(Auction auction, AutoBid autoBid) {
+    auction.registerAutoBid(autoBid);
+    }
 }
