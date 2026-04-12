@@ -37,6 +37,7 @@ public class AuctionController {
     public void endAuction(Auction auction) {
         auctionService.endAuction(auction);
     }
+    
     public void registerAutoBid(Auction auction, AutoBid autoBid) {
     auctionService.registerAutoBid(auction, autoBid);
     }
