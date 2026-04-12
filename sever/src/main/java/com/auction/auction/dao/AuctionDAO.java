@@ -7,8 +7,7 @@ public interface AuctionDAO {
      
     void save(Auction auction); // lưu trữ 
     List<Auction> findAll();
-
-    Auction findById(int index);
+    Auction findById(String id);
     void delete(Auction auction);
     
 }

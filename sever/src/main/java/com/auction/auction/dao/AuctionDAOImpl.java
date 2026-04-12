@@ -3,28 +3,32 @@ package com.auction.auction.dao;
 import com.auction.auction.model.Auction;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AuctionDAOImpl implements AuctionDAO {
 
-    private List<Auction> auctions = new ArrayList<>();
+    private final Map<String, Auction> store = new HashMap<>();
 
+    @Override
     public void save(Auction auction) {
-        auctions.add(auction);
+        store.put(auction.getId(), auction);
     }
 
+    @Override
     public List<Auction> findAll() {
-        return auctions;
-    }
-//trả về toàn bộ phiên đấu giá
-    public Auction findById(int index) {
-        if (index >= 0 && index < auctions.size()) {
-            return auctions.get(index);
-        }
-        return null;
+        return new ArrayList<>(store.values());
     }
 
+    @Override
+    public Auction findById(String id) {
+        return store.get(id);
+    }
+
+    @Override
     public void delete(Auction auction) {
-        auctions.remove(auction);
+        store.remove(auction.getId());
     }
 }
+   
