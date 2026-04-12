@@ -38,8 +38,8 @@ public class AuctionService {
     }
 
     //  tìm auction
-    public Auction getAuctionById(int index) {
-        return auctionDAO.findById(index);
+    public Auction getAuctionById(String id) {
+        return auctionDAO.findById(id);
     }
 
     //  kết thúc

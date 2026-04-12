@@ -1,5 +1,5 @@
 package com.auction.auction.model;
-
+import java.util.UUID;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +9,7 @@ import com.auction.user.model.Seller;
 import com.auction.user.model.User;
 
 public class Auction {
-
+    private String id;
     private Item item; 
     private Seller seller;
     private double currentPrice;
@@ -24,6 +24,7 @@ public class Auction {
 
 // contructor
     public Auction(Item item , Seller seller , long durationMillis) {
+        this.id = UUID.randomUUID().toString();
         this.item = item;
         this.seller = seller;
         this.currentPrice = item.getStartPrice(); // cần định nghãi hàm getStartPrice
@@ -74,9 +75,11 @@ public class Auction {
 
         System.out.println(bidder.getName() + " bid " + amount);
 
+        processAutoBids();
+
         return true;
 
-        processAutoBids();
+        
     }
 
     public void endAuction(){
@@ -101,7 +104,8 @@ public class Auction {
         }
     }
 
-        
+    public String getId()  { return id; } 
+
     public User getHighestBidder() {
         return highestBidder;
     }
@@ -153,7 +157,12 @@ public class Auction {
                 currentPrice = nextBid;
                 highestBidder = auto.getUser();
 
-                bidHistory.add(new BidTransaction(auto.getUser(),nextBid,System.currentTimeMillis()));
+                bidHistory.add(new BidTransaction(
+                            auto.getUser().getId(),
+                            auto.getUser().getName(),
+                            this.id,
+                            nextBid,
+                            System.currentTimeMillis()));
 
                 System.out.println("[AUTO] "
                         + auto.getUser().getName()

@@ -29,7 +29,7 @@ public class AuctionController {
     }
 
     //  tìm auction
-    public Auction getAuctionById(int id) {
+    public Auction getAuctionById(String id) {
         return auctionService.getAuctionById(id);
     }
 
