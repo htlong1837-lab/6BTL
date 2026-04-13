@@ -22,7 +22,24 @@ public class Admin extends User {
         System.out.println("[Admin] User \"" + user.getName() + "\" has been banned.");
         // TODO: thêm trường isActive vào User nếu cần xử lý thật
     }
- 
+    // Mở lại tài khoản người dùng
+    public void isActive(User user) {
+        System.out.println("[Admin] User \"" + user.getName() + "\" has been activated. You can now access");
+    }
+    // Duyệt sản phẩm
+    public void approveItem(Item item) {
+        if (item.isApproved()) {
+            System.out.println("[Admin] Item \"" + item.getName() + "\" is already approved. It's ready for auction right now");
+        } else {
+            System.out.println("[Admin] Item \"" + item.getName() + "\" is invalid. Please check the details and edit it for approval.");
+        }
+    }
+    // Ghi nhận hành vi đánh giá bất thường
+    public void flagSuspiciousActivity(User user) {
+        if (user.login(false))
+
+
+
     /** Xem toàn bộ phiên đấu giá */
     public void listAllAuctions(List<Auction> auctions) {
         System.out.println("[Admin] All auctions (" + auctions.size() + "):");
