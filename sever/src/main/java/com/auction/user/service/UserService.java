@@ -5,7 +5,14 @@ import com.auction.user.dao.UserDAO;
 import com.auction.user.model.Bidder;
 import com.auction.user.model.User;
 import com.auction.common.until.PasswordUtil;
+import com.auction.exception.UserException.DuplicateEmailException;
+import com.auction.exception.UserException.DuplicateUsernameException;
+import com.auction.exception.UserException.InvalidDataException;
+import com.auction.exception.UserException.UserException;
+
 import java.util.UUID;
+
+import javax.naming.AuthenticationException;
 
 public class UserService {
 
@@ -16,25 +23,25 @@ public class UserService {
     }
 
     public String signUp(String username, String email,
-                         String password, String confirmPassword) {
+                         String password, String confirmPassword) throws UserException {
 
         if (username == null || username.isBlank())
-            return "Tên người dùng không được để trống.";
+            throw new InvalidDataException("Tên người dùng không được để trống.") ;
 
         if (userDAO.findByUsername(username) != null)
-            return "Tên người dùng đã tồn tại.";
+            throw new DuplicateUsernameException("Tên người dùng đã tồn tại.") ;
 
         if (email == null || !email.contains("@"))
-            return "Email không hợp lệ.";
+            throw new InvalidDataException("Email không hợp lệ.") ;
 
         if (userDAO.existsByEmail(email))
-            return "Email đã tồn tại.";
+            throw new DuplicateEmailException("Email đã tồn tại.");
 
         if (!PasswordUtil.isStrongPassword(password))
-            return "Mật khẩu phải có ít nhất 8 ký tự (hoa, thường, số).";
+            throw new InvalidDataException("Mật khẩu phải có ít nhất 8 ký tự (phải bao gồm chữ in hoa,chữ in thường và số).");
 
         if (!password.equals(confirmPassword))
-            return "Mật khẩu xác nhận không khớp.";
+            throw new AuthenticationException("Mật khẩu xác nhận không khớp.");
 
         String id           = UUID.randomUUID().toString();
         String passwordHash = PasswordUtil.hashPassword(password);
