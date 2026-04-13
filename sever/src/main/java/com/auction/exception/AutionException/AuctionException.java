@@ -1,5 +1,5 @@
-package com.auction.exception;
-//base bắt lỗi chung
+package com.auction.exception.AutionException;
+//base bắt lỗi chung trong phiên đấu giá
 
 public class AuctionException extends Exception {
     public AuctionException(String message) {
