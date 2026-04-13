@@ -1,6 +1,7 @@
 package com.auction.item.model;
 import com.auction.common.model.Entity;
 import java.util.ArrayList;
+import java.util.List;
 public abstract class Item extends Entity {
     protected String name;
     protected String des;
@@ -42,19 +43,20 @@ public abstract class Item extends Entity {
         this.startPrice = startPrice;
     }
         // Duyệt Item hợp lệ
-    public isApproved() {
+    public boolean isApproved() {
         if (this.name != null && !this.name.isEmpty() &&
             this.des != null && !this.des.isEmpty() &&
             this.startPrice > 0 && this.category != null && !this.category.isEmpty() && this.sellerId != null && !this.sellerId.isEmpty()) {
-            return true;
             System.out.println("[Admin] Item \"" + this.name + "\" has been approved and is ready for auction.");
+            return true;
+        } else {
+             System.out.println("[Admin] Item \"" + this.name + "\" is invalid and cannot be aution.Please check the details of the item and try again");
+             return false;
         }
-        return false;
-        System.out.println("[Admin] Item \"" + this.name + "\" is invalid and cannot be aution.Please check the details of the item and try again");
     }
     // Chỉnh sửa Item khi duyệt lỗi
-    public void editItem() {
-        if (isApproved(false)){
+    public void editItem(Item item) {
+        if (!item.isApproved()){
             this.name = name;
             this.des = des;
             this.startPrice = startPrice;
@@ -66,9 +68,8 @@ public abstract class Item extends Entity {
     }
     //Lập List Item để Admin Thêm/sửa/xóa
     public void listAllItems(List<Item> items) {
-        Item i =new Item(id, name, des, startPrice, category, sellerId);
-        if (i.isApproved(true)){
-            items.add(i);
+        if (this.isApproved()){
+            items.add(this);
         }   
     }
     //In ra List
