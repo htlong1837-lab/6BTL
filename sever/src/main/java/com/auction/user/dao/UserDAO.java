@@ -1,4 +1,7 @@
 package com.auction.user.dao;
+
+import com.auction.user.model.User;
+
 //Interface
 
 public interface UserDAO {

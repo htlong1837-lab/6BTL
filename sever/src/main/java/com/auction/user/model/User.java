@@ -38,4 +38,14 @@ public abstract class User extends Entity {
     public String toString() {
         return getClass().getSimpleName() + "[id=" + id + ", name=" + name + "]";
     }
+    // Đăng nhập
+    public boolean login(boolean isSuccess) {
+        if (isSuccess) {
+            System.out.println("User \"" + name + "\" logged in successfully.");
+            return true;
+        } else {
+            System.out.println("Login failed for user \"" + name + "\". Please check your credentials and try again.");
+            return false;
+        }
+    }
 }

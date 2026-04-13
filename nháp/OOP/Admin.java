@@ -1,6 +1,9 @@
 
 // sai hết admin
 import java.util.List;
+import OOP.User;
+import OOP.Auction;
+import OOP.Item;
  
 public class Admin extends User {
  
@@ -22,7 +25,21 @@ public class Admin extends User {
         System.out.println("[Admin] User \"" + user.getName() + "\" has been banned.");
         // TODO: thêm trường isActive vào User nếu cần xử lý thật
     }
- 
+    // Mở lại tài khoản người dùng
+    public void isActive(User user) {
+        System.out.println("[Admin] User \"" + user.getName() + "\" has been activated. You can now access");
+    }
+    // Duyệt sản phẩm
+    public void approveItem(Item item) {
+        if (item.isApproved()) {
+            System.out.println("[Admin] Item \"" + item.getName() + "\" is already approved. It's ready for auction right now");
+        } else {
+            item.setApproved(true);
+            System.out.println("[Admin] Item \"" + item.getName() + "\" has been approved. It's now ready for auction.");
+        }
+    }
+    // Ghi nhận hành vi đánh giá bất thường
+  
     /** Xem toàn bộ phiên đấu giá */
     public void listAllAuctions(List<Auction> auctions) {
         System.out.println("[Admin] All auctions (" + auctions.size() + "):");
