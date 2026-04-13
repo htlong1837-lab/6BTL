@@ -12,6 +12,24 @@ public abstract class Item extends Entity {
         this.description = description;
         this.startPrice = startPrice;
     }
+    // Duyệt Item hợp lệ
+    public isApproved() {
+        if (this.name != null && !this.name.isEmpty() &&
+            this.description != null && !this.description.isEmpty() &&
+            this.startPrice > 0) {
+            return true;
+            System.out.println("[Admin] Item \"" + this.name + "\" has been approved and is ready for auction.");
+        }
+        return false;
+        System.out.println("[Admin] Item \"" + this.name + "\" is invalid and cannot be aution.Please check the details of the item and try again");
+    }
+    // Chỉnh sửa Item khi duyệt lỗi
+    public void editItem(String name, String description, double startPrice) {
+        this.name = name;
+        this.description = description;
+        this.startPrice = startPrice;
+        System.out.println("[Admin] Item \"" + this.name + "\" has been updated. Please review it again for approval.");
+    }
  
     // Getter
     public String getName()        { return name; }
