@@ -49,13 +49,21 @@ public abstract class Item extends Entity {
             this.startPrice > 0 && this.category != null && !this.category.isEmpty() && this.sellerId != null && !this.sellerId.isEmpty()) {
             System.out.println("[Admin] Item \"" + this.name + "\" has been approved and is ready for auction.");
             return true;
-        } else {
-             System.out.println("[Admin] Item \"" + this.name + "\" is invalid and cannot be aution.Please check the details of the item and try again");
-             return false;
+        } else if (this.name == null || this.name.isEmpty() ) {
+            System.out.println("[Admin] Item \"" + this.name + "\" is invalid and cannot be added to the auction. Please provide a valid name.");
+        } else if (this.des == null || this.des.isEmpty()) {
+            System.out.println("[Admin] Item \"" + this.des + " of " + this.name + "\" is invalid and cannot be added to the auction. Please provide a valid description.");
+        } else if (this.startPrice <= 0) {
+            System.out.println("[Admin] Item \"" + this.startPrice + " of "+ this.name + "\" is invalid and cannot be added to the auction. Please provide a valid starting price.");
+        } else if (this.category == null || this.category.isEmpty()) {
+            System.out.println("[Admin] Item \"" + this.category + " of " + this.name + "\" is invalid and cannot be added to the auction. Please provide a valid category.");
+        } else if (this.sellerId == null || this.sellerId.isEmpty()) {
+            System.out.println("[Admin] Item \"" + this.sellerId + " of " + this.name + "\" is invalid and cannot be added to the auction. Please provide a valid seller ID.");
         }
+        return false;
     }
     // Chỉnh sửa Item khi duyệt lỗi
-    public void editItem(Item item) {
+    public void editItemError(Item item) {
         if (!item.isApproved()){
             this.name = name;
             this.des = des;
