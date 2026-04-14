@@ -51,11 +51,11 @@ public class VehicleBuilder implements ItemBuilder {
         return this;
     }
 
-    public VehicleBuilder setmMake(String make) {
+    public VehicleBuilder setMake(String make) {
         this.make = make;
         return this;
     }
-    public VehicleBuilder setmModel(String model) {
+    public VehicleBuilder setModel(String model) {
         this.model = model;
         return this;
     }
