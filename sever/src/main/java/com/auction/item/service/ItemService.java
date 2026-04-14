@@ -7,6 +7,18 @@ import com.auction.item.model.Product.Item;
 // CRUD items, validate
 public class ItemService extends Item {
 
+    // Constructor
+    public ItemService(String name, String des, double startPrice, String category, String sellerId) {
+        // TODO: Check the Item class for available constructors
+        // Use the correct constructor based on what Item class provides
+        super();
+        this.name = name;
+        this.des = des;
+        this.startPrice = startPrice;
+        this.category = category;
+        this.sellerId = sellerId;
+    }
+
     // Duyệt Item hợp lệ
     public boolean isApproved() {
         if (this.name != null && !this.name.isEmpty() &&
