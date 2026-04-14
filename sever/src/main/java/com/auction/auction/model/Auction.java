@@ -102,7 +102,13 @@ public class Auction {
         status = AuctionStatus.FINISHED ;
 
         System.out.println("Auction ended: " + item.getName());
-        String winnerName = (highestBidder != null) ? highestBidder.getName() : null;
+
+        String winnerName;
+        if (highestBidder != null) {
+            winnerName = highestBidder.getName();
+        } else {
+            winnerName = null;
+        }
         AuctionEventManager.getInstance().publish(id,
             new AuctionEvent(EventType.AUCTION_ENDED, id, item.getName(),
                      currentPrice, winnerName));
@@ -135,10 +141,8 @@ public class Auction {
     public void registerAutoBid(AutoBid autoBid) {autoBids.add(autoBid);}
 
     private void processAutoBids() {
-
-    boolean updated;
-
-    do {
+    boolean updated = true;
+    while (updated) {
         updated = false;
 
         for (AutoBid auto : autoBids) {
@@ -154,24 +158,39 @@ public class Auction {
                 highestBidder = auto.getUser();
 
                 bidHistory.add(new BidTransaction(
-                            auto.getUser().getId(),
-                            auto.getUser().getName(),
-                            this.id,
-                            nextBid,
-                            System.currentTimeMillis()));
+                        auto.getUser().getId(),
+                        auto.getUser().getName(),
+                        this.id,
+                        nextBid,
+                        System.currentTimeMillis()));
 
                 System.out.println("[AUTO] "
                         + auto.getUser().getName()
                         + " bid " + nextBid);
-                
+
                 AuctionEventManager.getInstance().publish(id,
-                new AuctionEvent(EventType.AUTO_BID_PLACED, id, item.getName(),
-                     nextBid, auto.getUser().getName()));
+                    new AuctionEvent(EventType.AUTO_BID_PLACED, id, item.getName(),
+                            nextBid, auto.getUser().getName()));
 
                 updated = true;
+                break;
+/**  sau mỗi lần có người thắng break thoát khỏi vòng for và quay lại while
+*từ đầu danh sách đảm bảo mọi người được xét tính công bằng
+vd : curPrice = 100 , A max = 120, B max = 110 , increase = 10k
+while 1 :
+ update = false;
+ chạy for :
+    A ko dẫn đầu nextBid =110 => A đang thắng 110k => updated = true => break chạy while 2
+
+while 2:
+update = false;
+chạy for
+    A dẫn đầu -> skip
+    B ko dẫn đầu B nextBid = 120 => udate = false => return B thắng luôn
+ 
+*/
             }
         }
-
-    } while (updated);
+    }
 }
 }

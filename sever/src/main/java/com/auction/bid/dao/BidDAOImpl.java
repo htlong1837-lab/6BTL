@@ -3,9 +3,7 @@ package com.auction.bid.dao;
 import com.auction.bid.model.BidTransaction;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * In-memory implementation của BidDAO.
@@ -27,29 +25,45 @@ public class BidDAOImpl implements BidDAO {
     }
 
     public List<BidTransaction> findByAuctionId(String auctionId) {
-        if (auctionId == null) return new ArrayList<>();
-        return store.stream()
-                .filter(tx -> auctionId.equals(tx.getAuctionId()))
-                .collect(Collectors.toList());
+        List<BidTransaction> result = new ArrayList<>();
+        if (auctionId == null) return result;
+        for (BidTransaction tx : store) {
+            if(auctionId.equals(tx.getAuctionId())){
+                result.add(tx);
+            }
+        }
+        return result;
     }
-
     public List<BidTransaction> findByBidderId(String bidderId) {
-        if (bidderId == null) return new ArrayList<>();
-        return store.stream()
-                .filter(tx -> bidderId.equals(tx.getBidderId()))
-                .collect(Collectors.toList());
+        List<BidTransaction> result = new ArrayList<>();
+        if (bidderId == null) return result;
+        for (BidTransaction tx : store) {
+            if (bidderId.equals(tx.getBidderId())) {
+                result.add(tx);
+            }
+        }
+        return result;
     }
 
     public BidTransaction findHighestBidByAuction(String auctionId) {
         if (auctionId == null) return null;
-        return store.stream()
-                .filter(tx -> auctionId.equals(tx.getAuctionId()))
-                .max(Comparator.comparingDouble(BidTransaction::getAmount))
-                .orElse(null);
+        BidTransaction highest = null;
+        for (BidTransaction tx : store) {
+            if (auctionId.equals(tx.getAuctionId())) {
+                if (highest == null || tx.getAmount() > highest.getAmount()) {
+                    highest = tx;
+                }
+            }
+        }
+        return highest;
     }
 
     public void deleteByAuctionId(String auctionId) {
         if (auctionId == null) return;
-        store.removeIf(tx -> auctionId.equals(tx.getAuctionId()));
+        for (int i = store.size() - 1; i >= 0; i--) {
+            if (auctionId.equals(store.get(i).getAuctionId())) {
+                store.remove(i);
+            }
+        }
     }
 }
