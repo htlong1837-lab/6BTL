@@ -1,4 +1,4 @@
-package com.auction.item.model;
+package com.auction.item.model.Product;
 import com.auction.common.model.Entity;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +16,8 @@ public abstract class Item extends Entity {
         this.category = category;
         this.sellerId = sellerId;
     }
+
+    //getter
     public String getName() {
         return name;
     }
@@ -26,19 +28,21 @@ public abstract class Item extends Entity {
     public double getStartPrice() {
         return startPrice;
     }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setDes(String des) {
-        this.des = des;
-    
-    }
     public String getCategory() {
         return category;
     }
     public String getSellerId() {
         return sellerId;
     }
+
+    //setter
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setDes(String des) {
+        this.des = des;
+    }
+    
     public void setStartPrice(double startPrice) {
         this.startPrice = startPrice;
     }
@@ -93,7 +97,7 @@ public abstract class Item extends Entity {
     }
     @Override
     public void printInfo() {
-        System.out.println("sản phẩm:" + name + "mô tả:" + des + "có giá khởi điểm" + startPrice);
+        System.out.println("Sản phẩm:" + name + "mô tả:" + des + "có giá khởi điểm" + startPrice);
     }
 
 

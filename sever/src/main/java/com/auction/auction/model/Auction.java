@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.auction.bid.model.BidTransaction;
-import com.auction.item.model.Item;
 import com.auction.user.model.Seller;
 import com.auction.user.model.User;
 
 import com.auction.common.observer.AuctionEvent;
 import com.auction.common.observer.AuctionEventManager;
 import com.auction.common.observer.EventType;
+import com.auction.item.model.Product.Item;
 
 public class Auction {
     private String id;

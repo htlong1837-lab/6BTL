@@ -3,9 +3,9 @@ package com.auction.auction.controller;
 import com.auction.auction.model.Auction;
 import com.auction.auction.model.AutoBid;
 import com.auction.auction.service.AuctionService;
+import com.auction.item.model.Product.Item;
 import com.auction.user.model.User;
 import com.auction.user.model.Seller;
-import com.auction.item.model.Item;
 
 import java.util.List;
 
