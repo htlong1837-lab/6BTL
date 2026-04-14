@@ -1,5 +1,5 @@
-package com.auction.item.model;
-public class Art extends Item {
+package com.auction.item.model.Product;
+class Art extends Item {
     private String artist;
     private String medium;
     public Art(String id, String name, String des, double startPrice, String category, String sellerId, String artist, String medium) {
@@ -7,17 +7,19 @@ public class Art extends Item {
         this.artist = artist;
         this.medium = medium;
     }
+    // getter
     public String getArtist() {
         return artist;
     }
     public String getMedium() {
         return medium;
-
     }
-    public void setArtist(String newname) {
+
+    //setter
+    void setArtist(String newname) {
         this.artist = newname;
     }
-    public void setMedium(String newmedium) {
+    void setMedium(String newmedium) {
         this.medium = newmedium;
     }
     @Override
