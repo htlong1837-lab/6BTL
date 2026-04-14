@@ -1,5 +1,5 @@
 package com.auction.item.model.Factory;
 
-public class VehicleFatory {
+public class VehicleFatory implements ItemFactory{
     
 }

@@ -1,43 +1,42 @@
 package com.auction.item.model.Builder;
 
-public class ElectronicsBuilder{
-    public static class Builder{
-        private String name;
-        private String des;
-        private double startPrice;
-        private String category;
-        private String sellerId;
-        private String brand;
-        private int warrantyMonths;
+import com.auction.item.model.Product.Item;
 
+public class ElectronicsBuilder implements ItemBuilder{
+    private Electronics item = new Electronics();
+    private String name;
+    private String des;
+    private double startPrice;
+    private String brand;
+    private int warrantyMonths;
 
-        public Builder setName(String name) {
-            this.name = name;
-            return this;
-        }
-        public Builder setDes(String des) {
-            this.des = des;
-            return this;
-        }
+    public ItemBuilder setName(String name) {
+        this.name = name;
+        return this;
+    }
+    public ItemBuilder setDes(String des) {
+        this.des = des;
+        return this;
+    }
+
+    public ItemBuilder setStartPrice(double startPrice) {
+        this.startPrice = startPrice;
+        return this;
+    }
+
+    public ItemBuilder setBrand(String a) {
+        this.brand = a;
+        return this;
+    }
     
-        public Builder setStartPrice(double startPrice) {
-            this.startPrice = startPrice;
-            return this;
-        }
+    public ItemBuilder setWarrantyMonths(int b) {
+        this.warrantyMonths = b;
+        return this;
+    }
 
-        public Builder setBrand(String a) {
-            this.brand = a;
-            return this;
-        }
-        
-        public Builder setWarrantyMonths(int b) {
-            this.warrantyMonths = b;
-            return this;
-        }
-
-        public Electronics build(){
-            return new Electronics(this);
-        }
+    public Item build(){
+        return item;
+    }
 
 
 }
