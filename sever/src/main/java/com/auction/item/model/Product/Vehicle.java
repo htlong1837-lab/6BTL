@@ -10,23 +10,26 @@ class Vehicle extends Item {
         this.model = model;
         this.year = year;
     }
+
+    //getter
     public String getMake() {
         return make;
     }
     public String getModel() {
         return model;
-
     }
     public int getYear() {
         return year;
     }
-    public void setMake(String a) {
+
+    //setter
+    void setMake(String a) {
         this.make = a;
     }
-    public void setModel(String b) {
+    void setModel(String b) {
         this.model = b;
     }
-    public void setYear(int c) {
+    void setYear(int c) {
         this.year = c;
     }
     @Override

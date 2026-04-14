@@ -11,17 +11,23 @@ class Electronics extends Item {
         this.warrantyMonths = builder.warrantyMonths;
     }
 
-    
-
-
-    }
+    //getter
     public String getBrand() {
         return brand;
     }
     public int getWarrantyMonths() {
         return warrantyMonths;
-
     }
+
+    //setter
+    void setBrand(String a) {
+            this.brand = a;
+    }
+        
+    void setWarrantyMonths(int b) {
+        this.warrantyMonths = b;
+    }
+
     
     @Override
     public void printInfo() {
