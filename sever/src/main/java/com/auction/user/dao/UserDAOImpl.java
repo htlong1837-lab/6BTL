@@ -10,8 +10,11 @@ import java.util.Set;
 public class UserDAOImpl implements UserDAO {
 
     // Đây là "database tạm" trong RAM
+<<<<<<< Updated upstream
     // Key   = username (String)
     // Value = object User
+=======
+>>>>>>> Stashed changes
     private Map<String, User> usersByUsername = new HashMap<>();
     private Set<String> emails = new HashSet<>();
 

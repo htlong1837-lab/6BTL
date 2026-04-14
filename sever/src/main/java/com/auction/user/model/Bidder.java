@@ -4,6 +4,7 @@ public class Bidder extends User {
     public Bidder(String id, String name, String email, String passwordHash) {
         super(id, name, email, passwordHash);
 
+<<<<<<< Updated upstream
     }
     public double deposit(double amount) {
         if (amount <=0) {
@@ -29,3 +30,37 @@ public class Bidder extends User {
         return this.balance;
     }
 }
+=======
+package com.auction.user.model;
+
+import com.auction.bid.model.BidTransaction;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Bidder extends User {
+
+    private List<BidTransaction> myBids;
+
+    public Bidder(String id, String name, String email, String passwordHash) {
+        super(id, name, email, passwordHash);
+        this.myBids = new ArrayList<>();
+    }
+
+    // Lịch sử bid của bidder này
+    public List<BidTransaction> getMyBids() { return myBids; }
+
+    public void addBidRecord(BidTransaction tx) { myBids.add(tx); }
+
+    // Kiểm tra số dư — hành vi của chính bidder, để ở đây hợp lý
+    public boolean hasSufficientBalance(double amount) {
+        return balance >= amount;
+    }
+
+    @Override
+    public void printInfo() {
+        super.printInfo();
+        System.out.println("Balance     : " + balance + " VND");
+        System.out.println("Total bids  : " + myBids.size());
+    }
+}
+>>>>>>> Stashed changes
