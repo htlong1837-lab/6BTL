@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.auction.auction.model.Auction;
-import com.auction.item.model.Item;
+import com.auction.item.model.Product.Item;
 
 public class Admin extends User {
     private int adminLevel;

@@ -3,10 +3,9 @@ package com.auction.auction.service;
 import com.auction.auction.dao.AuctionDAO;
 import com.auction.auction.dao.AuctionDAOImpl;
 import com.auction.auction.model.*;
-
+import com.auction.item.model.Product.Item;
 import com.auction.user.model.Seller;
 import com.auction.user.model.User;
-import com.auction.item.model.Item;
 
 import java.util.List;
 
