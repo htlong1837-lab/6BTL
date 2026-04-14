@@ -11,7 +11,11 @@ class Electronics extends Item {
         this.warrantyMonths = builder.warrantyMonths;
     }
 
+<<<<<<< HEAD
     //getter
+=======
+
+>>>>>>> 9667fe2d5aa0b49693bd10022a7d11ca678ffc1f
     public String getBrand() {
         return brand;
     }
@@ -29,10 +33,6 @@ class Electronics extends Item {
     }
 
     
-    @Override
-    public void printInfo() {
-        super.printInfo(); 
-        System.out.println("Brand :" + brand);
-        System.out.println("WarrantyMonths :" + warrantyMonths);
-    }
+  
+
 }

@@ -22,9 +22,6 @@ class Art extends Item {
     void setMedium(String newmedium) {
         this.medium = newmedium;
     }
-    @Override
-    public void printInfo() {
-        System.out.println("Artist :" + artist);
-        System.out.println("Medium :" + medium);
-    }
+  
+
 }
