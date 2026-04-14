@@ -1,39 +1,44 @@
 package com.auction.item.model.Factory;
 
-import com.auction.item.model.Builder.ElectronicsBuilder;
+import com.auction.item.model.Builder.VehicleBuilder;
 import com.auction.item.model.Product.Item;
 
-public class ElectronicFactory implements ItemFactory {
+public class VehicleFactory implements ItemFactory{
     private String id;
     private String name;
     private String des;
     private double startPrice;
     private String category;
     private String sellerId;
-    private String brand;
-    private int warrantyMonths;
-
-    public ElectronicFactory(String id, String name, String des, double startPrice, String category, String sellerId, String brand, int warrantyMonths) {
+    private String make;
+    private String model;
+    private int year;
+    
+    public VehicleFactory(String id, String name, String des, double startPrice, String category, String sellerId, String make, String model, int year) {
         this.id = id;
         this.name = name;
         this.des = des;
         this.startPrice = startPrice;
         this.category = category;
         this.sellerId = sellerId;
-        this.brand = brand;
-        this.warrantyMonths = warrantyMonths;
+        this.make = make;
+        this.model = model; 
+        this.year = year;
     }
 
     @Override
     public Item createItem() {
-        return new ElectronicsBuilder()
+        return new VehicleBuilder()
         .setId(id)
         .setName(name)
         .setDes(des)
         .setStartPrice(startPrice)
         .setCategory(category)
         .setSellerId(sellerId)
-        .setBrand(brand)
-        .setWarrantyMonths(warrantyMonths).build();
+        .setMake(make)
+        .setModel(model)
+        .setYear(year)
+        .build();
+
     }
 }
