@@ -1,20 +1,48 @@
-package com.auction.item.service;
-
+package com.auction.item.model;
+import com.auction.common.model.Entity;
+import java.util.ArrayList;
 import java.util.List;
-
-import com.auction.item.model.Product.Item;
-
-// CRUD items, validate
-public class ItemService extends Item {
-
-    // Constructor
-    public ItemService(String name, String des, double startPrice, String category, String sellerId) {
-       // TODO: Check the Item class for available const ructors
-        // Use the correct constructor based on what Item class provides
-        super(name, des, startPrice, category, sellerId);
+public abstract class Item extends Entity {
+    protected String name;
+    protected String des;
+    protected double startPrice;
+    protected String category;
+    protected String sellerId;
+    public Item(String id, String name, String des, double startPrice, String category, String sellerId) {
+        super(id);
+        this.name = name;
+        this.des = des;
+        this.startPrice = startPrice;
+        this.category = category;
+        this.sellerId = sellerId;
     }
+    public String getName() {
+        return name;
+    }
+    public String getDes() {
+        return des;
 
-    // Duyệt Item hợp lệ
+    }
+    public double getStartPrice() {
+        return startPrice;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setDes(String des) {
+        this.des = des;
+    
+    }
+    public String getCategory() {
+        return category;
+    }
+    public String getSellerId() {
+        return sellerId;
+    }
+    public void setStartPrice(double startPrice) {
+        this.startPrice = startPrice;
+    }
+        // Duyệt Item hợp lệ
     public boolean isApproved() {
         if (this.name != null && !this.name.isEmpty() &&
             this.des != null && !this.des.isEmpty() &&
@@ -65,6 +93,9 @@ public class ItemService extends Item {
     }
     @Override
     public void printInfo() {
-        System.out.println("Sản phẩm:" + name + "mô tả:" + des + "có giá khởi điểm" + startPrice);
+        System.out.println("sản phẩm:" + name + "mô tả:" + des + "có giá khởi điểm" + startPrice);
     }
+
+
+    
 }

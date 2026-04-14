@@ -9,7 +9,7 @@ class Electronics extends Item {
         super(builder.id, builder.name, builder.des, builder.startPrice, builder.category, builder.sellerId);
         this.brand = builder.brand;
         this.warrantyMonths = builder.warrantyMonths;
-    }
+    }s
 
 
     public String getBrand() {
