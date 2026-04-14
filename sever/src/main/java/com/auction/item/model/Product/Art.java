@@ -1,5 +1,5 @@
 package com.auction.item.model.Product;
-class Art extends Item {
+public class Art extends Item {
     private String artist;
     private String medium;
     public Art(String id, String name, String des, double startPrice, String category, String sellerId, String artist, String medium) {

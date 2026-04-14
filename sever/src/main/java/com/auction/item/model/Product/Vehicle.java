@@ -1,6 +1,6 @@
 package com.auction.item.model.Product;
 
-class Vehicle extends Item {
+public class Vehicle extends Item {
     private String make;
     private String model;
     private int year;
