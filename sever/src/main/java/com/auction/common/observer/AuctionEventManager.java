@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+import com.auction.exception.SystemException.SystemException;
 public class AuctionEventManager {
 
     // Singleton
@@ -25,9 +25,18 @@ public class AuctionEventManager {
 
     //Client đăng ký theo dõi 1 phiên đấu giá 
     public void subscribe(String auctionId, AuctionListener listener) {
-        listeners.computeIfAbsent(auctionId, k -> new CopyOnWriteArrayList<>())
-                 .add(listener);
+    boolean found = false;
+    for (String key : listeners.keySet()) {
+        if (key.equals(auctionId)) {
+            found = true;
+            break;
+        }
     }
+    if (found == false) {
+        listeners.put(auctionId, new CopyOnWriteArrayList<>());
+    }
+    listeners.get(auctionId).add(listener);
+}
 
     // Client hủy theo dõi 
     public void unsubscribe(String auctionId, AuctionListener listener) {
@@ -42,12 +51,18 @@ public class AuctionEventManager {
         CopyOnWriteArrayList<AuctionListener> list = listeners.get(auctionId);
         if (list == null || list.isEmpty()) return;
 
-        for (AuctionListener listener : list) {
-            notifyExecutor.submit(() -> {
-                try {
-                    listener.onEvent(event);
-                } catch (Exception e) {
-                    System.err.println("[EventManager] Listener error: " + e.getMessage());
+        for (final AuctionListener listener : list) {
+            notifyExecutor.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        listener.onEvent(event);
+                    } catch (Exception e) {
+                       SystemException ex = new SystemException(
+                            "[EventManager] Listener lỗi: " + e.getMessage()
+                        );
+                        System.out.println(ex.getMessage());
+                    }
                 }
             });
         }

@@ -16,8 +16,11 @@ public class AuctionScheduler {
 
         if (delay < 0) delay = 0;
 
-        scheduler.schedule(() -> {
-            auction.endAuction();
+        scheduler.schedule(new Runnable() {
+            @Override
+            public void run() {
+                auction.endAuction();
+            }
         }, delay, TimeUnit.MILLISECONDS);
     }
 }
