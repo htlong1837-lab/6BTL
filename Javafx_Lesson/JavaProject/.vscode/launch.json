@@ -6,11 +6,28 @@
     "configurations": [
         {
             "type": "java",
+            "name": "A2Bai2",
+            "request": "launch",
+            "mainClass": "A2Bai2",
+            "projectName": "JavaProject_6e316a27"
+        },
+        {
+            "type": "java",
+            "name": "A1Bai1",
+            "request": "launch",
+            "mainClass": "A1Bai1",
+            "projectName": "JavaProject_6e316a27",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
             "name": "StackPaneLesson",
             "request": "launch",
             "mainClass": "StackPaneLesson",
             "projectName": "JavaProject_9440feb5",
-            "classPaths": ["bin"],
+            "classPaths": [
+                "bin"
+            ],
             "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
         },
         {
