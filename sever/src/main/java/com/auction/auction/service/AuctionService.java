@@ -13,7 +13,7 @@ public class AuctionService {
 
     private AuctionDAO auctionDAO = new AuctionDAOImpl();
     private AuctionScheduler scheduler = new AuctionScheduler();
- //tạo auction
+ /**tạo auction*/    
     public Auction createAuction(Item item, Seller seller, long durationMillis) {
 
         Auction auction = new Auction(item, seller, durationMillis);
@@ -26,7 +26,7 @@ public class AuctionService {
         return auction;
     }
 
-// đặt giá
+/**  đặt giá */
     public boolean placeBid(Auction auction, User bidder, double amount) {
         return auction.placeBid(bidder, amount);
     }

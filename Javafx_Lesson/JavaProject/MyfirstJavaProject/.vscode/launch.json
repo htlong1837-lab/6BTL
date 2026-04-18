@@ -1,0 +1,100 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "A1Bai1",
+            "request": "launch",
+            "mainClass": "A1Bai1",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "A2Bai2",
+            "request": "launch",
+            "mainClass": "A2Bai2",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "B1StackPaneLesson",
+            "request": "launch",
+            "mainClass": "B1StackPaneLesson",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "B2HBoxLesson",
+            "request": "launch",
+            "mainClass": "B2HBoxLesson",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "B3VBoxLesson",
+            "request": "launch",
+            "mainClass": "B3VBoxLesson",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "B4GridPaneLesson",
+            "request": "launch",
+            "mainClass": "B4GridPaneLesson",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "C1AlertLesson",
+            "request": "launch",
+            "mainClass": "C1AlertLesson",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "C2DialogLesson",
+            "request": "launch",
+            "mainClass": "C2DialogLesson",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "C3CheckBoxLesson",
+            "request": "launch",
+            "mainClass": "C3CheckBoxLesson",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "C4_1Property",
+            "request": "launch",
+            "mainClass": "C4_1Property",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml,javafx.base"
+        },
+        {
+            "type": "java",
+            "name": "C4_2Binding",
+            "request": "launch",
+            "mainClass": "C4_2Binding",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml,javafx.base"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${fileBasenameNoExtension}",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml,javafx.base"
+        }
+    ]
+}
