@@ -1,0 +1,84 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "C4_2Binding",
+            "request": "launch",
+            "mainClass": "C4_2Binding",
+            "projectName": "MyfirstJavaProject_6e22ed2d"
+        },
+        {
+            "type": "java",
+            "name": "CheckBoxLesson",
+            "request": "launch",
+            "mainClass": "C_Tương_Tác.CheckBoxLesson",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "AlertLesson",
+            "request": "launch",
+            "mainClass": "AlertLesson",
+            "projectName": "MyfirstJavaProject_6e22ed2d"
+        },
+        {
+            "type": "java",
+            "name": "GridPaneLesson",
+            "request": "launch",
+            "mainClass": "GridPaneLesson",
+            "projectName": "MyfirstJavaProject_6e22ed2d"
+        },
+        {
+            "type": "java",
+            "name": "VboxLesson",
+            "request": "launch",
+            "mainClass": "VboxLesson",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "Bai2",
+            "request": "launch",
+            "mainClass": "Bai2",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "App",
+            "request": "launch",
+            "mainClass": "App",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "LoginApp",
+            "request": "launch",
+            "mainClass": "LoginApp",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "StackPaneLesson",
+            "request": "launch",
+            "mainClass": "StackPaneLesson",
+            "projectName": "MyfirstJavaProject_6e22ed2d",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${fileBasenameNoExtension}",
+            "vmArgs": "--module-path \"C:/Java/javafx-sdk-26/lib\" --add-modules javafx.controls,javafx.fxml"
+        }
+    ]
+}
