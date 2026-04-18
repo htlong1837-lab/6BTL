@@ -19,4 +19,5 @@ public class Request {
     public void setAction(String action ) { this.action = action; }
     public void setToken(String token) {this.token = token ;}
     public void setData (Object payload) {this.payload = payload ;}
+    
 }
