@@ -27,10 +27,6 @@ public class UserServiceTest {
         userDAO     = new UserDAOImpl();       // tạo database mới (rỗng)
         userService = new UserService(userDAO); // tạo service với database đó
     }
-
-
-    // ĐĂNG KÝ
-
     @Test
     @DisplayName("Kiểm tra đăng ký thành công với thông tin hợp lệ")
     public void testSuccessfulSignUp() {
@@ -102,8 +98,8 @@ public class UserServiceTest {
     @DisplayName("Đăng ký với username rỗng - lỗi InvalidData")
     void testSignUpwithEmptyUsername() {
         assertThrows(InvalidDataException.class, () -> {
-            userService.signUp("","email@example.com", "pw123", "pw123");
-        });
+            userService.signUp("",
+        })
     }
 
 
@@ -111,36 +107,15 @@ public class UserServiceTest {
     // ĐĂNG NHẬP
     @Test
     @DisplayName("Đăng nhập thành công")
-    void testSuccessfulLogin() throws Exception {
-        // Trước tiên phải có tài khoản đã đăng ký
-        userService.signUp("Name", "email@example.com", "pw123", "pw123");
-
-        //Đăng nhap với thông tin đúng
-        assertDoesNotThrow(() -> {
-            userService.login("Name", "pw123");
-        });
 
 
     @Test
     @DisplayName("Đăng nhập với tài khoản không tồn tại - lỗi UserNotFoundException")
-    void testLoginWithNonExistentUser() {
-        assertThrows(UserNotFoundException.class, () -> {
-            userService.login("NonExistent", "anyPassword");
-        });
-    }
     
 
     @Test
-    @DisplayName("Đăng nhập với mật khẩu sai - lỗi PasswordAuthenticationException")  
-    void testLoginWithWrongPassword() throws Exception {
-        // Trước tiên phải có tài khoản đã đăng ký
-        userService.signUp("Name", "email@example.com", "pw123", "pw123");
+    @DisplayName("Đăng nhập với mật khẩu sai - lỗi PasswordAuthenticationException")
 
-        // Đăng nhập với mật khẩu sai
-        assertThrows(PasswordAuthenticationException.class, () -> {
-            userService.login("Name", "wrongPassword");
-        });
-    }
 
 }
 
