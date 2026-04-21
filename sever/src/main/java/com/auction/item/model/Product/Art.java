@@ -16,12 +16,17 @@ public class Art extends Item {
     }
 
     //setter
-    void setArtist(String newname) {
-        this.artist = newname;
+    public void setArtist(String artist) {
+        this.artist = artist;
     }
-    void setMedium(String newmedium) {
-        this.medium = newmedium;
+    public void setMedium(String medium) {
+        this.medium = medium;
     }
-  
 
+    @Override
+    public void printInfo() {
+        super.printInfo();
+        System.out.println("Artist : " + artist);
+        System.out.println("Medium : " + medium);
+    }
 }

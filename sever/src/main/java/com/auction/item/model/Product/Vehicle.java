@@ -23,14 +23,14 @@ public class Vehicle extends Item {
     }
 
     //setter
-    void setMake(String a) {
-        this.make = a;
+    public void setMake(String make) {
+        this.make = make;
     }
-    void setModel(String b) {
-        this.model = b;
+    public void setModel(String model) {
+        this.model = model;
     }
-    void setYear(int c) {
-        this.year = c;
+    public void setYear(int year) {
+        this.year = year;
     }
     @Override
     public void printInfo() {
