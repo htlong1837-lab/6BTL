@@ -13,6 +13,7 @@ public class ElectronicsBuilder implements ItemBuilder {
     private String sellerId;
     private String brand;
     private int warrantyMonths;
+<<<<<<< Updated upstream
 
     @Override
     public ElectronicsBuilder setId(String id) {
@@ -22,6 +23,10 @@ public class ElectronicsBuilder implements ItemBuilder {
 
     @Override
     public ElectronicsBuilder setName(String name) {
+=======
+    //setter
+    public ItemBuilder setName(String name) {
+>>>>>>> Stashed changes
         this.name = name;
         return this;
     }
