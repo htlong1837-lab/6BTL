@@ -23,9 +23,10 @@ public class UserDAOImpl implements UserDAO {
     public User findByUsername(String username) {
         return usersByUsername.get(username);
     }
-//ktra xem có email chx
-@Override
+//tìm bằng email
+    @Override
     public boolean existsByEmail(String email) {
         return emails.contains(email);
     }
+
 }
