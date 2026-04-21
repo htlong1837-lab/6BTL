@@ -1,6 +1,5 @@
 package com.auction.user.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.auction.auction.model.Auction;
@@ -30,9 +29,9 @@ public class Admin extends User {
  
     // Khóa tài khoản người dùng (ví dụ khi vi phạm) */
     public void banUser(User user) {
-        if user.flagSuspiciousActivity(user);
-            user.ban();
-            System.out.println("[Admin] User \"" + user.getName() + "\" has been banned.");
+        user.flagSuspiciousActivity(user);
+        user.ban();
+        System.out.println("[Admin] User \"" + user.getName() + "\" has been banned.");
     }
     // Mở lại tài khoản người dùng
     public void isActive(User user) {
