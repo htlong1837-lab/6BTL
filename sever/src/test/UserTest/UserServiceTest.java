@@ -107,15 +107,33 @@ public class UserServiceTest {
     // ĐĂNG NHẬP
     @Test
     @DisplayName("Đăng nhập thành công")
+    void testSuccessfulLogin() throws UserException {
+        // Trước tiên phải có tài khoản đã đăng ký
+        userService.signUp("Name", "email@example.com", "pw123", "pw123");
+        // Đăng nhập thành công
+        String result = assertDoesNotThrow(() -> userService.login("email@example.com", "pw123"));
 
+        assertEquals("Đăng nhập thành công!", result);
+    }
 
     @Test
     @DisplayName("Đăng nhập với tài khoản không tồn tại - lỗi UserNotFoundException")
-    
+    void testLoginWithNonExistentAccount() {
+        assertThrows(UserNotFoundException.class, () -> {
+            userService.login("nonexistent@example.com", "pw123");
+        });
+    }
 
     @Test
     @DisplayName("Đăng nhập với mật khẩu sai - lỗi PasswordAuthenticationException")
+    void testLoginWithWrongPassword() {
+        // Trước tiên phải có tài khoản đã đăng ký
+        userService.signUp("Name", "email@example.com", "pw123", "pw123");
 
+        assertThrows(PasswordAuthenticationException.class, () -> {
+            userService.login("Name", "wrongpassword");
+        });
+    }
 
 }
 
