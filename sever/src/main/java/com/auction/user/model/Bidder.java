@@ -1,6 +1,4 @@
 package com.auction.user.model;
-// full bộ của máy cu đấu giá
-
 import com.auction.bid.model.BidTransaction;
 import java.util.ArrayList;
 import java.util.List;

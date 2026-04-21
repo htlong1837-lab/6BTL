@@ -13,8 +13,14 @@ public class ElectronicsBuilder implements ItemBuilder {
     private String sellerId;
     private String brand;
     private int warrantyMonths;
-    //setter
-    public ItemBuilder setName(String name) {
+    @Override
+    public ElectronicsBuilder setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    @Override
+    public ElectronicsBuilder setName(String name) {
         this.name = name;
         return this;
     }
