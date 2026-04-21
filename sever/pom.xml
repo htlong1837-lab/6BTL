@@ -1,50 +1,68 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!-- pom.xml = "bản khai báo" của Maven project
+     Maven đọc file này để biết: dùng thư viện gì, build thế nào, test thế nào -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
+    <!-- Phiên bản định dạng file pom, luôn là 4.0.0 -->
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- Thong tin project -->
+    <!-- ====== ĐỊNH DANH PROJECT ====== -->
+    <!-- groupId: tên tổ chức/nhóm, thường viết theo domain ngược -->
     <groupId>com.auction</groupId>
+    <!-- artifactId: tên module này, sẽ thành tên file .jar khi build -->
     <artifactId>auction-server</artifactId>
+    <!-- version: SNAPSHOT = đang phát triển, chưa release chính thức -->
     <version>1.0-SNAPSHOT</version>
+    <!-- packaging: build ra file .jar (thay vì .war cho web) -->
     <packaging>jar</packaging>
 
+    <!-- Tên hiển thị, không ảnh hưởng build -->
     <name>Online Auction System - Server</name>
 
+    <!-- ====== BIẾN TOÀN CỤC ====== -->
+    <!-- Khai báo 1 lần ở đây, dùng bằng ${tên_biến} ở bên dưới
+         Lợi ích: muốn đổi version thư viện chỉ cần sửa 1 chỗ -->
     <properties>
-        <!-- Phien ban Java -->
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <!-- Java version: source = code viết bằng Java bao nhiêu,
+             target = bytecode chạy được trên JVM bao nhiêu -->
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <!-- Encoding khi đọc/ghi file .java -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Phien ban cac thu vien -->
+        <!-- Phiên bản các thư viện, khai báo ở đây để dễ nâng cấp sau -->
         <gson.version>2.10.1</gson.version>
         <sqlite.version>3.45.1.0</sqlite.version>
         <junit.version>5.10.2</junit.version>
     </properties>
 
+    <!-- ====== THƯ VIỆN BÊN NGOÀI ====== -->
+    <!-- Maven tự tải về từ internet, không cần copy .jar thủ công -->
     <dependencies>
 
-        <!-- Gson: chuyen doi Java object <-> JSON -->
-        <!-- Dung de gui/nhan data giua Client va Server -->
+        <!-- Gson: chuyển đổi Java object <-> chuỗi JSON
+             Dùng để đóng gói Request/Response gửi qua Socket -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
+            <!-- không có <scope>: mặc định là "compile" = dùng ở mọi nơi -->
         </dependency>
 
-        <!-- SQLite JDBC: database nhẹ, khong can cai dat server rieng -->
-        <!-- File .db nam ngay trong project, de demo -->
+        <!-- SQLite JDBC: kết nối database SQLite
+             Không cần cài server riêng, dữ liệu lưu trong file .db -->
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>${sqlite.version}</version>
         </dependency>
 
-        <!-- JUnit 5: unit test (bat buoc theo de bai, 0.5d) -->
+        <!-- JUnit 5: framework viết unit test
+             scope=test: chỉ dùng khi chạy test, không đóng gói vào .jar cuối -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -54,28 +72,33 @@
 
     </dependencies>
 
+    <!-- ====== CẤU HÌNH BUILD ====== -->
     <build>
         <plugins>
-            <!-- Plugin compile Java 17 -->
+
+            <!-- Plugin compile: dịch .java → .class
+                 Phải khai báo để đồng bộ với Java version ở <properties> -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.12.1</version>
                 <configuration>
-                    <source>17</source>
-                    <target>17</target>
+                    <source>21</source>
+                    <target>21</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
 
-            <!-- Plugin chay unit test -->
+            <!-- Plugin chạy unit test khi gọi "mvn test"
+                 Tự động tìm và chạy các class có @Test -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
             </plugin>
 
-            <!-- Plugin dong goi JAR co the chay duoc -->
+            <!-- Plugin đóng gói thành file .jar có thể chạy được
+                 mainClass: class nào chứa hàm main() để chạy server -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -83,11 +106,14 @@
                 <configuration>
                     <archive>
                         <manifest>
+                            <!-- Khi chạy "java -jar auction-server.jar"
+                                 JVM sẽ tìm class này để chạy đầu tiên -->
                             <mainClass>com.auction.common.network.ServerMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
             </plugin>
+
         </plugins>
     </build>
 
