@@ -30,4 +30,11 @@ public class Bidder extends User {
         this.balance -= amount;
         return this.balance;
     }
+    @Override
+    public void printInfo() {
+        super.printInfo();
+        System.out.println("so du moi" + balance );
+    }
+
+
 }
