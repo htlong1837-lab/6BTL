@@ -98,8 +98,8 @@ public class UserServiceTest {
     @DisplayName("Đăng ký với username rỗng - lỗi InvalidData")
     void testSignUpwithEmptyUsername() {
         assertThrows(InvalidDataException.class, () -> {
-            userService.signUp("",
-        })
+            userService.signUp("", "email@example.com", "pw123", "pw123");
+        });
     }
 
 

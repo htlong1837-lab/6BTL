@@ -7,8 +7,6 @@ import com.auction.user.model.User;
 import com.auction.common.until.PasswordUtil;
 import com.auction.exception.UserException.*;
 
-import java.util.UUID;
-
 import javax.naming.AuthenticationException;
 
 public class UserService {
@@ -19,20 +17,38 @@ public class UserService {
         this.userDAO = userDAO;
     }
 
-    public String signUp(String username, String email,
+    //=====================================================
+    //                     ĐĂNG KÝ
+    //=====================================================
+
+    public String signUp(String id,String username, String email,
                          String password, String confirmPassword) throws UserException, AuthenticationException {
+
+
+        //========================ID===========================
+        if(id == null || id.isBlank())
+            throw new InvalidDataException("ID không được để trống.") ;
+        if(userDAO.existsById(id))
+            throw new DuplicateDataException("ID đã tồn tại.");
+
+
+        //========================USERNAME===========================
 
         if (username == null || username.isBlank())
             throw new InvalidDataException("Tên người dùng không được để trống.") ;
 
-        if (userDAO.findByUsername(username) != null)
-            throw new DuplicateUsernameException("Tên người dùng đã tồn tại.") ;
+        if (userDAO.existsByUsername(username))
+            throw new DuplicateDataException("Tên người dùng đã tồn tại.") ;
+
+        //========================EMAIL===========================
 
         if (email == null || !email.contains("@"))
             throw new InvalidDataException("Email không hợp lệ.") ;
 
         if (userDAO.existsByEmail(email))
-            throw new DuplicateEmailException("Email đã tồn tại.");
+            throw new DuplicateDataException("Email đã tồn tại.");
+
+        //========================PASSWORD===========================
 
         if (!PasswordUtil.isStrongPassword(password))
             throw new InvalidDataException("Mật khẩu phải có ít nhất 8 ký tự (phải bao gồm chữ in hoa,chữ in thường và số).");
@@ -40,14 +56,19 @@ public class UserService {
         if (!password.equals(confirmPassword))
             throw new PasswordAuthenticationException("Mật khẩu xác nhận không khớp.");
 
-        String id           = UUID.randomUUID().toString();
+        // Hash mật khẩu trước khi lưu vào database để tăng cường bảo mật
         String passwordHash = PasswordUtil.hashPassword(password);
-        User newUser        = new Bidder(id, username, email, passwordHash);
+        
 
+        // Tạo user mới và lưu vào "database"
+        User newUser        = new Bidder(id, username, email, passwordHash);
         userDAO.save(newUser);
         return "Đăng ký thành công!";
     }
 
+    //=====================================================
+    //                     ĐĂNG NHẬP
+    //=====================================================
     public String login(String username, String password) throws UserException {
 
         User user = userDAO.findByUsername(username);
