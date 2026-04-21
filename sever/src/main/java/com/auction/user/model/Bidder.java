@@ -1,6 +1,5 @@
 package com.auction.user.model;
 // full bộ của máy cu đấu giá
-package com.auction.user.model;
 
 import com.auction.bid.model.BidTransaction;
 import java.util.ArrayList;
@@ -12,7 +11,7 @@ public class Bidder extends User {
     }
     public double deposit(double amount) {
         if (amount <=0) {
-            throw new IllegalArgumentException("không thể nạo tiền do giá trị nạp nhỏ hơn 0");
+            throw new IllegalArgumentException("Không thể nạp tiền do giá trị nạp nhỏ hơn 0");
         }
         this.balance += amount;
         return this.balance;
@@ -25,10 +24,10 @@ public class Bidder extends User {
     }
     public double withdraw(double amount) {
         if (amount <= 0) {
-            throw new IllegalArgumentException("số tiền rút phải lớn hơn 0");
+            throw new IllegalArgumentException("Số tiền rút phải lớn hơn 0");
         }
         if (!hasSufficientBalance(amount)) {
-            throw new IllegalArgumentException("số dư không đủ để rút");
+            throw new IllegalArgumentException("Số dư không đủ để rút");
         }
         this.balance -= amount;
         return this.balance;
