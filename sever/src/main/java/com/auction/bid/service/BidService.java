@@ -1,85 +1,95 @@
 package com.auction.bid.service;
-//placeBid (synchronized), validate
 
+import com.auction.auction.dao.AuctionDAO;
+import com.auction.auction.model.Auction;
+import com.auction.bid.dao.BidDAO;
+import com.auction.bid.model.BidTransaction;
 import com.auction.user.model.Bidder;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 public class BidService {
 
-    // Kho lưu trữ theo userId
-    // Bidder đang tham gia phiên nào
-    private Map<String, List<String>> activeBids   = new HashMap<>();
-    // Các phiên đã thắng
-    private Map<String, List<String>> wonAuctions  = new HashMap<>();
-    // Lịch sử các lần đặt giá
-    private Map<String, List<String>> bidHistories = new HashMap<>();
+    private final AuctionDAO auctionDAO;
+    private final BidDAO bidDAO;
 
-    // Lấy list theo userId, tạo mới nếu chưa có
+    private Map<String, List<String>> activeBids  = new HashMap<>();
+    private Map<String, List<String>> wonAuctions = new HashMap<>();
+    private Map<String, List<String>> bidHistory  = new HashMap<>();
+
+    public BidService(AuctionDAO auctionDAO, BidDAO bidDAO) {
+        this.auctionDAO = auctionDAO;
+        this.bidDAO     = bidDAO;
+    }
+
     private List<String> getList(Map<String, List<String>> map, String userId) {
         return map.computeIfAbsent(userId, k -> new ArrayList<>());
     }
 
-    // Nạp tiền vào tài khoản
     public String deposit(Bidder bidder, double amount) {
-        if (amount <= 0) return "Số tiền nạp phải lớn hơn 0.";
-
+        if (amount <= 0) return "So tien nap phai lon hon 0.";
         bidder.setBalance(bidder.getBalance() + amount);
-        return "Nạp tiền thành công! Số dư: " + bidder.getBalance() + " VND";
+        return "Nap tien thanh cong! So du: " + bidder.getBalance() + " VND";
     }
 
-    // Đặt giá vào 1 phiên
     public String placeBid(Bidder bidder, String auctionId, double bidAmount) {
         if (bidAmount <= 0)
-            return "Số tiền đặt giá phải lớn hơn 0.";
+            return "So tien dat gia phai lon hon 0.";
         if (!bidder.hasSufficientBalance(bidAmount))
-            return "Số dư không đủ. Hiện có: " + bidder.getBalance() + " VND";
+            return "So du khong du. Hien co: " + bidder.getBalance() + " VND";
 
-        String record = "AuctionID: " + auctionId + " | Bid: " + bidAmount;
-        getList(bidHistories, bidder.getId()).add(record);
+        Auction auction = auctionDAO.findById(auctionId);
+        if (auction == null)
+            return "Phien dau gia khong ton tai.";
+
+        boolean success = auction.placeBid(bidder, bidAmount);
+        if (!success)
+            return "Dat gia that bai. Gia phai cao hon gia hien tai hoac phien da dong.";
+
+        bidDAO.save(new BidTransaction(
+            bidder.getId(),
+            bidder.getName(),
+            auctionId,
+            bidAmount,
+            System.currentTimeMillis()
+        ));
 
         List<String> active = getList(activeBids, bidder.getId());
         if (!active.contains(auctionId)) active.add(auctionId);
 
-        return "Đặt giá thành công! " + record;
+        return "Dat gia thanh cong! " + bidAmount + " VND";
     }
 
-    // Rút khỏi phiên đấu giá
     public String withdrawBid(Bidder bidder, String auctionId) {
         List<String> active = getList(activeBids, bidder.getId());
         if (!active.contains(auctionId))
-            return "Bạn không tham gia phiên: " + auctionId;
-
+            return "Ban khong tham gia phien: " + auctionId;
         active.remove(auctionId);
-        return "Đã rút khỏi phiên: " + auctionId;
+        return "Da rut khoi phien: " + auctionId;
     }
 
-    // Ghi nhận thắng đấu giá
     public String receiveWin(Bidder bidder, String auctionId) {
         getList(wonAuctions, bidder.getId()).add(auctionId);
         getList(activeBids,  bidder.getId()).remove(auctionId);
-        return "Chúc mừng " + bidder.getName() + " thắng phiên: " + auctionId;
+        return "Chuc mung " + bidder.getName() + " thang phien: " + auctionId;
     }
 
-    // Xem các phiên đang tham gia
     public String viewActiveBids(Bidder bidder) {
         List<String> active = getList(activeBids, bidder.getId());
-        if (active.isEmpty()) return "Bạn chưa tham gia phiên nào.";
-
-        StringBuilder sb = new StringBuilder("=== Phiên đang tham gia ===\n");
-        active.forEach(a -> sb.append("  • ").append(a).append("\n"));
+        if (active.isEmpty()) return "Ban chua tham gia phien nao.";
+        StringBuilder sb = new StringBuilder("Phien dang tham gia\n");
+        active.forEach(a -> sb.append("  | ").append(a).append("\n"));
         return sb.toString();
     }
 
-    // Xem lịch sử đặt giá
     public String viewBidHistory(Bidder bidder) {
-        List<String> history = getList(bidHistories, bidder.getId());
-        if (history.isEmpty()) return "Chưa có lịch sử đấu giá.";
-
-        StringBuilder sb = new StringBuilder("=== Lịch sử đấu giá ===\n");
-        history.forEach(r -> sb.append("  • ").append(r).append("\n"));
+        List<String> history = getList(bidHistory, bidder.getId());
+        if (history.isEmpty()) return "Chua co lich su dau gia.";
+        StringBuilder sb = new StringBuilder("Lich su dau gia\n");
+        history.forEach(r -> sb.append("  | ").append(r).append("\n"));
         return sb.toString();
     }
 }
-
