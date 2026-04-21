@@ -18,15 +18,24 @@ public class UserDAOImpl implements UserDAO {
         usersByUsername.put(user.getName(), user);
         emails.add(user.getEmail());
     }
-//tìm bằng tên
+
+    //tìm bằng tên
     @Override
     public User findByUsername(String username) {
         return usersByUsername.get(username);
     }
-//tìm bằng email
+
+    //ktra xem có user chx
     @Override
-    public boolean existsByEmail(String email) {
-        return emails.contains(email);
+    public boolean existsByUsername(String username) {
+        return usersByUsername.containsKey(username);
     }
 
+    //ktra xem có email chx
+    @Override
+        public boolean existsByEmail(String email) {
+            return emails.contains(email);
+    }
 }
+   
+

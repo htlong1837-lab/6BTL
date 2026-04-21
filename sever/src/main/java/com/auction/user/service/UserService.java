@@ -54,15 +54,22 @@ public class UserService {
 
         if (user == null)
             throw new UserNotFoundException("Tài khoản không tồn tại.") ;
-
+        if(user.isBanned() == true)
+            System.out.println("Tài khoản đã bị khóa.");
+        
+        // Hash mật khẩu nhập vào để so sánh với hash đã lưu trong database
         String inputHash = PasswordUtil.hashPassword(password);
 
         if (!user.getPasswordHash().equals(inputHash))
             throw new PasswordAuthenticationException("Sai mật khẩu.");
+            user.incrementFailedLoginAttempts();
+
+        if(user.getFailedLoginAttempts() >= 5) {
+            user.setBanned(true);
+            System.out.println("Tài khoản đã bị khóa do quá nhiều lần đăng nhập thất bại.");
+        }
 
         return "Đăng nhập thành công!";
     }
 
- 
-    
 }

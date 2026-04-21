@@ -6,6 +6,8 @@ public abstract class User extends Entity {
     protected String email;
     protected String passwordHash;
     protected double balance;
+    private int failedLoginAttempts = 0;
+    private boolean isBanned = false;
 
     public User(String id, String name, String email, String passwordHash) {
         super(id);
@@ -13,6 +15,8 @@ public abstract class User extends Entity {
         this.email = email;
         this.passwordHash = passwordHash;
         this.balance = 0.0;
+        this.failedLoginAttempts = 0;
+        this.isBanned = false;
     }
 
     // Getters
@@ -20,11 +24,19 @@ public abstract class User extends Entity {
     public String getEmail()        { return email; }
     public String getPasswordHash() { return passwordHash; }
     public double getBalance()      { return balance; }
+    public boolean isBanned()       { return isBanned; }
+    public int getFailedLoginAttempts() { return failedLoginAttempts; }
 
     // Setters
     public void setName(String name)         { this.name = name; }
     public void setEmail(String email)       { this.email = email; }
     public void setPassword(String hash)     { this.passwordHash = hash; }
+    public void incrementFailedLoginAttempts() { this.failedLoginAttempts++; }
+    public void resetFailedLoginAttempts() { this.failedLoginAttempts = 0; }
+
+    // quyền ban của admin
+    public void setBanned(boolean banned)    { this.isBanned = banned; } 
+
 
     @Override
     public void printInfo() {
@@ -38,29 +50,16 @@ public abstract class User extends Entity {
     public String toString() {
         return getClass().getSimpleName() + "[id=" + id + ", name=" + name + "]";
     }
-    // Đăng nhập
-    public boolean login(boolean isSuccess) {
-        if (isSuccess) {
-            System.out.println("User \"" + name + "\" logged in successfully.");
-            return true;
-        } else {
-            System.out.println("Login failed for user \"" + name + "\". Please check your credentials and try again.");
-            return false;
+
+    // Khi chưa quá 5 lần đăng nhập thất bại mà login đúng -> reset số lần thất bại về 0
+    public void successfulLogin(User user) {
+        if (user.getFailedLoginAttempts() < 5) {
+            user.resetFailedLoginAttempts();
+        }
+        else {
+            user.setBanned(true);
+            System.out.println("Tài khoản đã bị khóa do quá nhiều lần đăng nhập thất bại. Vui lòng liên hệ hỗ trợ để biết thêm chi tiết.");
         }
     }
-    //khóa tài khoản
-    public void ban() {
-        System.out.println("User \"" + name + "\" has been banned. You can no longer access the platform.");
-    }
-    public void flagSuspiciousActivity(User user) {
-        boolean loginSuccess = user.login(false);
-        if (loginSuccess) {
-            System.out.println("[Admin] User \"" + user.getName() + "\" has a failed login attempt.");
-            boolean loginSuccess2 = user.login(false);
-            if (loginSuccess2) {
-                System.out.println("[Admin] User \"" + user.getName() + "\" has multiple failed login attempts. Consider banning this account.");
-                user.ban();
-            }    
-        }
-    }
+
 }

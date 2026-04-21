@@ -16,8 +16,9 @@ public class Admin extends User {
     }
     public void setAdminLevel(int level) {
         this.adminLevel = level;
-
     }
+
+    
     // Xóa một phiên đấu giá khỏi danh sách */
     public void removeAuction(List<Auction> auctions, Auction target) {
         if (auctions.remove(target)) {
@@ -27,14 +28,9 @@ public class Admin extends User {
         }
     }
  
-    // Khóa tài khoản người dùng (ví dụ khi vi phạm) */
-    public void banUser(User user) {
-        user.flagSuspiciousActivity(user);
-        user.ban();
-        System.out.println("[Admin] User \"" + user.getName() + "\" has been banned.");
-    }
     // Mở lại tài khoản người dùng
     public void isActive(User user) {
+        user.setBanned(false);
         System.out.println("[Admin] User \"" + user.getName() + "\" has been activated. You can now access");
     }
     // Duyệt sản phẩm
@@ -62,7 +58,9 @@ public class Admin extends User {
             System.out.println("[Admin] Invalid item index.");
         }
     }
+  
 
+    
     public void manageLiveAuction(Auction auction) {
            
     }
