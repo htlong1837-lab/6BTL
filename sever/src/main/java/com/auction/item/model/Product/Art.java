@@ -1,4 +1,6 @@
 package com.auction.item.model.Product;
+import java.util.List;
+import com.auction.item.model.Product.Item;
 public class Art extends Item {
     private String artist;
     private String medium;
@@ -35,8 +37,8 @@ public class Art extends Item {
         return true;
     }
 //chỉnh sửa khi duyệt lỗi
-    @Override
-    public void editItemError(Art item){
+   
+    public void editItemError( Art item){
         super.editItemError(item);
         if (item.artist == null || item.artist.isEmpty()) {
             this.artist = item.artist;
@@ -46,20 +48,8 @@ public class Art extends Item {
         }
 
     }
-//Lập List
-    @Override
-    public void listAllItems(List<Art> items) {
-        super.listAllItems(items);       
-    }
-//in list
-    @Override
-    public void printListItems(List<Art> items) {
-        super.printListItems(items);
-        for (Art item : items) {
-            System.out.println("Artist : " + item.artist);
-            System.out.println("Medium : " + item.medium);
-        }
-    }
+
+
 
     @Override
     public void printInfo() {

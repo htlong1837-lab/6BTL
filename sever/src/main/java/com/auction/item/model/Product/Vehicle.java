@@ -1,5 +1,5 @@
 package com.auction.item.model.Product;
-
+import java.util.List;
 public class Vehicle extends Item {
     private String make;
     private String model;
@@ -61,19 +61,7 @@ public class Vehicle extends Item {
             this.year = item.year;
         }
     }
-    //Lập List
-    public void listAllItems(List<Vehicle> items) {
-        super.listAllItems(items);
-    }
-    //in list
-    public void printListItems(List<Vehicle> items) {
-        super.printListItems(items);
-        for (Vehicle item : items) {
-            System.out.println("Make  : " + item.make);
-            System.out.println("Model : " + item.model);
-            System.out.println("Year  : " + item.year);
-        }
-    }
+ 
     @Override
     public void printInfo() {
         super.printInfo(); 

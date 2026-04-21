@@ -1,5 +1,5 @@
 package com.auction.item.model.Product;
-
+import java.util.List;
 public class Electronics extends Item {
     private String brand;
     private int warrantyMonths;
@@ -29,7 +29,7 @@ public class Electronics extends Item {
         return true;
     }
     //chỉnh sửa khi duyệt lỗi
-    @Override
+  
     public void editItemError(Electronics item) {
         super.editItemError(item);
         if (item.brand == null || item.brand.isEmpty()) {
@@ -39,20 +39,7 @@ public class Electronics extends Item {
             this.warrantyMonths = item.warrantyMonths;
         }
     }
-    //Lập List
-    @Override
-    public void listAllItems(List<Electronics> items) {
-        super.listAllItems(items);
-    }
-    //in list
-    @Override
-    public void printListItems(List<Electronics> items) {
-        super.printListItems(items);
-        for (Electronics item : items) {
-            System.out.println("Brand    : " + item.brand);
-            System.out.println("Warranty : " + item.warrantyMonths + " months");
-        }
-    }
+ 
     @Override
     public void printInfo() {
         super.printInfo();
