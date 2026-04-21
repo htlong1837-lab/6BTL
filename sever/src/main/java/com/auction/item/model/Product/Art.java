@@ -16,12 +16,55 @@ public class Art extends Item {
     }
 
     //setter
-    void setArtist(String newname) {
-        this.artist = newname;
+    public void setArtist(String artist) {
+        this.artist = artist;
     }
-    void setMedium(String newmedium) {
-        this.medium = newmedium;
+    public void setMedium(String medium) {
+        this.medium = medium;
     }
-  
+//duyệt hợp lệ
+    @Override
+    public boolean isApproved() {
+        super.isApproved();
+        if (artist == null || artist.isEmpty()) {
+            return false;
+        }
+        if (medium == null || medium.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
+//chỉnh sửa khi duyệt lỗi
+    @Override
+    public void editItemError(Art item){
+        super.editItemError(item);
+        if (item.artist == null || item.artist.isEmpty()) {
+            this.artist = item.artist;
+        }
+        if (item.medium == null || item.medium.isEmpty()) {
+            this.medium = item.medium;
+        }
 
+    }
+//Lập List
+    @Override
+    public void listAllItems(List<Art> items) {
+        super.listAllItems(items);       
+    }
+//in list
+    @Override
+    public void printListItems(List<Art> items) {
+        super.printListItems(items);
+        for (Art item : items) {
+            System.out.println("Artist : " + item.artist);
+            System.out.println("Medium : " + item.medium);
+        }
+    }
+
+    @Override
+    public void printInfo() {
+        super.printInfo();
+        System.out.println("Artist : " + artist);
+        System.out.println("Medium : " + medium);
+    }
 }

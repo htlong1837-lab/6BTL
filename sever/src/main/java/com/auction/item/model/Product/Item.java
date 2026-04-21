@@ -64,15 +64,14 @@ public abstract class Item extends Entity {
     }
     // Chỉnh sửa Item khi duyệt lỗi
     public void editItemError(Item item) {
-        if (!item.isApproved()){
-            this.name = name;
-            this.des = des;
-            this.startPrice = startPrice;
-            this.category = category;
-            this.sellerId = sellerId;
+        if (!item.isApproved()) {
+            this.name = item.name;
+            this.des = item.des;
+            this.startPrice = item.startPrice;
+            this.category = item.category;
+            this.sellerId = item.sellerId;
             System.out.println("[Admin] Item \"" + this.name + "\" has been updated. Please review it again for approval.");
-
-        }  
+        }
     }
     //Lập List Item để Admin Thêm/sửa/xóa
     public void listAllItems(List<Item> items) {

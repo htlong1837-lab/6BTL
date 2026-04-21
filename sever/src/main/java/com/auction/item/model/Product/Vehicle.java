@@ -23,14 +23,56 @@ public class Vehicle extends Item {
     }
 
     //setter
-    void setMake(String a) {
-        this.make = a;
+    public void setMake(String make) {
+        this.make = make;
     }
-    void setModel(String b) {
-        this.model = b;
+    public void setModel(String model) {
+        this.model = model;
     }
-    void setYear(int c) {
-        this.year = c;
+    public void setYear(int year) {
+        this.year = year;
+    }
+    //duyệt hợp lệ
+    @Override
+
+    public boolean isApproved() {
+        super.isApproved();
+        if (make == null || make.isEmpty()) {
+            return false;
+        }
+        if (model == null || model.isEmpty()) {
+            return false;
+        }
+        if (year <= 0) {
+            return false;
+        }
+        return true;
+    }
+    //chỉnh sửa khi duyệt lỗi
+    public void editItemError(Vehicle item) {
+        super.editItemError(item);
+        if (item.make == null || item.make.isEmpty()) {
+            this.make = item.make;
+        }
+        if (item.model == null || item.model.isEmpty()) {
+            this.model = item.model;
+        }
+        if (item.year <= 0) {
+            this.year = item.year;
+        }
+    }
+    //Lập List
+    public void listAllItems(List<Vehicle> items) {
+        super.listAllItems(items);
+    }
+    //in list
+    public void printListItems(List<Vehicle> items) {
+        super.printListItems(items);
+        for (Vehicle item : items) {
+            System.out.println("Make  : " + item.make);
+            System.out.println("Model : " + item.model);
+            System.out.println("Year  : " + item.year);
+        }
     }
     @Override
     public void printInfo() {

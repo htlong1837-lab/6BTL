@@ -48,23 +48,5 @@ public class Admin extends User {
         super.printInfo();
         System.out.println("ADMIN này có cấp độ :" + adminLevel);
     }
-    //Quản lý đấu giá trực tiếp
-    // Admin đưa sản phẩm vào đấu giá
-    public void setItemtoLiveAution(int i, List<Item> items){
-        if (i >= 0 && i < items.size()) {
-            Item item = items.get(i);
-            item.printInfo();
-        } else {
-            System.out.println("[Admin] Invalid item index.");
-        }
-    }
-  
 
-    
-    public void manageLiveAuction(Auction auction) {
-           
-    }
-
-
-    
 }
