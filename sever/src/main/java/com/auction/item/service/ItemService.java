@@ -9,9 +9,10 @@ public class ItemService extends Item {
 
     // Constructor
     public ItemService(String name, String des, double startPrice, String category, String sellerId) {
-       // TODO: Check the Item class for available const ructors
+       // TODO: Check the Item class for available constructors
         // Use the correct constructor based on what Item class provides
-        super(name, des, startPrice, category, sellerId);
+        // Example: super(name, des, startPrice); // Use the actual constructor from Item class
+        
     }
 
     // Duyệt Item hợp lệ
