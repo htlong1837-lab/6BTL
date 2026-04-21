@@ -62,5 +62,15 @@ public class UserService {
 
         return "Đăng nhập thành công!";
     }
+
+    public void login(User user) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'login'");
+    }
+
+    public User signUp(User user) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'signUp'");
+    }
    
 }

@@ -30,7 +30,9 @@ public class Admin extends User {
  
     // Khóa tài khoản người dùng (ví dụ khi vi phạm) */
     public void banUser(User user) {
-        System.out.println("[Admin] User \"" + user.getName() + "\" has been banned.");
+        if user.flagSuspiciousActivity(user);
+            user.ban();
+            System.out.println("[Admin] User \"" + user.getName() + "\" has been banned.");
     }
     // Mở lại tài khoản người dùng
     public void isActive(User user) {
@@ -45,19 +47,7 @@ public class Admin extends User {
         }
     }
     // Ghi nhận hành vi đánh giá bất thường
-    public void flagSuspiciousActivity(User user) {
-        boolean loginSuccess = user.login(false);
-        if (loginSuccess) {
-            System.out.println("[Admin] User \"" + user.getName() + "\" has a failed login attempt.");
-            boolean loginSuccess2 = user.login(false);
-            if (loginSuccess2) {
-                System.out.println("[Admin] User \"" + user.getName() + "\" has multiple failed login attempts. Consider banning this account.");
 
-            }
-            
-        
-        }
-    }
     @Override
     public void printInfo() {
         super.printInfo();
@@ -73,9 +63,7 @@ public class Admin extends User {
             System.out.println("[Admin] Invalid item index.");
         }
     }
-    public void updateCurrentPrice(Auction auction){
-        System.out.println("Current price has been updated. " + "New price: " + auction.getCurrentPrice());
-    }
+  
 
     
     public void manageLiveAuction(Auction auction) {

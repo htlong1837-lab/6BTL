@@ -9,12 +9,19 @@ public class ItemService extends Item {
 
     // Constructor
     public ItemService(String name, String des, double startPrice, String category, String sellerId) {
+        super(name, des, startPrice, category, sellerId);
        // TODO: Check the Item class for available constructors
         // Use the correct constructor based on what Item class provides
         // Example: super(name, des, startPrice); // Use the actual constructor from Item class
         
     }
-
+    //tạo item mới
+    public Item createItem(Item item) {
+        Item newItem = new Item(item.getName(), item.getDes(), item.getStartPrice(), item.getCategory(), item.getSellerId()) {
+            
+        };
+        return newItem;
+    }
     // Duyệt Item hợp lệ
     public boolean isApproved() {
         if (this.name != null && !this.name.isEmpty() &&
