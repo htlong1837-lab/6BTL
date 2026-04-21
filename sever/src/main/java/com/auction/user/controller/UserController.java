@@ -7,16 +7,13 @@ import com.auction.user.service.UserService;
 public class UserController {
     private UserService userService=new UserService(new UserDAOImpl());
     //tạo tài khoản
-    public void createAccount(User user) throws Exception {
-        userService.signUp(user.getName(), user.getEmail(), user.getPasswordHash(), user.getPasswordHash());
-        
+    public User createAccount(User user) {
+        return userService.signUp(user);
     }
     //Đăng nhập
-    public void LoginAccount(User user) throws Exception {
-        userService.login(user.getName(), user.getPasswordHash());
-           
-    } 
-    
+    public void LoginAccount(User user) {
+        return userService.login(user);
+    }
 
     
 

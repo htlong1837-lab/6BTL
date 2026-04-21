@@ -26,19 +26,13 @@ public class Admin extends User {
             System.out.println("[Admin] Auction not found.");
         }
     }
- // Khóa tài khoản người dùng
-
+ 
+    // Khóa tài khoản người dùng (ví dụ khi vi phạm) */
     public void banUser(User user) {
-<<<<<<< HEAD
-        user.ban();
-        System.out.println("[Admin] User \"" + user.getName() + "\" has been banned. You can no longer access the platform.");
-=======
         user.flagSuspiciousActivity(user);
         user.ban();
         System.out.println("[Admin] User \"" + user.getName() + "\" has been banned.");
->>>>>>> e0d5f32ea7e1c14e4101ca58c9e679746d4f3e05
     }
-    
     // Mở lại tài khoản người dùng
     public void isActive(User user) {
         System.out.println("[Admin] User \"" + user.getName() + "\" has been activated. You can now access");
@@ -51,7 +45,7 @@ public class Admin extends User {
             System.out.println("[Admin] Item \"" + item.getName() + "\" is invalid. Please check the details and edit it for approval.");
         }
     }
-    
+    // Ghi nhận hành vi đánh giá bất thường
 
     @Override
     public void printInfo() {
@@ -68,9 +62,7 @@ public class Admin extends User {
             System.out.println("[Admin] Invalid item index.");
         }
     }
-  
 
-    
     public void manageLiveAuction(Auction auction) {
            
     }
