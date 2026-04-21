@@ -43,7 +43,5 @@ public class ItemService {
             return "Sản phẩm không tồn tại.";
         itemDAO.delete(id);
         return "Đã xóa sản phẩm.";
-n("Sản phẩm:" + name + "mô tả:" + des + "có giá khởi điểm" + startPrice);
-n("Sản phẩm:" + name + "mô tả:" + des + "có giá khởi điểm" + startPrice);
     }
 }
