@@ -1,78 +1,49 @@
 package com.auction.item.service;
+import com.auction.item.dao.ItemDAO;
+import com.auction.item.model.Product.Item;
 
 import java.util.List;
 
-import com.auction.item.model.Product.Item;
+public class ItemService {
 
-// CRUD items, validate
-public class ItemService extends Item {
+    private final ItemDAO itemDAO;
 
-    // Constructor
-    public ItemService(String name, String des, double startPrice, String category, String sellerId) {
-        super(name, des, startPrice, category, sellerId);
-       // TODO: Check the Item class for available constructors
-        // Use the correct constructor based on what Item class provides
-        // Example: super(name, des, startPrice); // Use the actual constructor from Item class
-        
+    public ItemService(ItemDAO itemDAO) {
+        this.itemDAO = itemDAO;
     }
-    //tạo item mới
-    public Item createItem(Item item) {
-        Item newItem = new Item(item.getName(), item.getDes(), item.getStartPrice(), item.getCategory(), item.getSellerId()) {
-            
-        };
-        return newItem;
-    }
-    // Duyệt Item hợp lệ
-    public boolean isApproved() {
-        if (this.name != null && !this.name.isEmpty() &&
-            this.des != null && !this.des.isEmpty() &&
-            this.startPrice > 0 && this.category != null && !this.category.isEmpty() && this.sellerId != null && !this.sellerId.isEmpty()) {
-            System.out.println("[Admin] Item \"" + this.name + "\" has been approved and is ready for auction.");
-            return true;
-        } else if (this.name == null || this.name.isEmpty() ) {
-            System.out.println("[Admin] Item \"" + this.name + "\" is invalid and cannot be added to the auction. Please provide a valid name.");
-        } else if (this.des == null || this.des.isEmpty()) {
-            System.out.println("[Admin] Item \"" + this.des + " of " + this.name + "\" is invalid and cannot be added to the auction. Please provide a valid description.");
-        } else if (this.startPrice <= 0) {
-            System.out.println("[Admin] Item \"" + this.startPrice + " of "+ this.name + "\" is invalid and cannot be added to the auction. Please provide a valid starting price.");
-        } else if (this.category == null || this.category.isEmpty()) {
-            System.out.println("[Admin] Item \"" + this.category + " of " + this.name + "\" is invalid and cannot be added to the auction. Please provide a valid category.");
-        } else if (this.sellerId == null || this.sellerId.isEmpty()) {
-            System.out.println("[Admin] Item \"" + this.sellerId + " of " + this.name + "\" is invalid and cannot be added to the auction. Please provide a valid seller ID.");
-        }
-        return false;
-    }
-    // Chỉnh sửa Item khi duyệt lỗi
-    public void editItemError(Item item) {
-        if (!item.isApproved()){
-            this.name = name;
-            this.des = des;
-            this.startPrice = startPrice;
-            this.category = category;
-            this.sellerId = sellerId;
-            System.out.println("[Admin] Item \"" + this.name + "\" has been updated. Please review it again for approval.");
 
-        }  
+    public String addItem(Item item) {
+        if (!item.isApproved())
+            return "Sản phẩm không hợp lệ. Vui lòng kiểm tra lại thông tin.";
+        itemDAO.save(item);
+        return "Thêm sản phẩm thành công: " + item.getName();
     }
-    //Lập List Item để Admin Thêm/sửa/xóa
-    public void listAllItems(List<Item> items) {
-        if (this.isApproved()){
-            items.add(this);
-        }   
+
+    public Item getItem(String id) {
+        return itemDAO.findById(id);
     }
-    //In ra List
-    public void printListAllItems(List<Item> items) {
-        System.out.println("[Admin] All items (" + items.size() + "):");
-        for (Item i : items) {
-            System.out.println("  - " + i.getName()
-                    + "  Description: " + i.getDes()
-                    + "  Start price: " + i.getStartPrice()
-                    + "  Category: " + i.getCategory()
-                    + "  Seller ID: " + i.getSellerId());
-        }
+
+    public List<Item> getAllItems() {
+        return itemDAO.findAll();
     }
-    @Override
-    public void printInfo() {
-        System.out.println("Sản phẩm:" + name + "mô tả:" + des + "có giá khởi điểm" + startPrice);
+
+    public List<Item> getItemsBySeller(String sellerId) {
+        return itemDAO.findBySellerId(sellerId);
+    }
+
+    public String updateItem(Item item) {
+        if (itemDAO.findById(item.getId()) == null)
+            return "Sản phẩm không tồn tại.";
+        itemDAO.update(item);
+        return "Cập nhật sản phẩm thành công: " + item.getName();
+    }
+
+    public String deleteItem(String id) {
+        if (itemDAO.findById(id) == null)
+            return "Sản phẩm không tồn tại.";
+        itemDAO.delete(id);
+        return "Đã xóa sản phẩm.";
+n("Sản phẩm:" + name + "mô tả:" + des + "có giá khởi điểm" + startPrice);
+n("Sản phẩm:" + name + "mô tả:" + des + "có giá khởi điểm" + startPrice);
     }
 }

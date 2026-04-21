@@ -1,5 +1,4 @@
 package com.auction.bid.service;
-
 import com.auction.auction.dao.AuctionDAO;
 import com.auction.auction.model.Auction;
 import com.auction.bid.dao.BidDAO;
