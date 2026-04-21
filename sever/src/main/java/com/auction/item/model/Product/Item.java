@@ -16,9 +16,6 @@ public abstract class Item extends Entity {
         this.category = category;
         this.sellerId = sellerId;
     }
-    public Item(String name2, String des2, double startPrice2, String category2, String sellerId2) {
-        //TODO Auto-generated constructor stub
-    }
     public String getName() {
         return name;
     }

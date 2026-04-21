@@ -48,4 +48,19 @@ public abstract class User extends Entity {
             return false;
         }
     }
+    //khóa tài khoản
+    public void ban() {
+        System.out.println("User \"" + name + "\" has been banned. You can no longer access the platform.");
+    }
+    public void flagSuspiciousActivity(User user) {
+        boolean loginSuccess = user.login(false);
+        if (loginSuccess) {
+            System.out.println("[Admin] User \"" + user.getName() + "\" has a failed login attempt.");
+            boolean loginSuccess2 = user.login(false);
+            if (loginSuccess2) {
+                System.out.println("[Admin] User \"" + user.getName() + "\" has multiple failed login attempts. Consider banning this account.");
+                user.ban();
+            }    
+        }
+    }
 }
