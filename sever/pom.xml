@@ -10,7 +10,6 @@
     <!-- Phiên bản định dạng file pom, luôn là 4.0.0 -->
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- ====== ĐỊNH DANH PROJECT ====== -->
     <!-- groupId: tên tổ chức/nhóm, thường viết theo domain ngược -->
     <groupId>com.auction</groupId>
     <!-- artifactId: tên module này, sẽ thành tên file .jar khi build -->
@@ -23,7 +22,6 @@
     <!-- Tên hiển thị, không ảnh hưởng build -->
     <name>Online Auction System - Server</name>
 
-    <!-- ====== BIẾN TOÀN CỤC ====== -->
     <!-- Khai báo 1 lần ở đây, dùng bằng ${tên_biến} ở bên dưới
          Lợi ích: muốn đổi version thư viện chỉ cần sửa 1 chỗ -->
     <properties>
