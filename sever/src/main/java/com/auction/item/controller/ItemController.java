@@ -3,6 +3,9 @@ import java.util.List;
 import com.auction.item.model.Product.Item;
 import com.auction.item.service.ItemService;
 
+
+
+
 public class ItemController {
     private ItemService itemService=new ItemService();
     //tạo item
@@ -10,8 +13,8 @@ public class ItemController {
         return itemService.createItem(item);
     }
     // Duyệt Item hợp lệ
-    public boolean isApproved() {
-        return itemService.isApproved();
+    public boolean isApproved( Item item) {
+        return itemService.isApproved(item);
     }
     // Chỉnh sửa Item khi duyệt lỗi
     public void editItemError(Item item) {
