@@ -1,7 +1,7 @@
 package com.auction.item.model.Builder;
 
-import com.auction.item.model.Product.Vehicle;
 import com.auction.item.model.Product.Item;
+import com.auction.item.model.Product.Vehicle;
 
 public class VehicleBuilder implements ItemBuilder {
 
