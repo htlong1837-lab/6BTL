@@ -31,7 +31,7 @@ public abstract class User extends Entity {
     public void setName(String name)         { this.name = name; }
     public void setEmail(String email)       { this.email = email; }
     public void setPassword(String hash)     { this.passwordHash = hash; }
-    public void incrementFailedLoginAttempts() { this.failedLoginAttempts++; }
+    public void incrementFailedLoginAttempts() { this.failedLoginAttempts ++; }
     public void resetFailedLoginAttempts() { this.failedLoginAttempts = 0; }
 
     // quyền ban của admin
@@ -51,15 +51,5 @@ public abstract class User extends Entity {
         return getClass().getSimpleName() + "[id=" + id + ", name=" + name + "]";
     }
 
-    // Khi chưa quá 5 lần đăng nhập thất bại mà login đúng -> reset số lần thất bại về 0
-    public void successfulLogin(User user) {
-        if (user.getFailedLoginAttempts() < 5) {
-            user.resetFailedLoginAttempts();
-        }
-        else {
-            user.setBanned(true);
-            System.out.println("Tài khoản đã bị khóa do quá nhiều lần đăng nhập thất bại. Vui lòng liên hệ hỗ trợ để biết thêm chi tiết.");
-        }
-    }
-
+    
 }

@@ -65,6 +65,14 @@ public class UserDAOImpl implements UserDAO {
     public User findById(String id) {
         return usersById.get(id);
     }
+
+
+    // update user (chỉ dùng để cập nhật số lần đăng nhập thất bại và trạng thái bị ban)
+    @Override
+    public void update(User user) {
+        usersByUsername.put(user.getName(), user);
+        usersById.put(user.getId(), user);
+    }
 }
    
 

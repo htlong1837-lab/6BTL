@@ -14,6 +14,9 @@ public interface UserDAO {
 
     User findByUsername(String username);   // tìm user theo tên
     User findById(String id);               // tìm user theo ID
+
+
+    void update(User user);
 }
     
     

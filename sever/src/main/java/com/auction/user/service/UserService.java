@@ -3,6 +3,7 @@ package com.auction.user.service;
 
 import com.auction.user.dao.UserDAO;
 import com.auction.user.model.Bidder;
+import com.auction.user.model.Seller;
 import com.auction.user.model.User;
 import com.auction.common.until.PasswordUtil;
 import com.auction.exception.UserException.*;
@@ -60,7 +61,7 @@ public class UserService {
         String passwordHash = PasswordUtil.hashPassword(password);
         
 
-        // Tạo user mới và lưu vào "database"
+        // Tạo user mới và lưu vào "database" và mặc định là Bidder.
         User newUser        = new Bidder(id, username, email, passwordHash);
         userDAO.save(newUser);
         return "Đăng ký thành công!";
@@ -69,7 +70,7 @@ public class UserService {
     //=====================================================
     //                     ĐĂNG NHẬP
     //=====================================================
-    public String login(String username, String password) throws UserException {
+    public User login(String username, String password) throws UserException {
 
         User user = userDAO.findByUsername(username);
 
@@ -81,16 +82,41 @@ public class UserService {
         // Hash mật khẩu nhập vào để so sánh với hash đã lưu trong database
         String inputHash = PasswordUtil.hashPassword(password);
 
-        if (!user.getPasswordHash().equals(inputHash))
-            throw new PasswordAuthenticationException("Sai mật khẩu.");
+        if (!user.getPasswordHash().equals(inputHash)) {
             user.incrementFailedLoginAttempts();
+            userDAO.update(user);    // Cập nhật số lần đăng nhập thất bại vào database
+            System.out.println("Sai mật khẩu."); 
 
-        if(user.getFailedLoginAttempts() >= 5) {
-            user.setBanned(true);
-            System.out.println("Tài khoản đã bị khóa do quá nhiều lần đăng nhập thất bại.");
+            if(user.getFailedLoginAttempts() >= 5) {
+                user.setBanned(true);
+                userDAO.update(user);    // Cập nhật trạng thái bị khóa vào database
+                System.out.println("Tài khoản đã bị khóa do quá nhiều lần đăng nhập thất bại.");
+            }
+             // Khi chưa quá 5 lần đăng nhập thất bại mà login đúng -> reset số lần thất bại về 0
+            if (user.getFailedLoginAttempts() < 5 && user.getPasswordHash().equals(inputHash)) {
+                user.resetFailedLoginAttempts();
+                userDAO.update(user);
+            }
         }
-
-        return "Đăng nhập thành công!";
+        
+        System.out.println("Đăng nhập thành công!");
+        return user; // trả về user để bt là Bidder/Seller/Admin
     }
 
+   //=====================================================
+    //                     REGISTER ROLE
+    //=====================================================
+    public String registerAsSeller(String name, String shopname) throws UserException {
+        User user = userDAO.findByUsername(name);
+        if (user == null) {
+            throw new UserNotFoundException("Tài khoản không tồn tại!");
+        }
+        if (user instanceof Bidder) {
+            Seller seller = new Seller(user.getId(), user.getName(), user.getEmail(), user.getPasswordHash());
+            seller.setShopName(shopname);
+            userDAO.update(seller);
+        }
+        return "Đăng ký Seller thành công!";
+
+    }
 }
