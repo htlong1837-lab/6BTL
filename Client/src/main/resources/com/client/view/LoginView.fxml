@@ -1,0 +1,4 @@
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.auction.controller.LoginController"
+            prefHeight="350" prefWidth="450">
+</AnchorPane>
