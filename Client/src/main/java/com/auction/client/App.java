@@ -14,7 +14,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(
-            getClass().getResource("/com/auction/client/LoginView.fxml")
+            getClass().getResource("/com/client/view/LoginView.fxml")
         );
         Scene scene = new Scene(loader.load(), 400, 300);
         stage.setTitle("Hệ thống đấu giá");
