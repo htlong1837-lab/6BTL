@@ -1,4 +1,4 @@
-package com.auction.user.test;
+package com.auction.user.service;
 
 // JUnit 5 - thư viện để viết test
 import org.junit.jupiter.api.BeforeEach;   // @BeforeEach: chạy trước mỗi test
@@ -11,7 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 // assertThrows        - kiểm tra hàm CÓ ném exception
 // assertEquals        - kiểm tra 2 giá trị BẰNG nhau
 
+import javax.naming.AuthenticationException;
+
+import com.auction.user.service.UserService;
 import com.auction.user.dao.UserDAOImpl;
+import com.auction.user.model.User;
 import com.auction.exception.UserException.*;
 
 public class UserServiceTest {
@@ -30,40 +34,41 @@ public class UserServiceTest {
     @Test
     @DisplayName("Kiểm tra đăng ký thành công với thông tin hợp lệ")
     public void testSuccessfulSignUp() {
+        String id = "user-001";
         String name = "Nguyen Thi Kim Ngan";
         String email = "kngan@example.com";
         String password = "Ngan123";
         String confirmPassword = "Ngan123";
         
         String result = assertDoesNotThrow(
-            () -> userService.signUp(name, email, password, confirmPassword)
+            () -> userService.signUp(id, name, email, password, confirmPassword)
         );
 
         assertEquals("Đăng ký thành công!", result);
     }
 
     @Test
-    @DisplayName("Email trùng - lỗi DuplicateEmailException")
-    void testSignUpwithExistingEmail() throws DuplicateEmailException {
+    @DisplayName("Email trùng - lỗi DuplicateDataException")
+    void testSignUpwithExistingEmail() throws AuthenticationException, UserException {
 
         // Đăng ký lần đầu
-        userService.signUp("Nguyen Thi Kim Ngan", "same@example.com", "Ngan123", "Ngan123");
+        userService.signUp("user-001", "Nguyen Thi Kim Ngan", "same@example.com", "Ngan123", "Ngan123");
 
          // Đăng ký lần 2 với email trùng (khác username)
-        assertThrows(DuplicateEmailException.class, () -> {
-            userService.signUp("Kim Ngan", "same@example.com", "Kn123", "Kn123");
+        assertThrows(DuplicateDataException.class, () -> {
+            userService.signUp("user-002", "Kim Ngan", "same@example.com", "Kn123", "Kn123");
         });
     }
 
     @Test
     @DisplayName("Đăng ký username trùng - lỗi DuplicateUsername")
-    void testSignUpwithExistingUsername() throws DuplicateUsernameException {
+    void testSignUpwithExistingUsername() throws AuthenticationException, UserException {
         // Đăng ký lan đầu
-        userService.signUp("Same", "e1@gmail.com", "pass123", "pass123");
+        userService.signUp("id", "Same", "e1@gmail.com", "pass123", "pass123");
 
         // Đăng ký lần 2 với username trùng (khác email)
-        assertThrows(DuplicateUsernameException.class, () -> {
-            userService.signUp("Same", "e2@gmail.com", "pass456", "pass456");
+        assertThrows(DuplicateDataException.class, () -> {
+            userService.signUp("id", "Same", "e2@gmail.com", "pass456", "pass456");
         });
     }
 
@@ -71,7 +76,7 @@ public class UserServiceTest {
     @DisplayName("Đăng ký mật khẩu xác nhận không khớp - lỗi PasswordAuthentication")
     void testSignUpwithPasswordMismatch() {
         assertThrows(PasswordAuthenticationException.class, () -> {
-            userService.signUp("Name", "email@example.com", "hihi123", "other123");
+            userService.signUp("id", "Name", "email@example.com", "hihi123", "other123");
         });
     }
 
@@ -80,7 +85,7 @@ public class UserServiceTest {
     void testSignUpwithWeakPassWord(){
         // Mật khẩu yếu: ít hơn 8 ký tự, hoặc không có chữ hoa, hoặc không có số
         assertThrows(InvalidDataException.class, () -> {
-            userService.signUp("Name", "email@example.com", "weak", "weak");
+            userService.signUp("id", "Name", "email@example.com", "weak", "weak");
         });
     }
 
@@ -89,7 +94,7 @@ public class UserServiceTest {
     @DisplayName("Đăng ký với email không có @ - lỗi InvalidData")
     void testSignUpwithInvalidEmail() {
         assertThrows(InvalidDataException.class, () -> {
-            userService.signUp("Name", "invalidemail.com", "pw123", "pw123");
+            userService.signUp("id", "Name", "invalidemail.com", "pw123", "pw123");
         });
     }
 
@@ -98,7 +103,7 @@ public class UserServiceTest {
     @DisplayName("Đăng ký với username rỗng - lỗi InvalidData")
     void testSignUpwithEmptyUsername() {
         assertThrows(InvalidDataException.class, () -> {
-            userService.signUp("", "email@example.com", "pw123", "pw123");
+            userService.signUp("id", "", "email@example.com", "pw123", "pw123");
         });
     }
 
@@ -107,13 +112,16 @@ public class UserServiceTest {
     // ĐĂNG NHẬP
     @Test
     @DisplayName("Đăng nhập thành công")
-    void testSuccessfulLogin() throws UserException {
+    void testSuccessfulLogin() throws UserException, AuthenticationException {
         // Trước tiên phải có tài khoản đã đăng ký
-        userService.signUp("Name", "email@example.com", "pw123", "pw123");
+        userService.signUp("id", "Name", "email@example.com", "pw123", "pw123");
         // Đăng nhập thành công
-        String result = assertDoesNotThrow(() -> userService.login("email@example.com", "pw123"));
+        User result = assertDoesNotThrow(() -> userService.login("Name", "pw123"));
 
-        assertEquals("Đăng nhập thành công!", result);
+        // Kiểm tra user trả về đúng không
+        assertNotNull(result);                        // phải khác null
+        assertEquals("Name", result.getName());       // đúng tên
+        assertEquals("email@example.com", result.getEmail()); // đúng email
     }
 
     @Test
@@ -126,9 +134,9 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Đăng nhập với mật khẩu sai - lỗi PasswordAuthenticationException")
-    void testLoginWithWrongPassword() {
+    void testLoginWithWrongPassword() throws AuthenticationException, UserException {
         // Trước tiên phải có tài khoản đã đăng ký
-        userService.signUp("Name", "email@example.com", "pw123", "pw123");
+        userService.signUp("id", "Name", "email@example.com", "pw123", "pw123");
 
         assertThrows(PasswordAuthenticationException.class, () -> {
             userService.login("Name", "wrongpassword");
