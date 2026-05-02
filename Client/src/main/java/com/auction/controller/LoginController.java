@@ -31,23 +31,32 @@ public class LoginController {
 
         // Validate
         if (email.isEmpty() || password.isEmpty() || password.length() < 6) {
-            errorLabel.setStyle("-fx-text-fill: red;");
-            errorLabel.setText("Vui lòng nhập đầy đủ thông tin!");
-            errorLabel.setVisible(true);
+            showError("Vui lòng nhập đầy đủ thông tin");
             return;
         }
 
         if (!email.contains("@")) {
-            errorLabel.setStyle("-fx-text-fill: red;");
-            errorLabel.setText("Email không hợp lệ!");
-            errorLabel.setVisible(true);
+            showError("Vui lòng nhập email");
             return;
         }
 
         // TODO: Gửi lên Server sau
         System.out.println("Login: " + email);
+        showSuccess("Đăng nhapah thhanfh công");
+    }
+
+    // Helper message //
+    private void showError(String message) {
+        errorLabel.setStyle("-fx-text-fill: red;");
+        errorLabel.setText(message);
+        errorLabel.setVisible(true);
+
+
+    }
+
+    private void showSuccess(String message) {
         errorLabel.setStyle("-fx-text-fill: green;");
-        errorLabel.setText("Đăng nhập thành công!");
+        errorLabel.setText(message);
         errorLabel.setVisible(true);
     }
 

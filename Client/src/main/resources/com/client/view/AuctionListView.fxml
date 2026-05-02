@@ -9,34 +9,15 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 
-
-<BorderPane maxHeight="-Infinity" 
-            maxWidth="-Infinity" 
-            minHeight="-Infinity" 
-            minWidth="-Infinity" 
-            prefHeight="600.0" 
-            prefWidth="900.0" 
-            xmlns="http://javafx.com/javafx/26" 
-            xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="com.auction.controller.AuctionListController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auction.controller.AuctionListController">
    <top>
-      <HBox prefWidth="200.0" 
-            spacing="12.0" 
-            style="-fx-padding: 12 16;" 
-            BorderPane.alignment="CENTER">
+      <HBox prefWidth="200.0" spacing="12.0" style="-fx-padding: 12 16;" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="searchField" 
-                    prefWidth="280.0" 
-                    promptText="Tìm kiếm phiên đấu giá" />
-            <Button mnemonicParsing="false" 
-                    text="Tìm" />
-            <Region prefHeight="50.0" 
-                    prefWidth="200.0" 
-                    HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" 
-                text="Đăng xuất" />
-            <Label fx:id="usernameLabel" 
-                text="Xin chào" />
+            <TextField fx:id="searchField" prefWidth="280.0" promptText="Tìm kiếm phiên đấu giá" />
+            <Button mnemonicParsing="false" text="Tìm" />
+            <Region prefHeight="50.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" text="Đăng xuất" />
+            <Label fx:id="usernameLabel" text="Xin chào" />
          </children>
       </HBox>
    </top>
