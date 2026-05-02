@@ -16,7 +16,7 @@ public class App extends Application {
         FXMLLoader loader = new FXMLLoader(
             getClass().getResource("/com/client/view/LoginView.fxml")
         );
-        Scene scene = new Scene(loader.load(), 400, 300);
+        Scene scene = new Scene(loader.load(), 500, 700);
         stage.setTitle("Hệ thống đấu giá");
         stage.setScene(scene);
         stage.show();

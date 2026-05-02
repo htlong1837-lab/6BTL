@@ -32,7 +32,7 @@ public class Response {
     public String getMessage() {return message;}
     public Object getdata() {return data;}
 
-    public void setSuccess() {this.success = success ;}
-    public void setMessage() {this.message = message ;}
-    public void setData() {this.message = message;}
+    public void setSuccess(Boolean success) {this.success = success ;}
+    public void setMessage(String message) {this.message = message ;}
+    public void setData(Object data) {this.data = data;}
 }

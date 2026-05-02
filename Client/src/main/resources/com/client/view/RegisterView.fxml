@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="750.0" style="-fx-background-color: #f0f4ff;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auction.controller.RegisterController">
+   <children>
+
+      <!-- Căn giữa toàn màn hình -->
+      <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+
+            <!-- Card trắng chứa form -->
+            <VBox alignment="TOP_CENTER" maxWidth="420.0" prefWidth="420.0" spacing="12.0" style="-fx-background-color: white;                          -fx-background-radius: 14;                          -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 16, 0, 0, 4);">
+               <padding>
+                  <Insets bottom="40" left="44" right="44" top="40" />
+               </padding>
+               <children>
+
+                  <!-- Tiêu đề -->
+                  <Label alignment="CENTER" maxWidth="Infinity" text="Đăng ký tài khoản" textAlignment="CENTER">
+                     <font><Font name="System Bold" size="22.0" /></font>
+                  </Label>
+
+                  <VBox prefHeight="8" />
+
+                  <!-- Họ và tên -->
+                  <Label text="Họ và tên *">
+                     <font><Font size="13.0" /></font>
+                  </Label>
+                  <TextField fx:id="nameField" maxWidth="Infinity" promptText="Nhập họ và tên" style="-fx-background-radius: 8;                                     -fx-border-radius: 8;                                     -fx-border-color: #dce3f0;                                     -fx-border-width: 1;                                     -fx-padding: 10;                                     -fx-font-size: 13;" />
+
+                  <!-- Email -->
+                  <Label text="Email *">
+                     <font><Font size="13.0" /></font>
+                  </Label>
+                  <TextField fx:id="emailField" maxWidth="Infinity" promptText="Nhập địa chỉ email" style="-fx-background-radius: 8;                                     -fx-border-radius: 8;                                     -fx-border-color: #dce3f0;                                     -fx-border-width: 1;                                     -fx-padding: 10;                                     -fx-font-size: 13;" />
+
+                  <!-- Mật khẩu -->
+                  <Label text="Mật khẩu *">
+                     <font><Font size="13.0" /></font>
+                  </Label>
+                  <PasswordField fx:id="passwordField" maxWidth="Infinity" promptText="Nhập mật khẩu (tối thiểu 6 ký tự)" style="-fx-background-radius: 8;                                         -fx-border-radius: 8;                                         -fx-border-color: #dce3f0;                                         -fx-border-width: 1;                                         -fx-padding: 10;                                         -fx-font-size: 13;" />
+
+                  <!-- Xác nhận mật khẩu -->
+                  <Label text="Xác nhận mật khẩu *">
+                     <font><Font size="13.0" /></font>
+                  </Label>
+                  <PasswordField fx:id="confirmPasswordField" maxWidth="Infinity" promptText="Nhập lại mật khẩu" style="-fx-background-radius: 8;                                         -fx-border-radius: 8;                                         -fx-border-color: #dce3f0;                                         -fx-border-width: 1;                                         -fx-padding: 10;                                         -fx-font-size: 13;" />
+
+                  <!-- Vai trò -->
+                  <Label text="Vai trò *">
+                     <font><Font size="13.0" /></font>
+                  </Label>
+                  <ComboBox fx:id="roleComboBox" maxWidth="Infinity" promptText="Chọn vai trò" style="-fx-background-radius: 8;                                    -fx-border-radius: 8;                                    -fx-border-color: #dce3f0;                                    -fx-border-width: 1;                                    -fx-font-size: 13;" />
+
+                  <!-- Thông báo lỗi / thành công -->
+                  <Label fx:id="errorLabel" maxWidth="Infinity" style="-fx-font-size: 12;" visible="false" wrapText="true">
+                     <font><Font size="12.0" /></font>
+                  </Label>
+
+                  <VBox prefHeight="4" />
+
+                  <!-- Nút đăng ký -->
+                  <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handleRegister" style="-fx-background-radius: 8;                                  -fx-border-radius: 8;                                  -fx-background-color: #2196F3;                                  -fx-text-fill: white;                                  -fx-padding: 12;                                  -fx-font-size: 14;                                  -fx-cursor: hand;" text="Đăng ký">
+                     <font><Font name="System Bold" size="14.0" /></font>
+                  </Button>
+
+                  <!-- Link đăng nhập -->
+                  <Label alignment="CENTER" maxWidth="Infinity" onMouseClicked="#goToLogin" style="-fx-text-fill: #2196F3; -fx-cursor: hand; -fx-font-size: 12;" text="Đã có tài khoản? Đăng nhập" textAlignment="CENTER">
+                     <font><Font size="12.0" /></font>
+                  </Label>
+
+               </children>
+            </VBox>
+
+         </children>
+      </VBox>
+
+   </children>
+</AnchorPane>
