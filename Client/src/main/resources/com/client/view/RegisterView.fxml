@@ -24,20 +24,20 @@
                </padding>
                <children>
 
-                  <!-- Tiêu đề -->
+                  
                   <Label alignment="CENTER" maxWidth="Infinity" text="Đăng ký tài khoản" textAlignment="CENTER">
                      <font><Font name="System Bold" size="22.0" /></font>
                   </Label>
 
                   <VBox prefHeight="8" />
 
-                  <!-- Họ và tên -->
+                  <! Nhập họ tên>
                   <Label text="Họ và tên *">
                      <font><Font size="13.0" /></font>
                   </Label>
                   <TextField fx:id="nameField" maxWidth="Infinity" promptText="Nhập họ và tên" style="-fx-background-radius: 8;                                     -fx-border-radius: 8;                                     -fx-border-color: #dce3f0;                                     -fx-border-width: 1;                                     -fx-padding: 10;                                     -fx-font-size: 13;" />
 
-                  <!-- Email -->
+                  <! nhập email>
                   <Label text="Email *">
                      <font><Font size="13.0" /></font>
                   </Label>
