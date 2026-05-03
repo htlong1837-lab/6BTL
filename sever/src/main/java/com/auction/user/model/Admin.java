@@ -41,8 +41,6 @@ public class Admin extends User {
             System.out.println("[Admin] Item \"" + item.getName() + "\" is invalid. Please check the details and edit it for approval.");
         }
     }
-    // Ghi nhận hành vi đánh giá bất thường
-
     @Override
     public void printInfo() {
         super.printInfo();

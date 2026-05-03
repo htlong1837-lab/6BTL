@@ -35,7 +35,13 @@ public abstract class User extends Entity {
     public void resetFailedLoginAttempts() { this.failedLoginAttempts = 0; }
 
     // quyền ban của admin
-    public void setBanned(boolean banned)    { this.isBanned = banned; } 
+    public void setBanned(boolean banned)    { this.isBanned = banned; }
+
+    // [THÊM] Cần để UserDAOSQLiteImpl khôi phục số dư từ DB khi load user (Seller/Admin không có setBalance riêng)
+    public void setBalance(double balance)   { this.balance = balance; }
+
+    // [THÊM] Cần để UserDAOSQLiteImpl khôi phục số lần login thất bại từ DB (failedLoginAttempts là private)
+    public void setFailedLoginAttempts(int n) { this.failedLoginAttempts = n; }
 
 
     @Override

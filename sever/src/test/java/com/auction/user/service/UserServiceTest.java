@@ -31,15 +31,18 @@ public class UserServiceTest {
         userDAO     = new UserDAOImpl();       // tạo database mới (rỗng)
         userService = new UserService(userDAO); // tạo service với database đó
     }
+
     @Test
     @DisplayName("Kiểm tra đăng ký thành công với thông tin hợp lệ")
     public void testSuccessfulSignUp() {
         String id = "user-001";
         String name = "Nguyen Thi Kim Ngan";
         String email = "kngan@example.com";
-        String password = "Ngan123";
-        String confirmPassword = "Ngan123";
-        
+        // [SỬA] Mật khẩu phải >= 8 ký tự + có chữ hoa + có số để qua isStrongPassword()
+        // "Ngan123" chỉ 7 ký tự nên bị từ chối - đổi thành "Ngan1234" (8 ký tự)
+        String password = "Ngan1234";
+        String confirmPassword = "Ngan1234";
+
         String result = assertDoesNotThrow(
             () -> userService.signUp(id, name, email, password, confirmPassword)
         );
@@ -51,32 +54,34 @@ public class UserServiceTest {
     @DisplayName("Email trùng - lỗi DuplicateDataException")
     void testSignUpwithExistingEmail() throws AuthenticationException, UserException {
 
-        // Đăng ký lần đầu
-        userService.signUp("user-001", "Nguyen Thi Kim Ngan", "same@example.com", "Ngan123", "Ngan123");
+        // [SỬA] Đổi "Ngan123" → "Ngan1234" và "Kn123" → "Kn123456" (cần >= 8 ký tự có hoa/thường/số)
+        userService.signUp("user-001", "Nguyen Thi Kim Ngan", "same@example.com", "Ngan1234", "Ngan1234");
 
-         // Đăng ký lần 2 với email trùng (khác username)
+        // Đăng ký lần 2 với email trùng (khác username)
         assertThrows(DuplicateDataException.class, () -> {
-            userService.signUp("user-002", "Kim Ngan", "same@example.com", "Kn123", "Kn123");
+            userService.signUp("user-002", "Kim Ngan", "same@example.com", "Kn123456", "Kn123456");
         });
     }
 
     @Test
     @DisplayName("Đăng ký username trùng - lỗi DuplicateUsername")
     void testSignUpwithExistingUsername() throws AuthenticationException, UserException {
-        // Đăng ký lan đầu
-        userService.signUp("id", "Same", "e1@gmail.com", "pass123", "pass123");
+        // [SỬA] Đổi "pass123" → "Pass1234" (cần >= 8 ký tự có hoa/thường/số)
+        userService.signUp("id", "Same", "e1@gmail.com", "Pass1234", "Pass1234");
 
         // Đăng ký lần 2 với username trùng (khác email)
         assertThrows(DuplicateDataException.class, () -> {
-            userService.signUp("id", "Same", "e2@gmail.com", "pass456", "pass456");
+            userService.signUp("id", "Same", "e2@gmail.com", "Pass4567", "Pass4567");
         });
     }
 
     @Test
     @DisplayName("Đăng ký mật khẩu xác nhận không khớp - lỗi PasswordAuthentication")
     void testSignUpwithPasswordMismatch() {
+        // [SỬA] Đổi "hihi123"/"other123" → "Hihi1234"/"Other1234" để vượt qua isStrongPassword()
+        // rồi mới bị bắt vì 2 mật khẩu không khớp
         assertThrows(PasswordAuthenticationException.class, () -> {
-            userService.signUp("id", "Name", "email@example.com", "hihi123", "other123");
+            userService.signUp("id", "Name", "email@example.com", "Hihi1234", "Other1234");
         });
     }
 
@@ -113,10 +118,10 @@ public class UserServiceTest {
     @Test
     @DisplayName("Đăng nhập thành công")
     void testSuccessfulLogin() throws UserException, AuthenticationException {
-        // Trước tiên phải có tài khoản đã đăng ký
-        userService.signUp("id", "Name", "email@example.com", "pw123", "pw123");
+        // [SỬA] Đổi "pw123" → "Password1" để vượt qua isStrongPassword() khi đăng ký
+        userService.signUp("id", "Name", "email@example.com", "Password1", "Password1");
         // Đăng nhập thành công
-        User result = assertDoesNotThrow(() -> userService.login("Name", "pw123"));
+        User result = assertDoesNotThrow(() -> userService.login("Name", "Password1"));
 
         // Kiểm tra user trả về đúng không
         assertNotNull(result);                        // phải khác null
@@ -135,8 +140,8 @@ public class UserServiceTest {
     @Test
     @DisplayName("Đăng nhập với mật khẩu sai - lỗi PasswordAuthenticationException")
     void testLoginWithWrongPassword() throws AuthenticationException, UserException {
-        // Trước tiên phải có tài khoản đã đăng ký
-        userService.signUp("id", "Name", "email@example.com", "pw123", "pw123");
+        // [SỬA] Đổi "pw123" → "Password1" để vượt qua isStrongPassword() khi đăng ký
+        userService.signUp("id", "Name", "email@example.com", "Password1", "Password1");
 
         assertThrows(PasswordAuthenticationException.class, () -> {
             userService.login("Name", "wrongpassword");
@@ -144,5 +149,3 @@ public class UserServiceTest {
     }
 
 }
-
-

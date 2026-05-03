@@ -75,32 +75,32 @@ public class UserService {
         User user = userDAO.findByUsername(username);
 
         if (user == null)
-            throw new UserNotFoundException("Tài khoản không tồn tại.") ;
-        if(user.isBanned() == true)
-            System.out.println("Tài khoản đã bị khóa.");
-        
-        // Hash mật khẩu nhập vào để so sánh với hash đã lưu trong database
+            throw new UserNotFoundException("Tài khoản không tồn tại.");
+
+        // [SỬA] Throw exception khi tài khoản bị khóa thay vì chỉ println rồi vẫn tiếp tục
+        if (user.isBanned())
+            throw new UserNotFoundException("Tài khoản đã bị khóa do đăng nhập sai quá nhiều lần.");
+
         String inputHash = PasswordUtil.hashPassword(password);
 
         if (!user.getPasswordHash().equals(inputHash)) {
             user.incrementFailedLoginAttempts();
-            userDAO.update(user);    // Cập nhật số lần đăng nhập thất bại vào database
-            System.out.println("Sai mật khẩu."); 
-
-            if(user.getFailedLoginAttempts() >= 5) {
+            userDAO.update(user);
+            if (user.getFailedLoginAttempts() >= 5) {
                 user.setBanned(true);
-                userDAO.update(user);    // Cập nhật trạng thái bị khóa vào database
-                System.out.println("Tài khoản đã bị khóa do quá nhiều lần đăng nhập thất bại.");
-            }
-             // Khi chưa quá 5 lần đăng nhập thất bại mà login đúng -> reset số lần thất bại về 0
-            if (user.getFailedLoginAttempts() < 5 && user.getPasswordHash().equals(inputHash)) {
-                user.resetFailedLoginAttempts();
                 userDAO.update(user);
             }
+            // [SỬA] Throw exception khi sai mật khẩu - trước đây code trả về user luôn, không báo lỗi
+            throw new PasswordAuthenticationException("Sai mật khẩu. Còn " + (5 - user.getFailedLoginAttempts()) + " lần thử.");
         }
-        
-        System.out.println("Đăng nhập thành công!");
-        return user; // trả về user để bt là Bidder/Seller/Admin
+
+        // [SỬA] Reset số lần thất bại khi đăng nhập thành công - trước đây nằm trong block sai mật khẩu nên không bao giờ chạy
+        if (user.getFailedLoginAttempts() > 0) {
+            user.resetFailedLoginAttempts();
+            userDAO.update(user);
+        }
+
+        return user;
     }
 
    //=====================================================
