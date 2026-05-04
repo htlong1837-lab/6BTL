@@ -42,7 +42,7 @@ public class LoginController {
 
         // TODO: Gửi lên Server sau
         System.out.println("Login: " + email);
-        showSuccess("Đăng nhapah thhanfh công");
+        showSuccess("Đăng nhập thành công");
     }
 
     // Helper message //
