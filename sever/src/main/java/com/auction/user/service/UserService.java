@@ -49,7 +49,7 @@ public class UserService {
             || email.indexOf("@") != email.lastIndexOf("@")          // email chỉ được chứa 1 ký tự "@"
             || !Character.isLetterOrDigit(email.charAt(0))       // email phải bắt đầu bằng chữ cái hoặc số
             || email.length() > 30 
-            || email.length() < 5) {        
+            || email.length() < 6) {        
             throw new InvalidDataException("Email không hợp lệ.") ;}
 
         if (userDAO.existsByEmail(email))

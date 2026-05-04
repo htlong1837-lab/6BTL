@@ -1,6 +1,5 @@
 
 package com.auction.controller;
-
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -30,16 +29,25 @@ public class LoginController {
         String password = passwordField.getText();
 
         // Validate
-        if (email.isEmpty() || password.isEmpty() || password.length() < 6) {
+        if (email.isEmpty() || password.isEmpty() || password.length() < 6 ) {
             showError("Vui lòng nhập đầy đủ thông tin");
             return;
         }
 
-        if (!email.contains("@")) {
+        if (!email.contains("@gmail.com")) {
             showError("Vui lòng nhập email");
             return;
         }
-
+        if (email == null || !email.endsWith("@gmail.com")             // email phải kết thúc bằng "@gmail.com"
+            || email.indexOf("@") == 0                                     // email không được bắt đầu bằng "@" 
+            || email.contains("..")                                          // email không được chứa ".." liên tiếp
+            || email.indexOf("@") != email.lastIndexOf("@")          // email chỉ được chứa 1 ký tự "@"
+            || !Character.isLetterOrDigit(email.charAt(0))       // email phải bắt đầu bằng chữ cái hoặc số
+            || email.length() > 30                                      // độ dài email không được vượt quá 30 ký tự và ít hơn 6 kí tự
+            || email.length() < 6) {        
+            showError("Email không hợp lệ.");
+            return;
+        }
         // TODO: Gửi lên Server sau
         System.out.println("Login: " + email);
         showSuccess("Đăng nhập thành công");
