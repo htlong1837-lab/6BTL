@@ -5,8 +5,8 @@ import java.util.List;
 public class FakeDataHelper {
 
     public static List<UserItem> makeUsers() {
-        long now = System.currentTimeMillis();
         return List.of(
+            new UserItem("U000", "admin",         "admin@gmail.com",       "Admin",  "ACTIVE"),
             new UserItem("U001", "nguyen_van_a",  "nguyenvana@gmail.com",  "Bidder", "ACTIVE"),
             new UserItem("U002", "tran_thi_b",    "tranthib@gmail.com",    "Seller", "ACTIVE"),
             new UserItem("U003", "le_van_c",      "levanc@gmail.com",      "Bidder", "BANNED"),
