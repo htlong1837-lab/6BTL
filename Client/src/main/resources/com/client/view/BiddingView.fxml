@@ -14,7 +14,7 @@
       <VBox prefWidth="320.0" style="-fx-spacing: 14; -fx-padding: 20 20;" BorderPane.alignment="CENTER">
          <children>
             <Label fx:id="itemNameLabel" text="Tên sản phẩm" />
-            <Label fx:id="itemDescribeLabel" text="GIới thiệu" wrapText="true" />
+            <Label fx:id="itemDescLabel" text="GIới thiệu" wrapText="true" />
             <Separator prefWidth="200.0" />
             <Label text="Giá hiện tại" />
             <Label fx:id="currentPriceLabel" />
