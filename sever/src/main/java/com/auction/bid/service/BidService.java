@@ -17,9 +17,9 @@ public class BidService {
     private final BidDAO bidDAO;
     private final BidLockManager lockManager;
 
-    private Map<String, List<String>> activeBids  = new HashMap<>();
-    private Map<String, List<String>> wonAuctions = new HashMap<>();
-    private Map<String, List<String>> bidHistory  = new HashMap<>();
+    private Map<String, List<String>> activeBids  = new HashMap<>();    //user đang tham gia phiên nào
+    private Map<String, List<String>> wonAuctions = new HashMap<>();    //user đã thắng phiên nào
+    private Map<String, List<String>> bidHistory  = new HashMap<>();    //user đã đặt giá phiên nào (có thể trùng với active hoặc won)
 
     public BidService(AuctionDAO auctionDAO, BidDAO bidDAO, BidLockManager lockManager) {
         this.auctionDAO  = auctionDAO;
@@ -27,6 +27,7 @@ public class BidService {
         this.lockManager = lockManager;
     }
 
+    // Lấy danh sách (nếu chưa có sẽ tạo mới) để lưu trữ thông tin về phiên đấu giá mà user tham gia, thắng hoặc đã đặt giá
     private List<String> getList(Map<String, List<String>> map, String userId) {
         return map.computeIfAbsent(userId, k -> new ArrayList<>());
     }
