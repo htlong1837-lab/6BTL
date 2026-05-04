@@ -43,8 +43,14 @@ public class UserService {
 
         //========================EMAIL===========================
 
-        if (email == null || !email.contains("@"))
-            throw new InvalidDataException("Email không hợp lệ.") ;
+        if (email == null || !email.endsWith("@gmail.com")              // email phải kết thúc bằng "@gmail.com"
+            || email.indexOf("@") == 0                                     // email không được bắt đầu bằng "@" 
+            || email.contains("..")                                          // email không được chứa ".." liên tiếp
+            || email.indexOf("@") != email.lastIndexOf("@")          // email chỉ được chứa 1 ký tự "@"
+            || !Character.isLetterOrDigit(email.charAt(0))       // email phải bắt đầu bằng chữ cái hoặc số
+            || email.length() > 30 
+            || email.length() < 5) {        
+            throw new InvalidDataException("Email không hợp lệ.") ;}
 
         if (userDAO.existsByEmail(email))
             throw new DuplicateDataException("Email đã tồn tại.");
