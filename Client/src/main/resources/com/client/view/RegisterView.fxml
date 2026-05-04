@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="750.0" style="-fx-background-color: #f0f4ff;" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auction.controller.RegisterController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="750.0" style="-fx-background-color: #f0f4ff;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auction.controller.RegisterController">
    <children>
 
       <!-- Căn giữa toàn màn hình -->
@@ -31,13 +31,13 @@
 
                   <VBox prefHeight="8" />
 
-                  <! Nhập họ tên>
+                  <!-- Nhập họ tên -->
                   <Label text="Họ và tên *">
                      <font><Font size="13.0" /></font>
                   </Label>
                   <TextField fx:id="nameField" maxWidth="Infinity" promptText="Nhập họ và tên" style="-fx-background-radius: 8;                                     -fx-border-radius: 8;                                     -fx-border-color: #dce3f0;                                     -fx-border-width: 1;                                     -fx-padding: 10;                                     -fx-font-size: 13;" />
 
-                  <! nhập email>
+                  <!-- nhập email -->
                   <Label text="Email *">
                      <font><Font size="13.0" /></font>
                   </Label>

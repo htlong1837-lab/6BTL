@@ -10,43 +10,49 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="600.0" prefWidth="900.0"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.auction.controller.SellerController">
    <top>
-      <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+      <HBox prefHeight="50.0" prefWidth="200.0" style="-fx-padding: 12 16; -fx-spacing: 10;" BorderPane.alignment="CENTER">
          <children>
             <Label text="Quản lý sản phẩm" />
-            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="SOMETIMES" />
-            <Button mnemonicParsing="false" text="Thêm sản phẩm" />
-            <Button mnemonicParsing="false" text="Đăng xuất" />
+            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#handleAddProduct" text="Thêm sản phẩm" />
+            <Button mnemonicParsing="false" onAction="#handleLogout"     text="Đăng xuất" />
          </children>
       </HBox>
    </top>
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-padding: 10 16; -fx-spacing: 8;" BorderPane.alignment="CENTER">
+      <VBox prefWidth="100.0" style="-fx-padding: 10 16; -fx-spacing: 8;" BorderPane.alignment="CENTER">
          <children>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <!-- Tìm kiếm -->
+            <HBox prefHeight="36.0" prefWidth="200.0">
                <children>
                   <TextField fx:id="searchField" promptText="Tìm kiếm sản phẩm" HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" text="TÌm" />
+                  <Button mnemonicParsing="false" onAction="#handleSearch" text="Tìm" />
                </children>
             </HBox>
-            <TableView prefHeight="200.0" prefWidth="200.0">
-              <columns>
-                <TableColumn fx:id="colId" prefWidth="75.0" text="ID" />
-                  <TableColumn fx:id="colName" prefWidth="75.0" text="Tên sản phẩm" />
-                  <TableColumn fx:id="colPrice" prefWidth="75.0" text="Giá khởi điểm" />
-                  <TableColumn fx:id="colCurrentPrice" prefWidth="75.0" text="Giá hiện tại" />
-                  <TableColumn fx:id="colStatus" prefWidth="75.0" text="Trạng thái" />
-                  <TableColumn fx:id="colTopBidder" prefWidth="75.0" text="Người dẫn đầu" />
-              </columns>
+            <!-- Bảng sản phẩm -->
+            <TableView fx:id="productTable" prefHeight="450.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="colId"           prefWidth="80.0"  text="ID" />
+                  <TableColumn fx:id="colName"         prefWidth="180.0" text="Tên sản phẩm" />
+                  <TableColumn fx:id="colPrice"        prefWidth="120.0" text="Giá khởi điểm" />
+                  <TableColumn fx:id="colCurrentPrice" prefWidth="120.0" text="Giá hiện tại" />
+                  <TableColumn fx:id="colStatus"       prefWidth="90.0"  text="Trạng thái" />
+                  <TableColumn fx:id="colTopBidder"    prefWidth="140.0" text="Người dẫn đầu" />
+               </columns>
             </TableView>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <!-- Thanh trạng thái + nút hành động -->
+            <HBox prefHeight="36.0" prefWidth="200.0" style="-fx-spacing: 10;">
                <children>
                   <Label fx:id="statusLabel" text="0 sản phẩm" />
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" text="Sửa" />
-                  <Button mnemonicParsing="false" text="Xóa" />
+                  <Button mnemonicParsing="false" onAction="#handleEdit"   text="Sửa" />
+                  <Button mnemonicParsing="false" onAction="#handleDelete" text="Xóa" />
                </children>
             </HBox>
          </children>

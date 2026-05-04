@@ -8,28 +8,39 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auction.controller.AuctionListController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="600.0" prefWidth="900.0"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.auction.controller.AuctionListController">
    <top>
       <HBox prefWidth="200.0" spacing="12.0" style="-fx-padding: 12 16;" BorderPane.alignment="CENTER">
          <children>
             <TextField fx:id="searchField" prefWidth="280.0" promptText="Tìm kiếm phiên đấu giá" />
-            <Button mnemonicParsing="false" text="Tìm" />
+            <Button mnemonicParsing="false" onAction="#handleSearch" text="Tìm" />
             <Region prefHeight="50.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" text="Đăng xuất" />
+            <Button mnemonicParsing="false" onAction="#handleLogout" text="Đăng xuất" />
             <Label fx:id="usernameLabel" text="Xin chào" />
          </children>
       </HBox>
    </top>
    <center>
-      <TableView fx:id="autionTable" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <columns>
-          <TableColumn fx:id="colName" prefWidth="220.0" text="Tên sản phẩm" />
-          <TableColumn fx:id="colPrice" prefWidth="130.0" text="Giá hiện tại" />
-            <TableColumn fx:id="colStatus" prefWidth="100.0" text="Trạng thái" />
-            <TableColumn fx:id="colEndTime" prefWidth="130.0" text="Kết thúc lúc" />
-            <TableColumn fx:id="colSeller" prefWidth="160.0" text="Người bán" />
-        </columns>
-      </TableView>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <TableView fx:id="auctionTable" prefHeight="540.0" prefWidth="200.0"
+                       onMouseClicked="#handleRowClick" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="colName"    prefWidth="220.0" text="Tên sản phẩm" />
+                  <TableColumn fx:id="colPrice"   prefWidth="130.0" text="Giá hiện tại" />
+                  <TableColumn fx:id="colStatus"  prefWidth="100.0" text="Trạng thái" />
+                  <TableColumn fx:id="colEndTime" prefWidth="150.0" text="Kết thúc lúc" />
+                  <TableColumn fx:id="colSeller"  prefWidth="160.0" text="Người bán" />
+               </columns>
+            </TableView>
+            <Label fx:id="statusLabel" text="0 phiên đấu giá" />
+         </children>
+      </VBox>
    </center>
 </BorderPane>

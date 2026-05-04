@@ -35,11 +35,7 @@ public class LoginController {
             return;
         }
 
-        if (!email.contains("@gmail.com")) {
-            showError("Vui lòng nhập email");
-            return;
-        }
-        if (email == null || !email.endsWith("@gmail.com")             // email phải kết thúc bằng "@gmail.com"
+        if (!email.endsWith("@gmail.com")             // email phải kết thúc bằng "@gmail.com"
             || email.indexOf("@") == 0                                     // email không được bắt đầu bằng "@" 
             || email.contains("..")                                          // email không được chứa ".." liên tiếp
             || email.indexOf("@") != email.lastIndexOf("@")          // email chỉ được chứa 1 ký tự "@"

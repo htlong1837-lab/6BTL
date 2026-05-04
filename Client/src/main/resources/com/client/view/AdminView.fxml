@@ -10,41 +10,45 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auction.controller.AdminController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="600.0" prefWidth="900.0"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.auction.controller.AdminController">
    <top>
-      <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-spacing: 10; -fx-padding: 12 16;" BorderPane.alignment="CENTER">
+      <HBox prefHeight="50.0" prefWidth="200.0" style="-fx-spacing: 10; -fx-padding: 12 16;" BorderPane.alignment="CENTER">
          <children>
             <Label text="Admin Dashboard" />
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" text="Đăng xuất" />
+            <Button mnemonicParsing="false" onAction="#handleLogout" text="Đăng xuất" />
          </children>
       </HBox>
    </top>
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 16; -fx-padding: 16;" BorderPane.alignment="CENTER">
+      <VBox prefWidth="100.0" style="-fx-spacing: 16; -fx-padding: 16;" BorderPane.alignment="CENTER">
          <children>
-            <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-spacing: 12;">
+            <!-- Thống kê -->
+            <HBox prefHeight="80.0" prefWidth="200.0" style="-fx-spacing: 12;">
                <children>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 6; -fx-padding: 16;" HBox.hgrow="ALWAYS">
+                  <VBox alignment="CENTER" prefWidth="100.0" style="-fx-spacing: 6; -fx-padding: 16;" HBox.hgrow="ALWAYS">
                      <children>
                         <Label fx:id="totalProductsLabel" text="0" />
                         <Label text="Sản phẩm" />
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 6; -fx-padding: 16;" HBox.hgrow="ALWAYS">
+                  <VBox alignment="CENTER" prefWidth="100.0" style="-fx-spacing: 6; -fx-padding: 16;" HBox.hgrow="ALWAYS">
                      <children>
                         <Label fx:id="totalBidsLabel" text="0" />
                         <Label text="Lượt đấu giá" />
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 6; -fx-padding: 16;" HBox.hgrow="ALWAYS">
+                  <VBox alignment="CENTER" prefWidth="100.0" style="-fx-spacing: 6; -fx-padding: 16;" HBox.hgrow="ALWAYS">
                      <children>
                         <Label fx:id="totalUsersLabel" text="0" />
                         <Label text="Người dùng" />
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-spacing: 6; -fx-padding: 16;" HBox.hgrow="ALWAYS">
+                  <VBox alignment="CENTER" prefWidth="100.0" style="-fx-spacing: 6; -fx-padding: 16;" HBox.hgrow="ALWAYS">
                      <children>
                         <Label fx:id="totalAuctionsLabel" text="0" />
                         <Label text="Phiên đang chạy" />
@@ -52,27 +56,30 @@
                   </VBox>
                </children>
             </HBox>
-            <HBox prefHeight="50.0" prefWidth="200.0">
+            <!-- Tìm kiếm -->
+            <HBox prefHeight="36.0" prefWidth="200.0">
                <children>
-                  <TextField fx:id="searchUserField" promptText="TÌm người dùng" HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" text="Tìm" />
+                  <TextField fx:id="searchUserField" promptText="Tìm người dùng" HBox.hgrow="ALWAYS" />
+                  <Button mnemonicParsing="false" onAction="#handleSearchUser" text="Tìm" />
                </children>
             </HBox>
-            <TableView prefHeight="200.0" prefWidth="200.0">
-              <columns>
-                <TableColumn fx:id="colUserId" text="ID" />
-                <TableColumn fx:id="colUsername" prefWidth="160.0" text="Tên đăng nhập" />
-                  <TableColumn prefWidth="200.0" text="Column X" />
-                  <TableColumn prefWidth="100.0" text="Column X" />
-                  <TableColumn prefWidth="120.0" text="Column X" />
-              </columns>
+            <!-- Bảng người dùng -->
+            <TableView fx:id="userTable" prefHeight="340.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+               <columns>
+                  <TableColumn fx:id="colUserId"     prefWidth="80.0"  text="ID" />
+                  <TableColumn fx:id="colUsername"   prefWidth="160.0" text="Tên đăng nhập" />
+                  <TableColumn fx:id="colEmail"      prefWidth="200.0" text="Email" />
+                  <TableColumn fx:id="colRole"       prefWidth="100.0" text="Vai trò" />
+                  <TableColumn fx:id="colUserStatus" prefWidth="120.0" text="Trạng thái" />
+               </columns>
             </TableView>
-            <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-spacing: 10;">
+            <!-- Thanh trạng thái + nút hành động -->
+            <HBox prefHeight="36.0" prefWidth="200.0" style="-fx-spacing: 10;">
                <children>
                   <Label fx:id="userStatusLabel" text="0 người dùng" />
                   <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-                  <Button mnemonicParsing="false" text="BAN" />
-                  <Button mnemonicParsing="false" text="UNBAN" />
+                  <Button mnemonicParsing="false" onAction="#handleBan"   text="BAN" />
+                  <Button mnemonicParsing="false" onAction="#handleUnban" text="UNBAN" />
                </children>
             </HBox>
          </children>

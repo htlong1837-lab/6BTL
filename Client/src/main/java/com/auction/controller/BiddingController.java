@@ -2,173 +2,160 @@ package com.auction.controller;
 
 import com.auction.client.model.Auction;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class BiddingController {
-    @FXML private Label itemNameLabel;
-    @FXML private Label itemDescLabel;
-    @FXML private Label currentPrice;
-    @FXML private Label currentPriceLabel;
-    @FXML private Label topBiderLabel;
-    @FXML private Label countdownLabel;
-    @FXML private TextField bidAmountField;
-    @FXML private Button bidButton;
-    @FXML private ListView<String> bidHistory;
 
-    private Auction auction;
+    @FXML private Label        itemNameLabel;
+    @FXML private Label        itemDescLabel;
+    @FXML private Label        currentPriceLabel;
+    @FXML private Label        topBidderLabel;
+    @FXML private Label        countdownLabel;
+    @FXML private Label        bidMessageLabel;
+    @FXML private TextField    bidAmountField;
+    @FXML private Button       bidButton;
+    @FXML private ListView<String> bidHistoryList;
+
+    private Auction  auction;
     private Timeline countdownTimer;
-    private double currentPrice;
-    prvate String topBidder ="";
+    private double   currentPrice;
+    private String   topBidder = "";
 
-    private ObserableList<String> historyItems = FXCollections.observableArrayList();
+    private ObservableList<String> historyItems = FXCollections.observableArrayList();
 
-    // nhận dữ liệu từ AuctionlistControler
+    // nhận dữ liệu từ AuctionListController
     public void setAuction(Auction auction) {
-
+        this.auction      = auction;
+        this.currentPrice = auction.getCurrentPrice();
+        bidHistoryList.setItems(historyItems);
+        renderInfo();
+        startCountdown();
     }
 
-    // hiện thị thông tin lên UI
     private void renderInfo() {
         itemNameLabel.setText(auction.getItemName());
         itemDescLabel.setText(
-            "Giá khởi điểm: "
-            + String.format("%,.0f VND", auction.getCurrentPrice())
+            "Giá khởi điểm: " + String.format("%,.0f VND", auction.getCurrentPrice())
         );
         updatePriceUI();
     }
 
     private void updatePriceUI() {
-        currentPriceLabel.setText(
-            String.format("%, 0f VNd", currentPrice )
-        );
-
-        topBidderLabel.setText(
-            topBidder.isEmpty() ? "(chưa có)" : topBidder
-        );
+        currentPriceLabel.setText(String.format("%,.0f VND", currentPrice));
+        topBidderLabel.setText(topBidder.isEmpty() ? "(chưa có)" : topBidder);
     }
 
     private void startCountdown() {
         countdownTimer = new Timeline(
-            new KeyFarme(Duration.seconds(1) , e -> tick())
+            new KeyFrame(Duration.seconds(1), e -> tick())
         );
-
         countdownTimer.setCycleCount(Timeline.INDEFINITE);
         countdownTimer.play();
     }
 
     private void tick() {
-        long remaining = auction.getEndTIme() - System.currentTimeMillis();
+        long remaining = auction.getEndTime() - System.currentTimeMillis();
 
-        // Hết giờ
         if (remaining <= 0) {
             countdownLabel.setText("Kết thúc");
             countdownLabel.setStyle(
-                "-fx-font-size: 28 ; -fx-font-weight: bold;" +
-                "-fx-text-fill: #e74c3c"
+                "-fx-font-size: 28; -fx-font-weight: bold;" +
+                "-fx-text-fill: #e74c3c;"
             );
             bidButton.setDisable(true);
             bidAmountField.setDisable(true);
-            bidMessageLabel.setText("Phiên đấu giá kết thúc");
+            showMessage("Phiên đấu giá kết thúc", "red");
             countdownTimer.stop();
             return;
+        }
 
+        long h = remaining / 3_600_000;
+        long m = (remaining % 3_600_000) / 60_000;
+        long s = (remaining % 60_000) / 1_000;
+
+        countdownLabel.setText(String.format("%02d:%02d:%02d", h, m, s));
+
+        if (remaining < 60_000) {
+            countdownLabel.setStyle(
+                "-fx-font-size: 32; -fx-font-weight: bold;" +
+                "-fx-text-fill: #e74c3c;"
+            );
+        } else {
+            countdownLabel.setStyle(
+                "-fx-font-size: 32; -fx-font-weight: bold;" +
+                "-fx-text-fill: #2980b9;"
+            );
         }
     }
-// tính giờ
-    long h = remaining / 3_600_000;
-    long m = (remaining % 3_600_000) /60_000;
-    long s = (remaining % 60_000) / 1_000;
 
-    countdownLabel.setText(String.format("%02d:%02d:%02d",h,m,s));
-    // đổi màu đỏ khi còn dưới 60s
-
-    if (remaining <60_000) {
-        countdownLabel.setStyle(
-            "-fx-font-size : 32; -fx-font-weight: bold;" +
-            "-fx-text-fill : #e74c3c;"
-        );
-
-    }else {
-        countdownLabel.setStyle(
-            "-fx-font-size: 32; -fx-font-weight: bold;"
-            "-fx-text-fill : #2980b9"
-        );
-    }
-    // cập nhật giá 
-
-
-    //đặt giá
-    @FXML 
+    @FXML
     private void handlePlaceBid() {
-        String input = bidAmountFIeld.getText().trim();
+        String input = bidAmountField.getText().trim();
 
-        if ( input.isEmpty()) {
+        if (input.isEmpty()) {
             showMessage("Vui lòng nhập số tiền", "red");
             return;
         }
 
         double amount;
         try {
-            amount = Double.parseDouble(input.replace(",",""));
-
-        }catch (NumberFormatException e) {
-            showMessage("Số tiền không hợp lệ" ,"red");
+            amount = Double.parseDouble(input.replace(",", ""));
+        } catch (NumberFormatException e) {
+            showMessage("Số tiền không hợp lệ", "red");
             return;
         }
 
         if (amount <= currentPrice) {
-            showMessage("Giá phải cao hơn" + String.format("%,0f,VND",currentPrice),"red");
+            showMessage("Giá phải cao hơn " + String.format("%,.0f VND", currentPrice), "red");
             return;
         }
-        // tất cả validate đã qua cập nhật state
 
         currentPrice = amount;
-        topBidder = "Bạn" //TÔDO : lấy từ sever sang sau
+        topBidder    = "Bạn"; // TODO: lấy username từ server
         updatePriceUI();
-        addHistory("Bạn",amount);
-
-        showMessage("Đặt giá thành công!" ,"green");
+        addHistory("Bạn", amount);
+        showMessage("Đặt giá thành công!", "green");
         bidAmountField.clear();
-        // TODO gửi BID request lên sever
-        // networkService.getInstance().send("PLACE_BID",...)
-
-
+        // TODO: gửi BID request lên server
     }
 
-    // -- add lịch sử bid
-
-    private void addHistory(String name , double amount) {
-        String time = new SimpleDateFormat("HH:mm:ss").format(new Data());
-
-        historyItems.add(0,
-            String.format("[%s] %s -> %, .0f VND",time,name,amount)
-        );
+    private void addHistory(String name, double amount) {
+        String time = new SimpleDateFormat("HH:mm:ss").format(new Date());
+        historyItems.add(0, String.format("[%s] %s -> %,.0f VND", time, name, amount));
     }
 
-    // helper
-    public void showMessage(String msg , String color) {
-        bidMessageLabel.setText(msg)l
-        bidMessageLabel.setStyle("-fx-text-fill:" +color";");
+    public void showMessage(String msg, String color) {
+        bidMessageLabel.setText(msg);
+        bidMessageLabel.setStyle("-fx-text-fill: " + color + ";");
     }
-    // quay về trang chính
-    @FXML 
+
+    @FXML
     public void handleBack() {
-        // phải dừng time chạy nếu ko khi thoát bộ nhỡ sẽ vẫn chạy
-        if(countdownTimer !=null) countdownTimer.stop();
-
-        try{
-            FXMLLoader loader = new FXML(
+        if (countdownTimer != null) countdownTimer.stop();
+        try {
+            FXMLLoader loader = new FXMLLoader(
                 getClass().getResource("/com/client/view/AuctionListView.fxml")
             );
-
-            Parent root = loader.load();
-            Stage stage = (Stage) bidAmountField.getScene().getWindow();
-            stage.setScene(new Scene(root, 900 ,600));
-
-        } catch(IOException e) {e.printStackTrace();}
+            Parent root  = loader.load();
+            Stage  stage = (Stage) bidAmountField.getScene().getWindow();
+            stage.setScene(new Scene(root, 900, 600));
+        } catch (IOException e) { e.printStackTrace(); }
     }
 }
