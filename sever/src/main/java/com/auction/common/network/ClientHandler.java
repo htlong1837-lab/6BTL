@@ -26,7 +26,6 @@ public class ClientHandler {
     private PrintWriter out;
     private BufferedReader in;
 
-    // RequestRouter là singleton - dùng chung cho tất cả ClientHandler
     private final RequestRouter router = new RequestRouter();
 
     public ClientHandler(Socket socket) {
