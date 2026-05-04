@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
+
 public class LoginController {
 
     @FXML private TextField emailField;
@@ -48,6 +49,7 @@ public class LoginController {
             showError("Email không hợp lệ.");
             return;
         }
+        
         // TODO: Gửi lên Server sau
         System.out.println("Login: " + email);
         showSuccess("Đăng nhập thành công");

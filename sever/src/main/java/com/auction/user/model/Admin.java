@@ -35,7 +35,7 @@ public class Admin extends User {
     }
     // Duyệt sản phẩm
     public void approveItem(Item item) {
-        if (item.isApproved()) {
+        if (item.isApproved()==true) {
             System.out.println("[Admin] Item \"" + item.getName() + "\" is already approved. It's ready for auction right now");
         } else {
             System.out.println("[Admin] Item \"" + item.getName() + "\" is invalid. Please check the details and edit it for approval.");
