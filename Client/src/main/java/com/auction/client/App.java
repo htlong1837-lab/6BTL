@@ -17,17 +17,10 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-<<<<<<< HEAD
         try {
             ServerConnection.getInstance().connect();
         } catch (IOException e) {
             System.err.println("[App] Không kết nối được server: " + e.getMessage());
-=======
-        try{
-            ServerConnection.getInstance().connect();
-        }catch(IOException e){
-            System.err.println("[App] không thể kết nối server" + e.getMessage());
->>>>>>> 542f7eec30695e805d1e37549bb8f56c44309eb3
         }
 
         FXMLLoader loader = new FXMLLoader(
