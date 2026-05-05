@@ -28,7 +28,7 @@ public class BidServiceTest {
         bidService = new BidService(auctionDAO, bidDAO, lockManager);
 
         // Tạo một Bidder giả: id, name, email, passwordHash
-        bidder = new Bidder("user-001", "TestUser", "hashed");
+        bidder = new Bidder("user-001", "TestUser", "hashed", "BIDDER");
         // Mặc định balance = 0 khi mới tạo
 
     }

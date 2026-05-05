@@ -26,26 +26,20 @@ public class Art extends Item {
 //duyệt hợp lệ
     @Override
     public boolean isApproved() {
-        super.isApproved();
-        if (artist == null || artist.isEmpty()) {
-            return false;
-        }
-        if (medium == null || medium.isEmpty()) {
-            return false;
-        }
+        if (!super.isApproved()) return false;
+        if (artist == null || artist.isEmpty()) return false;
+        if (medium == null || medium.isEmpty()) return false;
         return true;
     }
-//chỉnh sửa khi duyệt lỗi
-   
-    public void editItemError( Art item){
+
+    public void editItemError(Art item) {
         super.editItemError(item);
-        if (item.artist == null || item.artist.isEmpty()) {
+        if (item.artist != null && !item.artist.isEmpty()) {
             this.artist = item.artist;
         }
-        if (item.medium == null || item.medium.isEmpty()) {
+        if (item.medium != null && !item.medium.isEmpty()) {
             this.medium = item.medium;
         }
-
     }
     @Override
     public void printInfo() {

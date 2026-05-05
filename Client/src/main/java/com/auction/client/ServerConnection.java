@@ -45,7 +45,7 @@ public class ServerConnection {
         catch (IOException ignored) {}
         System.out.println("[Client] Đã ngắt kết nối.");
     }
-    public Response send(String action, Map<String, String> payload) throws IOException {
+    public Response send(String action, Map<String, Object> payload) throws IOException {
         if (!isConnected()) {
             throw new IOException("Chưa kết nối server. Gọi connect() trước.");
         }
