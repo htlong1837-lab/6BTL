@@ -33,7 +33,7 @@ public class Bidder extends User {
     @Override
     public void printInfo() {
         super.printInfo();
-        System.out.println("số dư mới" + balance );
+        System.out.println("Số dư mới: " + balance );
     }
 
 

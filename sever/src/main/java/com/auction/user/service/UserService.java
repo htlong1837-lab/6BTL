@@ -49,9 +49,10 @@ public class UserService {
         if (!password.equals(confirmPassword))
             throw new PasswordAuthenticationException("Mật khẩu xác nhận không khớp.");
 
+        
         // Tạo user mới và lưu vào "database" và mặc định là Bidder.
-        User newUser        = new Bidder(id, username, password);
-        userDAO.save(newUser);
+            User newUser        = new Bidder(id, username, password);
+            userDAO.save(newUser);
         return "Đăng ký thành công!";
     }
 
@@ -78,20 +79,4 @@ public class UserService {
         return user;
     }
 
-   //=====================================================
-    //                     REGISTER ROLE
-    //=====================================================
-    public String registerAsSeller(String name, String shopname) throws UserException {
-        User user = userDAO.findByUsername(name);
-        if (user == null) {
-            throw new UserNotFoundException("Tài khoản không tồn tại!");
-        }
-        if (user instanceof Bidder) {
-            Seller seller = new Seller(user.getId(), user.getName(), user.getPasswordHash());
-            seller.setShopName(shopname);
-            userDAO.update(seller);
-        }
-        return "Đăng ký Seller thành công!";
-
-    }
 }

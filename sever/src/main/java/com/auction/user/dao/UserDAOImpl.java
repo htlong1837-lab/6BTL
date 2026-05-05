@@ -16,7 +16,6 @@ public class UserDAOImpl implements UserDAO {
     // ko đc trùng
     private Set<String> ids = new HashSet<>();
     private Set<String> usernames = new HashSet<>();
-    
 
     //=======================SAVE============================
     @Override

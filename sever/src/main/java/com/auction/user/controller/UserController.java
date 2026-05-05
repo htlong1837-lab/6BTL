@@ -13,10 +13,10 @@ public class UserController {
 
     // [SỬA] Sửa params: trước đây nhận User object nhưng User không có raw password
     // RequestRouter sẽ extract các field này từ JSON payload của request
-    public boolean createAccount(String id, String username, String email,
+    public boolean createAccount(String id, String username,
                                   String password, String confirmPassword) {
         try {
-            userService.signUp(id, username, email, password, confirmPassword);
+            userService.signUp(id, username, password, confirmPassword);
             return true;
         } catch (Exception e) {
             System.out.println("[UserController] Lỗi đăng ký: " + e.getMessage());
@@ -32,17 +32,6 @@ public class UserController {
         } catch (UserException e) {
             System.out.println("[UserController] Lỗi đăng nhập: " + e.getMessage());
             return null;
-        }
-    }
-
-    // [THÊM] Chuyển đổi quyền Bidder → Seller khi user muốn bán hàng
-    public boolean registerAsSeller(String username, String shopName) {
-        try {
-            userService.registerAsSeller(username, shopName);
-            return true;
-        } catch (UserException e) {
-            System.out.println("[UserController] Lỗi đăng ký Seller: " + e.getMessage());
-            return false;
         }
     }
 }
