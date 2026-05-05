@@ -22,23 +22,6 @@ import com.auction.user.model.Seller;
 import com.auction.user.model.User;
 
 import java.util.Map;
-
-/**
- * RequestRouter - Định tuyến request tới đúng Controller & Method
- *
- * Flow:
- * 1. ClientHandler parse JSON → Request object
- * 2. Gọi router.route(request)
- * 3. RequestRouter switch(request.getAction())
- * 4. Gọi controller method phù hợp
- * 5. Trả Response success/fail
- *
- * Request format từ client:
- * {
- *   "action": "LOGIN",
- *   "payload": {username: "...", password: "..."}
- * }
- */
 public class RequestRouter {
 
     private final UserController userController = new UserController();
@@ -123,9 +106,17 @@ public class RequestRouter {
             (String) map.get("username"),
             (String) map.get("password")
         );
-        return user != null
-            ? Response.ok("Đăng nhập thành công!", user)
-            : Response.fall("Đăng nhập thất bại.");
+        if (user == null) return Response.fall("Đăng nhập thất bại.");
+
+        // Chỉ gửi các field cần thiết — không gửi passwordHash về client
+        Map<String, Object> safeUser = new java.util.HashMap<>();
+        safeUser.put("id",      user.getId());
+        safeUser.put("username", user.getName());
+        safeUser.put("balance",  user.getBalance());
+        safeUser.put("role",     user instanceof com.auction.user.model.Admin  ? "ADMIN"
+                               : user instanceof com.auction.user.model.Seller ? "SELLER"
+                               : "BIDDER");
+        return Response.ok("Đăng nhập thành công!", safeUser);
     }
 
     private Response handleRegisterSeller(Object payload) {
@@ -139,10 +130,6 @@ public class RequestRouter {
             : Response.fall("Đăng ký Seller thất bại.");
     }
 
-    // Payload: {type, id, name, des, startPrice, category, sellerId, ...type-specific fields}
-    // ART:         artist, medium
-    // VEHICLE:     make, model, year
-    // ELECTRONICS: brand, warrantyMonths
     private Response handleCreateItem(Object payload) {
         Map<String, Object> map = toMap(payload);
         String type     = (String) map.get("type");
@@ -175,7 +162,7 @@ public class RequestRouter {
                 return Response.fall("Loại sản phẩm không hợp lệ: " + type);
         }
         String result = itemController.createItem(item);
-        return Response.ok(result, item);
+        return result.contains("thành công") ? Response.ok(result, item) : Response.fall(result);
     }
 
     private Response handleListItems() {
@@ -193,10 +180,8 @@ public class RequestRouter {
     private Response handleDeleteItem(Object payload) {
         Map<String, Object> map = toMap(payload);
         String msg = itemController.deleteItem((String) map.get("id"));
-        return msg.contains("success") ? Response.ok(msg, null) : Response.fall(msg);
+        return msg.contains("Đã xóa") ? Response.ok(msg, null) : Response.fall(msg);
     }
-
-    // Payload: {itemId, sellerId, durationMillis}
     private Response handleCreateAuction(Object payload) {
         Map<String, Object> map = toMap(payload);
         String itemId       = (String) map.get("itemId");
@@ -219,7 +204,6 @@ public class RequestRouter {
         return Response.ok("Danh sách phiên đấu giá", auctionController.getAllAuctions());
     }
 
-    // Payload: {bidderId, auctionId, bidAmount}
     private Response handlePlaceBid(Object payload) {
         Map<String, Object> map = toMap(payload);
         String bidderId  = (String) map.get("bidderId");
