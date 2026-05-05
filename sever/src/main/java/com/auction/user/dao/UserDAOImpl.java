@@ -16,7 +16,6 @@ public class UserDAOImpl implements UserDAO {
     // ko đc trùng
     private Set<String> ids = new HashSet<>();
     private Set<String> usernames = new HashSet<>();
-    private Set<String> emails = new HashSet<>();
     
 
     //=======================SAVE============================
@@ -28,7 +27,6 @@ public class UserDAOImpl implements UserDAO {
 
         ids.add(user.getId());
         usernames.add(user.getName());
-        emails.add(user.getEmail());
     }
 
 
@@ -38,12 +36,6 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public boolean existsByUsername(String username) {
         return usernames.contains(username);
-    }
-
-    //ktra xem có email chx
-    @Override
-        public boolean existsByEmail(String email) {
-            return emails.contains(email);
     }
 
     //ktra xem có id chx

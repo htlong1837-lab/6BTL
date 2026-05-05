@@ -24,15 +24,13 @@ public class UserDAOSQLiteImpl implements UserDAO {
     @Override
     public void save(User user) {
         String sql =
-            "INSERT INTO users(id, username, email, password_hash, balance, failed_attempts, is_banned, role, shop_name)" +
+            "INSERT INTO users(id, username, password_hash, balance, failed_attempts, is_banned, role, shop_name)" +
             " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn().prepareStatement(sql)) {
             ps.setString(1, user.getId());
             ps.setString(2, user.getName());
-            ps.setString(3, user.getEmail());
             ps.setString(4, user.getPasswordHash());
             ps.setDouble(5, user.getBalance());
-            ps.setInt(6, user.getFailedLoginAttempts());
             ps.setInt(7, user.isBanned() ? 1 : 0);
             ps.setString(8, roleOf(user));
             // [THÊM] shop_name chỉ Seller mới có, các loại khác lưu NULL
@@ -54,11 +52,6 @@ public class UserDAOSQLiteImpl implements UserDAO {
     }
 
     @Override
-    public boolean existsByEmail(String email) {
-        return countWhere("SELECT COUNT(*) FROM users WHERE email = ?", email) > 0;
-    }
-
-    @Override
     public User findByUsername(String username) {
         return queryOne("SELECT * FROM users WHERE username = ?", username);
     }
@@ -74,10 +67,8 @@ public class UserDAOSQLiteImpl implements UserDAO {
             "UPDATE users SET email=?, password_hash=?, balance=?, failed_attempts=?," +
             " is_banned=?, role=?, shop_name=? WHERE id=?";
         try (PreparedStatement ps = conn().prepareStatement(sql)) {
-            ps.setString(1, user.getEmail());
             ps.setString(2, user.getPasswordHash());
             ps.setDouble(3, user.getBalance());
-            ps.setInt(4, user.getFailedLoginAttempts());
             ps.setInt(5, user.isBanned() ? 1 : 0);
             ps.setString(6, roleOf(user));
             ps.setString(7, user instanceof Seller ? ((Seller) user).getShopName() : null);
@@ -117,29 +108,26 @@ public class UserDAOSQLiteImpl implements UserDAO {
     private User mapRow(ResultSet rs) throws SQLException {
         String id        = rs.getString("id");
         String username  = rs.getString("username");
-        String email     = rs.getString("email");
         String hash      = rs.getString("password_hash");
         double balance   = rs.getDouble("balance");
-        int    failed    = rs.getInt("failed_attempts");
         boolean banned   = rs.getInt("is_banned") == 1;
         String role      = rs.getString("role");
         String shopName  = rs.getString("shop_name");
 
         User user;
         if ("SELLER".equals(role)) {
-            Seller s = new Seller(id, username, email, hash);
+            Seller s = new Seller(id, username, hash);
             if (shopName != null) s.setShopName(shopName);
             user = s;
         } else if ("ADMIN".equals(role)) {
-            user = new Admin(id, username, email, hash);
+            user = new Admin(id, username, hash);
         } else {
-            user = new Bidder(id, username, email, hash);
+            user = new Bidder(id, username, hash);
         }
 
         // [THÊM] Khôi phục trạng thái balance, failedAttempts, banned từ DB
         // Cần thiết vì constructor User luôn set balance=0, failed=0, banned=false
         user.setBalance(balance);
-        user.setFailedLoginAttempts(failed);
         user.setBanned(banned);
         return user;
     }

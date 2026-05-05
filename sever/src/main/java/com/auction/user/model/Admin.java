@@ -7,8 +7,8 @@ import com.auction.item.model.Product.Item;
 
 public class Admin extends User {
     private int adminLevel;
-    public Admin(String id, String name, String email, String passwordHash) {
-        super(id, name, email, passwordHash);
+    public Admin(String id, String name, String passwordHash) {
+        super(id, name, passwordHash);
         this.adminLevel = 1;
     }
     public int getAdminLevel() {
