@@ -6,18 +6,9 @@ import com.auction.auction.model.Auction;
 import com.auction.item.model.Product.Item;
 
 public class Admin extends User {
-    private int adminLevel;
     public Admin(String id, String name, String passwordHash) {
-        super(id, name, passwordHash);
-        this.adminLevel = 1;
+        super(id, name, passwordHash, "Admin");
     }
-    public int getAdminLevel() {
-        return adminLevel;
-    }
-    public void setAdminLevel(int level) {
-        this.adminLevel = level;
-    }
-
     
     // Xóa một phiên đấu giá khỏi danh sách */
     public void removeAuction(List<Auction> auctions, Auction target) {
@@ -44,7 +35,6 @@ public class Admin extends User {
     @Override
     public void printInfo() {
         super.printInfo();
-        System.out.println("ADMIN này có cấp độ :" + adminLevel);
     }
 
 }

@@ -1,8 +1,5 @@
 package com.auction.user.dao;
 
-// [THÊM] Toàn bộ file này là mới - UserDAO dùng SQLite thay vì in-memory HashMap
-// Cần thiết để dữ liệu user tồn tại sau khi server khởi động lại
-
 import com.auction.common.until.DatabaseConnection;
 import com.auction.user.model.Admin;
 import com.auction.user.model.Bidder;
@@ -16,7 +13,6 @@ import java.sql.SQLException;
 
 public class UserDAOSQLiteImpl implements UserDAO {
 
-    // [THÊM] Lấy connection từ Singleton DatabaseConnection thay vì tự tạo
     private Connection conn() {
         return DatabaseConnection.getInstance().getConnection();
     }
@@ -25,61 +21,55 @@ public class UserDAOSQLiteImpl implements UserDAO {
     public void save(User user) {
         String sql =
             "INSERT INTO users(id, username, password_hash, balance, failed_attempts, is_banned, role, shop_name)" +
-            " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            " VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn().prepareStatement(sql)) {
             ps.setString(1, user.getId());
             ps.setString(2, user.getName());
-            ps.setString(4, user.getPasswordHash());
-            ps.setDouble(5, user.getBalance());
-            ps.setInt(7, user.isBanned() ? 1 : 0);
-            ps.setString(8, roleOf(user));
-            // [THÊM] shop_name chỉ Seller mới có, các loại khác lưu NULL
-            ps.setString(9, user instanceof Seller ? ((Seller) user).getShopName() : null);
+            ps.setString(3, user.getPasswordHash());
+            ps.setDouble(4, user.getBalance());
+            ps.setInt(5, 0);
+            ps.setInt(6, user.isBanned() ? 1 : 0);
+            ps.setString(7, roleOf(user));
+            ps.setString(8, user instanceof Seller ? ((Seller) user).getShopName() : null);
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("[UserDAO] save lỗi: " + e.getMessage());
         }
     }
-
     @Override
     public boolean existsById(String id) {
         return countWhere("SELECT COUNT(*) FROM users WHERE id = ?", id) > 0;
     }
-
     @Override
     public boolean existsByUsername(String username) {
         return countWhere("SELECT COUNT(*) FROM users WHERE username = ?", username) > 0;
     }
-
     @Override
     public User findByUsername(String username) {
         return queryOne("SELECT * FROM users WHERE username = ?", username);
     }
-
     @Override
     public User findById(String id) {
         return queryOne("SELECT * FROM users WHERE id = ?", id);
     }
-
     @Override
     public void update(User user) {
         String sql =
-            "UPDATE users SET email=?, password_hash=?, balance=?, failed_attempts=?," +
+            "UPDATE users SET password_hash=?, balance=?, failed_attempts=?," +
             " is_banned=?, role=?, shop_name=? WHERE id=?";
         try (PreparedStatement ps = conn().prepareStatement(sql)) {
-            ps.setString(2, user.getPasswordHash());
-            ps.setDouble(3, user.getBalance());
-            ps.setInt(5, user.isBanned() ? 1 : 0);
-            ps.setString(6, roleOf(user));
-            ps.setString(7, user instanceof Seller ? ((Seller) user).getShopName() : null);
-            ps.setString(8, user.getId());
+            ps.setString(1, user.getPasswordHash());
+            ps.setDouble(2, user.getBalance());
+            ps.setInt(3, 0);
+            ps.setInt(4, user.isBanned() ? 1 : 0);
+            ps.setString(5, roleOf(user));
+            ps.setString(6, user instanceof Seller ? ((Seller) user).getShopName() : null);
+            ps.setString(7, user.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("[UserDAO] update lỗi: " + e.getMessage());
         }
     }
-
-    // [THÊM] Helper đếm rows để kiểm tra tồn tại - tái sử dụng cho 3 exists methods
     private int countWhere(String sql, String param) {
         try (PreparedStatement ps = conn().prepareStatement(sql)) {
             ps.setString(1, param);
@@ -90,8 +80,6 @@ public class UserDAOSQLiteImpl implements UserDAO {
         }
         return 0;
     }
-
-    // [THÊM] Helper lấy 1 row và chuyển thành User object
     private User queryOne(String sql, String param) {
         try (PreparedStatement ps = conn().prepareStatement(sql)) {
             ps.setString(1, param);
@@ -102,9 +90,6 @@ public class UserDAOSQLiteImpl implements UserDAO {
         }
         return null;
     }
-
-    // [THÊM] Chuyển ResultSet row thành đúng lớp con User (Bidder/Seller/Admin)
-    // Dựa vào cột role để quyết định tạo lớp nào
     private User mapRow(ResultSet rs) throws SQLException {
         String id        = rs.getString("id");
         String username  = rs.getString("username");
@@ -113,26 +98,21 @@ public class UserDAOSQLiteImpl implements UserDAO {
         boolean banned   = rs.getInt("is_banned") == 1;
         String role      = rs.getString("role");
         String shopName  = rs.getString("shop_name");
-
         User user;
         if ("SELLER".equals(role)) {
-            Seller s = new Seller(id, username, hash);
+            Seller s = new Seller(id, username, hash, "SELLER");
             if (shopName != null) s.setShopName(shopName);
             user = s;
         } else if ("ADMIN".equals(role)) {
             user = new Admin(id, username, hash);
         } else {
-            user = new Bidder(id, username, hash);
+            user = new Bidder(id, username, hash, "BIDDER");
         }
 
-        // [THÊM] Khôi phục trạng thái balance, failedAttempts, banned từ DB
-        // Cần thiết vì constructor User luôn set balance=0, failed=0, banned=false
         user.setBalance(balance);
         user.setBanned(banned);
         return user;
     }
-
-    // [THÊM] Map lớp Java → giá trị chuỗi lưu trong cột role của SQLite
     private String roleOf(User user) {
         if (user instanceof Admin)  return "ADMIN";
         if (user instanceof Seller) return "SELLER";

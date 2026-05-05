@@ -1,4 +1,7 @@
 package com.auction.controller;
+
+import com.auction.client.ServerConnection;
+import com.auction.client.dto.Response;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -8,63 +11,81 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.UUID;
 
 public class RegisterController {
-    @FXML private TextField nameField;
-    @FXML private TextField emailField;
-    @FXML private PasswordField passwordField;
-    @FXML private ComboBox<String> roleComboBox;
-    @FXML private Label errorLabel;
-    @FXML private PasswordField confirmPasswordField;
 
+    @FXML private TextField     userNameField;
+    @FXML private PasswordField passwordField;
+    @FXML private PasswordField confirmPasswordField;
+    @FXML private ComboBox<String> roleComboBox;
+    @FXML private Label         errorLabel;
+
+    @FXML
     public void initialize() {
-        // Load vai trò vào ComboBox
-        roleComboBox.setItems(FXCollections.observableArrayList(
-            "Bidder", "Seller"
-        ));
+        roleComboBox.setItems(FXCollections.observableArrayList("Bidder", "Seller"));
         errorLabel.setVisible(false);
     }
 
     @FXML
     private void handleRegister() {
-
         errorLabel.setVisible(false);
 
-        String name = nameField.getText().trim();
-        String email = emailField.getText().trim();
-        String password = passwordField.getText();
+        String username        = userNameField.getText().trim();
+        String password        = passwordField.getText();
         String confirmPassword = confirmPasswordField.getText();
-        String role =  roleComboBox.getValue();
+        String role            = roleComboBox.getValue();
 
-        // kiểm tra tính hợp lệ
-        if (name.isEmpty() || email.isEmpty() ||
-            password.isEmpty() || role == null) {
+        // Validate đầu vào
+        if (username.isEmpty() || password.isEmpty() || role == null) {
             showError("Vui lòng nhập đầy đủ thông tin");
             return;
-        // chỉ cho phép nhập chữ thường chữ in hoa và số 
-        // Tài khoản full chữ cho phép chữ thường và chữ in hoa
-        // Mật khẩu full số chỉ cho phép số
-
         }
-        // kiểm tra confirm passwword cho nó đúng với pass word
-        
-        
+        if (!password.equals(confirmPassword)) {
+            showError("Mật khẩu xác nhận không khớp");
+            return;
+        }
 
-        // TODO: Gửi lên Server sau
-        System.out.println("Đăng ký: " + name + " | " + email + " | " + role);
-        errorLabel.setStyle("-fx-text-fill: green;");
-        errorLabel.setText("Đăng ký thành công!");
-        errorLabel.setVisible(true);
-    }
+        // Gửi lên server
+        try {
+            String id = UUID.randomUUID().toString();
 
-    // Hàm hiện lỗi tránh lặp code
+            Response res = ServerConnection.getInstance().send("REGISTER", Map.of(
+                "id",              id,
+                "username",        username,
+                "password",        password,
+                "confirmPassword", confirmPassword,
+                "role",            role
+            ));
+
+            if (res.isSuccess()) {
+                showSuccess("Đăng ký thành công! Vui lòng đăng nhập.");
+            } else {
+                showError(res.getMessage());
+            }
+
+        } catch (IOException e) {
+            showError("Lỗi kết nối server: " + e.getMessage());
+        }
+    } 
+
     private void showError(String message) {
         errorLabel.setStyle("-fx-text-fill: red;");
         errorLabel.setText(message);
         errorLabel.setVisible(true);
     }
+
+    private void showSuccess(String message) {
+        errorLabel.setStyle("-fx-text-fill: green;");
+        errorLabel.setText(message);
+        errorLabel.setVisible(true);
+    }
+
     @FXML
     private void goToLogin(MouseEvent event) {
         try {
@@ -72,13 +93,14 @@ public class RegisterController {
                 getClass().getResource("/com/client/view/LoginView.fxml")
             );
             Parent root = loader.load();
-            Stage stage = (Stage) nameField.getScene().getWindow();
-            stage.setScene(new Scene(root, 600, 400));
+            Stage stage = (Stage) userNameField.getScene().getWindow();
+            stage.setScene(new Scene(root, 500, 700));
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-}
+} 
+
 
 

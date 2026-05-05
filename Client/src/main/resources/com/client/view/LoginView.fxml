@@ -28,12 +28,12 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <Label text="Tài khảon">
+            <Label text="Tên đăng nhập">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="nameTextField" maxWidth="-Infinity" 
+            <TextField fx:id="userNameField" maxWidth="-Infinity" 
                prefWidth="350.0" 
                promptText="Nhập tài khoản" 
                style="-fx-background-radius: 8; 
