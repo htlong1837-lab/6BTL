@@ -104,6 +104,16 @@
                 <version>3.2.5</version>
             </plugin>
 
+            <!-- Plugin chạy server bằng lệnh: mvn exec:java -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <mainClass>com.auction.common.network.SeverMain</mainClass>
+                </configuration>
+            </plugin>
+
             <!-- Plugin đóng gói thành file .jar có thể chạy được
                  mainClass: class nào chứa hàm main() để chạy server -->
             <plugin>
@@ -115,7 +125,7 @@
                         <manifest>
                             <!-- Khi chạy "java -jar auction-server.jar"
                                  JVM sẽ tìm class này để chạy đầu tiên -->
-                            <mainClass>com.auction.common.network.ServerMain</mainClass>
+                            <mainClass>com.auction.common.network.SeverMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

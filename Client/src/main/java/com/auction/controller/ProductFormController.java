@@ -1,128 +1,108 @@
 package com.auction.controller;
 
-import com.auction.client.model.SellerProduct;
+import com.auction.client.ServerConnection;
+import com.auction.client.SessionManager;
+import com.auction.client.dto.Response;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
-
+import javafx.scene.layout.VBox;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class ProductFormController {
 
-    @FXML private Label     titleLabel;
-    @FXML private TextField nameField;
+    @FXML private TextField nameField, priceField;
     @FXML private TextArea  descField;
-    @FXML private TextField priceField;
-    @FXML private TextField durationField;
-    @FXML private Label     messageLabel;
-    @FXML private Button    saveButton;
+    @FXML private ComboBox<String> categoryCombo;
+    @FXML private Label messageLabel;
 
-    private SellerProduct    editingProduct;
-    private SellerController sellerController;
+    // Dynamic containers
+    @FXML private VBox artFields, vehicleFields, electronicsFields;
 
-    public void setProduct(SellerProduct product) {
-        this.editingProduct = product;
-        if (product == null) {
-            titleLabel.setText("Thêm sản phẩm mới");
-            saveButton.setText("Thêm");
-        } else {
-            titleLabel.setText("Sửa sản phẩm");
-            saveButton.setText("Cập nhật");
-            nameField .setText(product.getName());
-            descField .setText(product.getDescription());
-            priceField.setText(String.valueOf((long) product.getStartPrice()));
+    // Art
+    @FXML private TextField artistField, mediumField;
+    // Vehicle
+    @FXML private TextField makeField, modelField, yearField;
+    // Electronics
+    @FXML private TextField brandField, warrantyField;
 
-            long remaining = product.getEndTime() - System.currentTimeMillis();
-            long hours     = Math.max(1, remaining / 3_600_000);
-            durationField.setText(String.valueOf(hours));
-        }
+    @FXML public void initialize() {
+        categoryCombo.getItems().addAll("Art", "Vehicle", "Electronics");
     }
 
-    public void setSellerController(SellerController controller) {
-        this.sellerController = controller;
+    @FXML void onCategoryChanged() {
+        String sel = categoryCombo.getValue();
+        show(artFields,         "Art".equals(sel));
+        show(vehicleFields,     "Vehicle".equals(sel));
+        show(electronicsFields, "Electronics".equals(sel));
     }
 
-    @FXML
-    private void handleSave() {
-        String name     = nameField    .getText().trim();
-        String desc     = descField    .getText().trim();
-        String priceStr = priceField   .getText().trim();
-        String hourStr  = durationField.getText().trim();
+    private void show(VBox box, boolean v) { box.setVisible(v); box.setManaged(v); }
 
-        if (name.isEmpty()) {
-            showMessage("Vui lòng nhập tên sản phẩm!", "red"); return;
-        }
-        if (priceStr.isEmpty()) {
-            showMessage("Vui lòng nhập giá khởi điểm!", "red"); return;
-        }
+    @FXML void handleSubmit() {
+        String name     = nameField.getText().trim();
+        String des      = descField.getText().trim();
+        String priceStr = priceField.getText().trim();
+        String category = categoryCombo.getValue();
 
+        if (name.isEmpty() || des.isEmpty() || priceStr.isEmpty() || category == null) {
+            msg("Vui lòng điền đầy đủ thông tin cơ bản.", false); return;
+        }
         double price;
-        try {
-            price = Double.parseDouble(priceStr.replace(",", ""));
-            if (price <= 0) throw new NumberFormatException();
-        } catch (NumberFormatException e) {
-            showMessage("Giá khởi điểm không hợp lệ!", "red"); return;
+        try { price = Double.parseDouble(priceStr); }
+        catch (NumberFormatException e) { msg("Giá không hợp lệ.", false); return; }
+
+        // Dùng Map<String, Object> để gửi cả String lẫn Number
+        Map<String, Object> payload = new HashMap<>(Map.of(
+            "id",         UUID.randomUUID().toString(),
+            "type",       category.toUpperCase(),
+            "name",       name,
+            "des",        des,
+            "startPrice", price,          // kiểu double → server parse đúng
+            "category",   category,
+            "sellerId",   SessionManager.getInstance().getUserId()
+        ));
+
+        switch (category) {
+            case "Art":
+                if (artistField.getText().isEmpty() || mediumField.getText().isEmpty()) {
+                    msg("Điền đầy đủ thông tin nghệ thuật.", false); return;
+                }
+                payload.put("artist", artistField.getText());
+                payload.put("medium", mediumField.getText());
+                break;
+            case "Vehicle":
+                if (makeField.getText().isEmpty() || modelField.getText().isEmpty() || yearField.getText().isEmpty()) {
+                    msg("Điền đầy đủ thông tin xe.", false); return;
+                }
+                payload.put("make",  makeField.getText());
+                payload.put("model", modelField.getText());
+                payload.put("year",  Integer.parseInt(yearField.getText()));  // int
+                break;
+            case "Electronics":
+                if (brandField.getText().isEmpty() || warrantyField.getText().isEmpty()) {
+                    msg("Điền đầy đủ thông tin điện tử.", false); return;
+                }
+                payload.put("brand",          brandField.getText());
+                payload.put("warrantyMonths", Integer.parseInt(warrantyField.getText()));  // int
+                break;
         }
-
-        if (hourStr.isEmpty()) {
-            showMessage("Vui lòng nhập thời gian đấu giá!", "red"); return;
-        }
-
-        long hours;
-        try {
-            hours = Long.parseLong(hourStr);
-            if (hours <= 0) throw new NumberFormatException();
-        } catch (NumberFormatException e) {
-            showMessage("Thời gian phải là số nguyên dương!", "red"); return;
-        }
-
-        long endTime = System.currentTimeMillis() + hours * 3_600_000L;
-        SellerProduct product;
-
-        if (editingProduct == null) {
-            product = new SellerProduct(UUID.randomUUID().toString(), name, desc, price, endTime);
-        } else {
-            editingProduct.setName(name);
-            editingProduct.setDescription(desc);
-            editingProduct.setStartPrice(price);
-            editingProduct.setEndTime(endTime);
-            product = editingProduct;
-        }
-
-        if (sellerController != null) {
-            sellerController.onProductSaved(product);
-        }
-
-        showMessage("Lưu thành công!", "green");
 
         new Thread(() -> {
-            try { Thread.sleep(800); } catch (Exception ignored) {}
-            javafx.application.Platform.runLater(this::goBack);
+            try {
+                Response res = ServerConnection.getInstance().send("CREATE_ITEM", payload);
+                javafx.application.Platform.runLater(() -> msg(res.getMessage(), res.isSuccess()));
+            } catch (IOException e) {
+                javafx.application.Platform.runLater(() -> msg("Lỗi: " + e.getMessage(), false));
+            }
         }).start();
     }
 
-    @FXML
-    private void handleCancel() {
-        goBack();
-    }
-
-    private void goBack() {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/com/client/view/SellerView.fxml")
-            );
-            Parent root  = loader.load();
-            Stage  stage = (Stage) nameField.getScene().getWindow();
-            stage.setScene(new Scene(root, 900, 600));
-        } catch (IOException e) { e.printStackTrace(); }
-    }
-
-    private void showMessage(String msg, String color) {
-        messageLabel.setText(msg);
-        messageLabel.setStyle("-fx-text-fill: " + color + ";");
+    private void msg(String m, boolean ok) {
+        messageLabel.setStyle("-fx-text-fill:" + (ok ? "#27ae60" : "#e74c3c") + ";");
+        messageLabel.setText(m);
     }
 }
+
