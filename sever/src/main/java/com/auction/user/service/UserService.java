@@ -23,7 +23,7 @@ public class UserService {
     //=====================================================
 
     public String signUp(String id,String username,
-                         String password, String confirmPassword) throws UserException, AuthenticationException {
+                         String password, String confirmPassword, String role) throws UserException, AuthenticationException {
 
 
         //========================ID===========================
@@ -49,10 +49,18 @@ public class UserService {
         if (!password.equals(confirmPassword))
             throw new PasswordAuthenticationException("Mật khẩu xác nhận không khớp.");
 
-        
-        // Tạo user mới và lưu vào "database" và mặc định là Bidder.
-            User newUser        = new Bidder(id, username, password);
+        //========================ROLE===========================
+
+        if (role == null || role.isBlank())
+            throw new InvalidDataException("Vai trò không được để trống.");
+        if (role.equals("Bidder")) {
+            User newUser = new Bidder(id, username, password, role);
             userDAO.save(newUser);
+        } else if (role.equals("Seller")){
+            User newUser = new Seller(id, username, password, role);
+            userDAO.save(newUser);
+        }
+
         return "Đăng ký thành công!";
     }
 

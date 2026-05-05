@@ -3,9 +3,8 @@ import com.auction.bid.model.BidTransaction;
 import java.util.ArrayList;
 import java.util.List;
 public class Bidder extends User {
-    public Bidder(String id, String name, String passwordHash) {
-        super(id, name, passwordHash);
-
+    public Bidder(String id, String name, String passwordHash, String role) {
+        super(id, name, passwordHash, "Bidder");
     }
     public double deposit(double amount) {
         if (amount <=0) {

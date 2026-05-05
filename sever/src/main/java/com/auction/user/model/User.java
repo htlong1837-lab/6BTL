@@ -6,7 +6,7 @@ public abstract class User extends Entity {
     protected String passwordHash;
     protected double balance;
     private boolean isBanned = false;
-    private String role;
+    protected String role;
 
     public User(String id, String name, String passwordHash, String role) {
         super(id);
