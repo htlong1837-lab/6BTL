@@ -6,12 +6,6 @@ import org.junit.jupiter.api.DisplayName;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.auction.auction.dao.AuctionDAO;
 import com.auction.bid.dao.BidDAO;
 import com.auction.bid.service.BidLockManager;

@@ -1,5 +1,4 @@
 package com.auction.item.model.Product;
-import java.util.List;
 public class Vehicle extends Item {
     private String make;
     private String model;

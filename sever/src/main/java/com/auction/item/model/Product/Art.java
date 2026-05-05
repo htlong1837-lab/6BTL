@@ -1,7 +1,5 @@
 package com.auction.item.model.Product;
-import java.util.List;
 
-import com.auction.item.model.Product.Item;
 public class Art extends Item {
     private String artist;
     private String medium;
@@ -49,9 +47,6 @@ public class Art extends Item {
         }
 
     }
-
-
-
     @Override
     public void printInfo() {
         super.printInfo();

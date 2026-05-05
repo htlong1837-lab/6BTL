@@ -1,6 +1,5 @@
 package com.auction.item.model.Product;
 import com.auction.common.model.Entity;
-import java.util.ArrayList;
 import java.util.List;
 public abstract class Item extends Entity {
     protected String name;

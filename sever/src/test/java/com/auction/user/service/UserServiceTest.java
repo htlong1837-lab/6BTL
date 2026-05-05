@@ -12,8 +12,6 @@ import static org.junit.jupiter.api.Assertions.*;
 // assertEquals        - kiểm tra 2 giá trị BẰNG nhau
 
 import javax.naming.AuthenticationException;
-
-import com.auction.user.service.UserService;
 import com.auction.user.dao.UserDAOImpl;
 import com.auction.user.model.User;
 import com.auction.exception.UserException.*;

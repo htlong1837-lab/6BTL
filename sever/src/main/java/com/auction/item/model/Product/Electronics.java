@@ -1,5 +1,4 @@
 package com.auction.item.model.Product;
-import java.util.List;
 public class Electronics extends Item {
     private String brand;
     private int warrantyMonths;
