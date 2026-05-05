@@ -1,138 +1,201 @@
 package com.auction.controller;
 
-import com.auction.client.ServerConnection;
-import com.auction.client.SessionManager;
-import com.auction.client.dto.Response;
-import com.google.gson.*;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.*;
-import javafx.fxml.*;
-import javafx.scene.*;
+import com.auction.client.model.UserItem;
+import com.auction.client.model.FakeDataHelper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class AdminController {
 
-    @FXML private StackPane contentArea;
-    private final Gson gson = new Gson();
+    // -- FXML binding ------------------
+    @FXML private Label totalProductsLabel;
+    @FXML private Label totalBidsLabel;
+    @FXML private Label totalUsersLabel;
+    @FXML private Label totalAuctionsLabel;
 
-    @FXML public void initialize() { showApproval(); }
+    @FXML private TableView<UserItem>           userTable;
+    @FXML private TableColumn<UserItem, String> colUserId;
+    @FXML private TableColumn<UserItem, String> colUsername;
+    @FXML private TableColumn<UserItem, String> colEmail;
+    @FXML private TableColumn<UserItem, String> colRole;
+    @FXML private TableColumn<UserItem, String> colUserStatus;
 
-    @FXML public void showApproval() {
-        new Thread(() -> {
-            try {
-                Response res = ServerConnection.getInstance().send("LIST_ITEMS", Map.of());
-                Platform.runLater(() -> {
-                    if (!res.isSuccess()) return;
-                    ObservableList<JsonObject> data = FXCollections.observableArrayList();
-                    for (JsonElement e : gson.toJsonTree(res.getData()).getAsJsonArray())
-                        data.add(e.getAsJsonObject());
+    @FXML private TextField searchUserField;
+    @FXML private Label     userStatusLabel;
 
-                    TableView<JsonObject> table = new TableView<>(data);
+    // -- State ------------------------------------
+    private ObservableList<UserItem> userList =
+        FXCollections.observableArrayList();
+    private List<UserItem> allUsers;
 
-                    TableColumn<JsonObject, String> cName = new TableColumn<>("Sản phẩm");
-                    cName.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().get("name").getAsString()));
-                    cName.setPrefWidth(180);
+    // -- Khởi tạo ------------------------------ 
+    
+    @FXML
+    public void initialize() {
+        setupColumns();
+        loadFakeData(); // TODO: thay bằng loadFromServer()
+    }
 
-                    TableColumn<JsonObject, String> cType = new TableColumn<>("Loại");
-                    cType.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().get("category").getAsString()));
+    private void setupColumns() {
+        colUserId    .setCellValueFactory(new PropertyValueFactory<>("id"));
+        colUsername  .setCellValueFactory(new PropertyValueFactory<>("username"));
+        colEmail     .setCellValueFactory(new PropertyValueFactory<>("email"));
+        colRole      .setCellValueFactory(new PropertyValueFactory<>("role"));
+        colUserStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
 
-                    TableColumn<JsonObject, String> cSeller = new TableColumn<>("Seller");
-                    cSeller.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().get("sellerId").getAsString()));
-                    cSeller.setPrefWidth(160);
-
-                    // Cột nút duyệt / từ chối
-                    // TODO: Server cần thêm action APPROVE_ITEM vào RequestRouter
-                    TableColumn<JsonObject, String> cAct = new TableColumn<>("Thao tác");
-                    cAct.setPrefWidth(180);
-                    cAct.setCellFactory(col -> new TableCell<>() {
-                        final Button btnOk  = new Button("Duyệt");
-                        final Button btnNo  = new Button("Từ chối");
-                        final HBox   box    = new HBox(5, btnOk, btnNo);
-                        {
-                            btnOk.setStyle("-fx-background-color:#27ae60;-fx-text-fill:white;");
-                            btnNo.setStyle("-fx-background-color:#e74c3c;-fx-text-fill:white;");
-                            btnOk.setOnAction(e ->
-                                approveItem(getTableView().getItems().get(getIndex()).get("id").getAsString(), true));
-                            btnNo.setOnAction(e ->
-                                approveItem(getTableView().getItems().get(getIndex()).get("id").getAsString(), false));
-                        }
-                        @Override protected void updateItem(String item, boolean empty) {
-                            super.updateItem(item, empty);
-                            setGraphic(empty ? null : box);
-                        }
-                    });
-
-                    table.getColumns().addAll(cName, cType, cSeller, cAct);
-
-                    VBox vbox = new VBox(10,
-                        new Label("Danh sách sản phẩm — " + data.size() + " mục"), table);
-                    VBox.setVgrow(table, Priority.ALWAYS);
-                    contentArea.getChildren().setAll(vbox);
-                });
-            } catch (IOException e) {
-                Platform.runLater(() -> contentArea.getChildren().setAll(new Label("Lỗi: " + e.getMessage())));
+        // Đổi màu dòng theo trạng thái
+        // BANNED → đỏ nhạt | ACTIVE → bình thường
+        userTable.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(UserItem user, boolean empty) {
+                super.updateItem(user, empty);
+                if (user == null || empty) {
+                    setStyle("");
+                } else if ("BANNED".equals(user.getStatus())) {
+                    setStyle("-fx-background-color: #FFEBEE;");
+                } else {
+                    setStyle("");
+                }
             }
-        }).start();
+        });
+
+        userTable.setItems(userList);
     }
 
-    private void approveItem(String itemId, boolean approved) {
-        // TODO: Thêm case "APPROVE_ITEM" vào server RequestRouter:
-        // case "APPROVE_ITEM":
-        //     String id = (String) map.get("itemId");
-        //     boolean ok = Boolean.parseBoolean((String) map.get("approved"));
-        //     itemController.approveItem(id, ok);
-        //     return Response.ok("Đã " + (ok ? "duyệt" : "từ chối"), null);
-        new Alert(Alert.AlertType.INFORMATION,
-            "Server chưa có action APPROVE_ITEM.\nItem: " + itemId, ButtonType.OK).showAndWait();
+    private void loadFakeData() {
+        // TODO: xóa, thay bằng gọi NetworkService
+        userList.setAll(FakeDataHelper.makeUsers());
+        allUsers = List.copyOf(userList);
+        updateStats();
     }
 
-    @FXML public void showAuctions() {
-        new Thread(() -> {
-            try {
-                Response res = ServerConnection.getInstance().send("LIST_AUCTIONS", Map.of());
-                Platform.runLater(() -> {
-                    if (!res.isSuccess()) return;
-                    ObservableList<JsonObject> data = FXCollections.observableArrayList();
-                    for (JsonElement e : gson.toJsonTree(res.getData()).getAsJsonArray())
-                        data.add(e.getAsJsonObject());
+    // -- Sự kiện --------------------------------
+    @FXML
+    private void handleSearchUser() {
+        String kw = searchUserField.getText().trim().toLowerCase();
 
-                    TableView<JsonObject> table = new TableView<>(data);
+        // Filter theo cả username lẫn email
+        List<UserItem> result = kw.isEmpty()
+            ? allUsers
+            : allUsers.stream()
+                .filter(u -> u.getUsername().toLowerCase().contains(kw)
+                          || u.getEmail()   .toLowerCase().contains(kw))
+                .collect(Collectors.toList());
 
-                    TableColumn<JsonObject, String> cId = new TableColumn<>("Auction ID");
-                    cId.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().get("id").getAsString()));
-                    cId.setPrefWidth(260);
-
-                    TableColumn<JsonObject, String> cStatus = new TableColumn<>("Trạng thái");
-                    cStatus.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().get("status").getAsString()));
-
-                    TableColumn<JsonObject, String> cPrice = new TableColumn<>("Giá hiện tại");
-                    cPrice.setCellValueFactory(d -> new SimpleStringProperty(
-                        String.format("%,.0f VND", d.getValue().get("currentPrice").getAsDouble())));
-
-                    table.getColumns().addAll(cId, cStatus, cPrice);
-
-                    VBox vbox = new VBox(10, new Label("Các phiên đấu giá — " + data.size() + " mục"), table);
-                    VBox.setVgrow(table, Priority.ALWAYS);
-                    contentArea.getChildren().setAll(vbox);
-                });
-            } catch (IOException e) {
-                Platform.runLater(() -> contentArea.getChildren().setAll(new Label("Lỗi: " + e.getMessage())));
-            }
-        }).start();
+        userList.setAll(result);
+        userStatusLabel.setText(result.size() + " người dùng");
     }
 
-    @FXML public void handleLogout() {
-        SessionManager.getInstance().clear();
+    @FXML
+    private void handleBan() {
+        UserItem selected = userTable
+            .getSelectionModel().getSelectedItem();
+
+        // Validate 1 — phải chọn user trước
+        if (selected == null) {
+            showAlert("Chưa chọn user",
+                "Vui lòng chọn người dùng muốn ban!");
+            return;
+        }
+
+        // Validate 2 — không ban người đã bị ban
+        if ("BANNED".equals(selected.getStatus())) {
+            showAlert("Đã bị ban",
+                selected.getUsername() + " đã bị ban rồi!");
+            return;
+        }
+
+        // Xác nhận trước khi ban
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Xác nhận ban");
+        confirm.setHeaderText("Ban: " + selected.getUsername());
+        confirm.setContentText(
+            "Người dùng sẽ không thể đăng nhập được nữa!"
+        );
+
+        Optional<ButtonType> result = confirm.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            selected.setStatus("BANNED");
+            userTable.refresh(); // ép TableView vẽ lại để đổi màu dòng
+            updateStats();
+            // TODO: gửi BAN request lên server
+        }
+    }
+
+    @FXML
+    private void handleUnban() {
+        UserItem selected = userTable
+            .getSelectionModel().getSelectedItem();
+
+        // Validate 1 — phải chọn user trước
+        if (selected == null) {
+            showAlert("Chưa chọn user",
+                "Vui lòng chọn người dùng muốn unban!");
+            return;
+        }
+
+        // Validate 2 — không unban người đang active
+        if ("ACTIVE".equals(selected.getStatus())) {
+            showAlert("Đang hoạt động",
+                selected.getUsername() + " đang hoạt động bình thường!");
+            return;
+        }
+
+        selected.setStatus("ACTIVE");
+        userTable.refresh(); // ép TableView vẽ lại để xóa màu đỏ
+        updateStats();
+        // TODO: gửi UNBAN request lên server
+    }
+
+    @FXML
+    private void handleLogout() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/client/view/LoginView.fxml"));
-            Stage stage = (Stage) contentArea.getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/com/client/view/LoginView.fxml")
+            );
+            Parent root = loader.load();
+            Stage stage = (Stage) searchUserField.getScene().getWindow();
             stage.setScene(new Scene(root, 500, 700));
-        } catch (Exception e) { e.printStackTrace(); }
+            stage.show();
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    // -- Helper ------------------------------
+    private void updateStats() {
+        long activeCount = userList.stream()
+            .filter(u -> "ACTIVE".equals(u.getStatus()))
+            .count();
+        long bannedCount = userList.stream()
+            .filter(u -> "BANNED".equals(u.getStatus()))
+            .count();
+
+        totalUsersLabel   .setText(String.valueOf(userList.size()));
+        totalProductsLabel.setText("9");  // TODO: lấy từ server
+        totalBidsLabel    .setText("23"); // TODO: lấy từ server
+        totalAuctionsLabel.setText(String.valueOf(activeCount));
+
+        userStatusLabel.setText(
+            userList.size() + " người dùng"
+            + "  (" + bannedCount + " bị ban)"
+        );
+    }
+
+    private void showAlert(String title, String msg) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(title);
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
 }
-

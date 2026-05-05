@@ -31,11 +31,17 @@
 
                   <VBox prefHeight="8" />
 
-                  <!-- nhập tài khoản -->
-                  <Label text="Tên đăng nhập *">
+                  <!-- Nhập họ tên -->
+                  <Label text="Họ và tên *">
                      <font><Font size="13.0" /></font>
                   </Label>
-                  <TextField fx:id="userNameField" maxWidth="Infinity" promptText="Nhập tên đăng nhập" style="-fx-background-radius: 8;                                     -fx-border-radius: 8;                                     -fx-border-color: #dce3f0;                                     -fx-border-width: 1;                                     -fx-padding: 10;                                     -fx-font-size: 13;" />
+                  <TextField fx:id="nameField" maxWidth="Infinity" promptText="Nhập họ và tên" style="-fx-background-radius: 8;                                     -fx-border-radius: 8;                                     -fx-border-color: #dce3f0;                                     -fx-border-width: 1;                                     -fx-padding: 10;                                     -fx-font-size: 13;" />
+
+                  <!-- nhập email -->
+                  <Label text="Email *">
+                     <font><Font size="13.0" /></font>
+                  </Label>
+                  <TextField fx:id="emailField" maxWidth="Infinity" promptText="Nhập địa chỉ email" style="-fx-background-radius: 8;                                     -fx-border-radius: 8;                                     -fx-border-color: #dce3f0;                                     -fx-border-width: 1;                                     -fx-padding: 10;                                     -fx-font-size: 13;" />
 
                   <!-- Mật khẩu -->
                   <Label text="Mật khẩu *">

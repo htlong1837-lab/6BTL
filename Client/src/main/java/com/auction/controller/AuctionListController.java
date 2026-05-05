@@ -1,120 +1,135 @@
 package com.auction.controller;
 
-import com.auction.client.ServerConnection;
-import com.auction.client.SessionManager;
-import com.auction.client.dto.Response;
-import com.google.gson.*;
-import javafx.application.Platform;
+import com.auction.client.model.Auction;
+import com.auction.client.model.FakeDataHelper;
+
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.*;
-import javafx.fxml.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+
 import java.io.IOException;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AuctionListController {
 
-    @FXML private Label usernameLabel, balanceLabel, statusLabel;
-    @FXML private TableView<JsonObject> auctionTable;
-    @FXML private TableColumn<JsonObject, String> colName, colPrice, colLeader, colStatus, colAction;
+    @FXML private TableView<Auction>           auctionTable;
+    @FXML private TableColumn<Auction, String> colName;
+    @FXML private TableColumn<Auction, String> colPrice;
+    @FXML private TableColumn<Auction, String> colStatus;
+    @FXML private TableColumn<Auction, String> colEndTime;
+    @FXML private TableColumn<Auction, String> colSeller;
+    @FXML private TextField                    searchField;
+    @FXML private Label                        statusLabel;
+    @FXML private Label                        usernameLabel;
 
-    private final Gson gson = new Gson();
-    private final ObservableList<JsonObject> auctions = FXCollections.observableArrayList();
+    private ObservableList<Auction> auctionList = FXCollections.observableArrayList();
+    private List<Auction> allAuctions;
 
     @FXML
     public void initialize() {
-        SessionManager s = SessionManager.getInstance();
-        usernameLabel.setText("Xin chào, " + s.getUsername());
-        balanceLabel.setText("Số dư: " + String.format("%,.0f VND", s.getBalance()));
+        setupColumns();
+        loadFakeData(); // TODO: thay bằng loadFromServer()
+    }
 
-        colName.setCellValueFactory(d -> {
-            JsonElement item = d.getValue().get("item");
-            if (item == null || item.isJsonNull()) return new SimpleStringProperty("N/A");
-            return new SimpleStringProperty(item.getAsJsonObject().get("name").getAsString());
-        });
-        colPrice.setCellValueFactory(d ->
-            new SimpleStringProperty(String.format("%,.0f", d.getValue().get("currentPrice").getAsDouble())));
-        colLeader.setCellValueFactory(d -> {
-            JsonElement e = d.getValue().get("highestBidder");
-            return new SimpleStringProperty(e == null || e.isJsonNull() ? "Chưa có" : e.getAsString());
-        });
-        colStatus.setCellValueFactory(d ->
-            new SimpleStringProperty(d.getValue().get("status").getAsString()));
+    private void setupColumns() {
+        colName.setCellValueFactory(data ->
+            new SimpleStringProperty(data.getValue().getItemName()));
 
-        // Cột nút "Vào phòng"
-        colAction.setCellFactory(col -> new TableCell<>() {
-            final Button btn = new Button("Vào phòng");
-            { btn.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;");
-              btn.setOnAction(e -> openAuctionRoom(getTableView().getItems().get(getIndex()))); }
-            @Override protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(empty ? null : btn);
-            }
+        colPrice.setCellValueFactory(data ->
+            new SimpleStringProperty(
+                String.format("%,.0f VND", data.getValue().getCurrentPrice())));
+
+        colStatus.setCellValueFactory(data ->
+            new SimpleStringProperty(data.getValue().getStatus()));
+
+        colEndTime.setCellValueFactory(data -> {
+            String time = new SimpleDateFormat("HH:mm dd/MM/yyyy")
+                .format(new Date(data.getValue().getEndTime()));
+            return new SimpleStringProperty(time);
         });
 
-        auctionTable.setItems(auctions);
-        loadAuctions();
+        colSeller.setCellValueFactory(data ->
+            new SimpleStringProperty(data.getValue().getSellerName()));
+
+        auctionTable.setItems(auctionList);
+    }
+
+    private void loadFakeData() {
+        auctionList.setAll(FakeDataHelper.makeAuctions());
+        allAuctions = List.copyOf(auctionList);
+        updateStatus();
     }
 
     @FXML
-    public void loadAuctions() {
-        new Thread(() -> {
-            try {
-                Response res = ServerConnection.getInstance().send("LIST_AUCTIONS", Map.of());
-                if (res.isSuccess()) {
-                    JsonArray arr = gson.toJsonTree(res.getData()).getAsJsonArray();
-                    Platform.runLater(() -> {
-                        auctions.clear();
-                        for (JsonElement e : arr) auctions.add(e.getAsJsonObject());
-                    });
-                } else {
-                    Platform.runLater(() -> statusLabel.setText(res.getMessage()));
-                }
-            } catch (IOException e) {
-                Platform.runLater(() -> statusLabel.setText("Lỗi kết nối: " + e.getMessage()));
-            }
-        }).start();
+    public void handleSearch(ActionEvent e) {
+        String kw = searchField.getText().trim().toLowerCase();
+        List<Auction> result = kw.isEmpty()
+            ? allAuctions
+            : allAuctions.stream()
+                .filter(a -> a.getItemName().toLowerCase().contains(kw))
+                .collect(Collectors.toList());
+        auctionList.setAll(result);
+        updateStatus();
     }
 
-    private void openAuctionRoom(JsonObject auction) {
+    @FXML
+    private void handleRowClick(MouseEvent e) {
+        if (e.getClickCount() < 2) return;
+        Auction selected = auctionTable.getSelectionModel().getSelectedItem();
+        if (selected == null) return;
+        goToBidding(selected);
+    }
+
+    @FXML
+    private void handleLogout() {
+        goToLogin();
+    }
+
+    private void goToBidding(Auction auction) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/client/view/AuctionRoomView.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/com/client/view/BiddingView.fxml")
+            );
             Parent root = loader.load();
-            BiddingController ctrl = loader.getController();
-            ctrl.setAuction(auction);
-            Stage stage = new Stage();
-            stage.setTitle("Phòng đấu giá — " +
-                auction.getAsJsonObject("item").get("name").getAsString());
-            stage.setScene(new Scene(root, 700, 520));
-            stage.show();
-        } catch (Exception e) {
-            statusLabel.setText("Không mở được phòng: " + e.getMessage());
-        }
-    }
 
-    @FXML void showAuctions() { loadAuctions(); }
+            BiddingController next = loader.getController();
+            next.setAuction(auction);
 
-    @FXML
-    void showWallet() {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/client/view/WalletView.fxml"));
-            Stage st = new Stage();
-            st.setTitle("Ví của tôi");
-            st.setScene(new Scene(root, 380, 280));
-            st.show();
-        } catch (Exception e) { statusLabel.setText("Lỗi: " + e.getMessage()); }
-    }
-
-    @FXML
-    void handleLogout() {
-        SessionManager.getInstance().clear();
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/client/view/LoginView.fxml"));
             Stage stage = (Stage) auctionTable.getScene().getWindow();
+            stage.setScene(new Scene(root, 900, 600));
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    private void goToLogin() {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/com/client/view/LoginView.fxml")
+            );
+            Parent root  = loader.load();
+            Stage  stage = (Stage) auctionTable.getScene().getWindow();
             stage.setScene(new Scene(root, 500, 700));
-        } catch (Exception e) { e.printStackTrace(); }
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    private void updateStatus() {
+        statusLabel.setText(auctionList.size() + " phiên đấu giá");
+    }
+
+    public void setUsername(String name) {
+        usernameLabel.setText("Xin chào " + name);
     }
 }
-

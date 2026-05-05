@@ -128,11 +128,19 @@ public class BiddingController {
         }
 
         currentPrice = amount;
+<<<<<<< HEAD
         topBidder    = "Bạn";
+=======
+        topBidder    = "Bạn"; // TODO: lấy username từ server
+>>>>>>> parent of 542f7ee (0.0'')
         updatePriceUI();
         addHistory("Bạn", amount);
         showMessage("Đặt giá thành công!", "green");
         bidAmountField.clear();
+<<<<<<< HEAD
+=======
+        // TODO: gửi BID request lên server
+>>>>>>> parent of 542f7ee (0.0'')
     }
 
     private void addHistory(String name, double amount) {
