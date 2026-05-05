@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.auction.controller.BiddingController"
+            style="-fx-padding: 15; ">
+
+    <!-- THÔNG TIN SẢN PHẨM -->
+    <top>
+        <VBox style="-fx-background-color: white; -fx-padding: 15; -fx-spacing: 6;
+                     -fx-background-radius: 8; -fx-effect: dropshadow(gaussian,#ccc,4,0,0,2);">
+            <Label fx:id="productNameLabel"  />
+            <Label fx:id="productDescLabel"  />
+            <Label fx:id="currentPriceLabel" style="-fx-font-size: 20;  -fx-font-weight: bold;"/>
+            <Label fx:id="highestBidderLabel"/>
+            <BorderPane.margin><Insets bottom="10"/></BorderPane.margin>
+        </VBox>
+    </top>
+
+    <!-- LỊCH SỬ ĐẶT GIÁ -->
+    <center>
+        <VBox style="-fx-padding: 10; -fx-spacing: 5;">
+            <Label text="Lịch sử đặt giá" style="-fx-font-weight: bold;"/>
+            <ListView fx:id="bidHistoryList" VBox.vgrow="ALWAYS"/>
+        </VBox>
+    </center>
+
+    <!-- FORM ĐẶT GIÁ -->
+    <bottom>
+        <VBox style=" -fx-padding: 15; -fx-spacing: 10;
+                     -fx-background-radius: 8; -fx-effect: dropshadow(gaussian,#ccc,4,0,0,-2);">
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <TextField fx:id="bidAmountField" promptText="Nhập số tiền đặt giá..." prefWidth="220"/>
+                <Button text="Đặt giá" onAction="#handlePlaceBid"
+                        style=" -fx-font-weight: bold;"/>
+                <Button text="Cập nhật" onAction="#refreshAuction"/>
+            </HBox>
+            <Label fx:id="messageLabel"/>
+        </VBox>
+    </bottom>
+</BorderPane>

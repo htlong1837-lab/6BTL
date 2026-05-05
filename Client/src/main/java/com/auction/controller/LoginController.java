@@ -1,9 +1,11 @@
 
 package com.auction.controller;
 
-import com.auction.client.model.FakeDataHelper;
-import com.auction.client.model.UserItem;
-
+import com.auction.client.ServerConnection;
+import com.auction.client.SessionManager;
+import com.auction.client.dto.Response;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,11 +16,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.Map;
 
 public class LoginController {
 
-    @FXML private TextField nameTextField;
+    @FXML private TextField userNameField;
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
 
@@ -28,40 +31,42 @@ public class LoginController {
     }
 
     @FXML
-    private void handleLogin() {
-        String nameText    = nameTextField.getText().trim();
-        String password = passwordField.getText();
+private void handleLogin() {
+    String username = userNameField.getText().trim();
+    String password = passwordField.getText();
 
-        if (nameText.isEmpty() || password.isEmpty() || password.length() < 6) {
-            showError("Vui lòng nhập đầy đủ thông tin");
-            return;
-        }
-
-        /*if (// TODO : làm lại các trường hợp login chỉ để chữ cái và số
-        ){
-            showError("Email không hợp lệ.");
-            return;
-        }*/
-
-        // TODO: thay bằng gọi server — hiện dùng fake data
-        List<UserItem> users = FakeDataHelper.makeUsers();
-        UserItem matched = users.stream()
-            .filter(u -> u.getEmail().equalsIgnoreCase(nameText))
-            .findFirst()
-            .orElse(null);
-
-        if (matched == null) {
-            showError("Email không tồn tại!");
-            return;
-        }
-
-        if ("BANNED".equals(matched.getStatus())) {
-            showError("Tài khoản của bạn đã bị khóa!");
-            return;
-        }
-
-        navigateByRole(matched.getRole());
+    if (username.isEmpty() || password.isEmpty() || password.length() < 6) {
+        showError("Vui lòng nhập đầy đủ thông tin");
+        return;
     }
+
+    try {
+        
+        Response res = ServerConnection.getInstance().send("LOGIN", Map.of(
+            "username",username ,
+            "password",password
+        ));
+
+        if (!res.isSuccess()) {
+            showError(res.getMessage());
+            return;
+        }
+
+        // Server trả user object trong data — parse role
+        // Tạm dùng Gson để lấy role
+        Gson gson = new Gson();
+        JsonObject userJson = gson.toJsonTree(res.getData()).getAsJsonObject();
+        String role = userJson.get("role").getAsString(); // "Admin" / "Seller" / "Bidder"
+        String userId  = userJson.get("id").getAsString();
+        String name    = userJson.get("name").getAsString();
+        double balance = userJson.has("balance") ? userJson.get("balance").getAsDouble() : 0.0;
+        SessionManager.getInstance().init(userId, name, role, balance);
+        navigateByRole(role);
+
+    } catch (IOException e) {
+        showError("Lỗi kết nối server: " + e.getMessage());
+    }
+}
 
     private void navigateByRole(String role) {
         String fxml;
@@ -98,12 +103,6 @@ public class LoginController {
         errorLabel.setVisible(true);
 
 
-    }
-
-    private void showSuccess(String message) {
-        errorLabel.setStyle("-fx-text-fill: green;");
-        errorLabel.setText(message);
-        errorLabel.setVisible(true);
     }
 
     @FXML

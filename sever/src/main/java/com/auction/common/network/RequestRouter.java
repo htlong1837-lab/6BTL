@@ -110,7 +110,6 @@ public class RequestRouter {
         boolean success = userController.createAccount(
             (String) map.get("id"),
             (String) map.get("username"),
-            (String) map.get("email"),
             (String) map.get("password"),
             (String) map.get("confirmPassword")
         );
