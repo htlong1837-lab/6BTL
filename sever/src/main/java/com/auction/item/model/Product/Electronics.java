@@ -18,7 +18,7 @@ public class Electronics extends Item {
     //duyệt hợp lệ
     @Override
     public boolean isApproved() {
-        super.isApproved();
+        if (!super.isApproved()) return false;
         if (brand == null || brand.isEmpty()) {
             return false;
         }
@@ -28,13 +28,13 @@ public class Electronics extends Item {
         return true;
     }
     //chỉnh sửa khi duyệt lỗi
-  
+
     public void editItemError(Electronics item) {
         super.editItemError(item);
-        if (item.brand == null || item.brand.isEmpty()) {
+        if (item.brand != null && !item.brand.isEmpty()) {
             this.brand = item.brand;
         }
-        if (item.warrantyMonths <= 0) {
+        if (item.warrantyMonths > 0) {
             this.warrantyMonths = item.warrantyMonths;
         }
     }

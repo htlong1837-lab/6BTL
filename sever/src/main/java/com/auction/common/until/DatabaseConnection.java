@@ -2,6 +2,7 @@ package com.auction.common.until;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -33,10 +34,15 @@ public class DatabaseConnection {
 
     private void initSchema() throws SQLException {
         try (Statement stmt = connection.createStatement()) {
+            // Nếu bảng users cũ có cột email (schema lỗi), xóa và tạo lại
+            if (tableHasColumn("users", "email")) {
+                System.out.println("[DB] Phát hiện schema cũ (có cột email), đang tạo lại bảng users...");
+                stmt.executeUpdate("DROP TABLE IF EXISTS users");
+            }
             stmt.executeUpdate(
                 "CREATE TABLE IF NOT EXISTS users (" +
                 "  id TEXT PRIMARY KEY, username TEXT NOT NULL UNIQUE," +
-                "  email TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL," +
+                "  password_hash TEXT NOT NULL," +
                 "  balance REAL DEFAULT 0.0, failed_attempts INTEGER DEFAULT 0," +
                 "  is_banned INTEGER DEFAULT 0, role TEXT DEFAULT 'BIDDER', shop_name TEXT)"
             );
@@ -48,5 +54,17 @@ public class DatabaseConnection {
                 "  make TEXT, model TEXT, year INTEGER, brand TEXT, warranty_months INTEGER)"
             );
         }
+    }
+
+    private boolean tableHasColumn(String table, String column) {
+        try (ResultSet rs = connection.createStatement()
+                .executeQuery("PRAGMA table_info(" + table + ")")) {
+            while (rs.next()) {
+                if (column.equalsIgnoreCase(rs.getString("name"))) return true;
+            }
+        } catch (SQLException e) {
+            // Bảng chưa tồn tại
+        }
+        return false;
     }
 }

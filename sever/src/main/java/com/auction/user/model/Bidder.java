@@ -1,7 +1,5 @@
 package com.auction.user.model;
-import com.auction.bid.model.BidTransaction;
-import java.util.ArrayList;
-import java.util.List;
+
 public class Bidder extends User {
     public Bidder(String id, String name, String passwordHash, String role) {
         super(id, name, passwordHash, "Bidder");

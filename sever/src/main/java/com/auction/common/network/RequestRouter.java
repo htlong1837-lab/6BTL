@@ -90,11 +90,14 @@ public class RequestRouter {
 
     private Response handleRegister(Object payload) {
         Map<String, Object> map = toMap(payload);
+        String role = (String) map.get("role");
+        if (role == null || role.isBlank()) role = "Bidder";
         boolean success = userController.createAccount(
             (String) map.get("id"),
             (String) map.get("username"),
             (String) map.get("password"),
-            (String) map.get("confirmPassword")
+            (String) map.get("confirmPassword"),
+            role
         );
         return success ? Response.ok("Đăng ký thành công!", null) : Response.fall("Đăng ký thất bại.");
     }

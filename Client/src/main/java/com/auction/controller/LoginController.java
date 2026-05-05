@@ -56,9 +56,9 @@ private void handleLogin() {
         // Tạm dùng Gson để lấy role
         Gson gson = new Gson();
         JsonObject userJson = gson.toJsonTree(res.getData()).getAsJsonObject();
-        String role = userJson.get("role").getAsString(); // "Admin" / "Seller" / "Bidder"
+        String role    = userJson.get("role").getAsString(); // "ADMIN" / "SELLER" / "BIDDER"
         String userId  = userJson.get("id").getAsString();
-        String name    = userJson.get("name").getAsString();
+        String name    = userJson.get("username").getAsString();
         double balance = userJson.has("balance") ? userJson.get("balance").getAsDouble() : 0.0;
         SessionManager.getInstance().init(userId, name, role, balance);
         navigateByRole(role);
@@ -72,15 +72,15 @@ private void handleLogin() {
         String fxml;
         int width, height;
         switch (role) {
-            case "Admin":
+            case "ADMIN":
                 fxml = "/com/client/view/AdminView.fxml";
                 width = 1000; height = 650;
                 break;
-            case "Seller":
+            case "SELLER":
                 fxml = "/com/client/view/SellerView.fxml";
                 width = 900; height = 600;
                 break;
-            default: // Bidder
+            default: // BIDDER
                 fxml = "/com/client/view/AuctionListView.fxml";
                 width = 900; height = 600;
                 break;
