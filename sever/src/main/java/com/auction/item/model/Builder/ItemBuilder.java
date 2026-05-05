@@ -1,4 +1,4 @@
-package com.auction.item.model.Builder;
++package com.auction.item.model.Builder;
 
 import com.auction.item.model.Product.Item;
 

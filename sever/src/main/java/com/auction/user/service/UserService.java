@@ -22,7 +22,7 @@ public class UserService {
     //                     ĐĂNG KÝ
     //=====================================================
 
-    public String signUp(String id,String username, String email,
+    public String signUp(String id,String username,
                          String password, String confirmPassword) throws UserException, AuthenticationException {
 
 
@@ -41,20 +41,6 @@ public class UserService {
         if (userDAO.existsByUsername(username))
             throw new DuplicateDataException("Tên người dùng đã tồn tại.") ;
 
-        //========================EMAIL===========================
-
-        if (email == null || !email.endsWith("@gmail.com")              // email phải kết thúc bằng "@gmail.com"
-            || email.indexOf("@") == 0                                     // email không được bắt đầu bằng "@" 
-            || email.contains("..")                                          // email không được chứa ".." liên tiếp
-            || email.indexOf("@") != email.lastIndexOf("@")          // email chỉ được chứa 1 ký tự "@"
-            || !Character.isLetterOrDigit(email.charAt(0))       // email phải bắt đầu bằng chữ cái hoặc số
-            || email.length() > 30 
-            || email.length() < 6) {        
-            throw new InvalidDataException("Email không hợp lệ.") ;}
-
-        if (userDAO.existsByEmail(email))
-            throw new DuplicateDataException("Email đã tồn tại.");
-
         //========================PASSWORD===========================
 
         if (!PasswordUtil.isStrongPassword(password))
@@ -63,12 +49,8 @@ public class UserService {
         if (!password.equals(confirmPassword))
             throw new PasswordAuthenticationException("Mật khẩu xác nhận không khớp.");
 
-        // Hash mật khẩu trước khi lưu vào database để tăng cường bảo mật
-        String passwordHash = PasswordUtil.hashPassword(password);
-        
-
         // Tạo user mới và lưu vào "database" và mặc định là Bidder.
-        User newUser        = new Bidder(id, username, email, passwordHash);
+        User newUser        = new Bidder(id, username, password);
         userDAO.save(newUser);
         return "Đăng ký thành công!";
     }
@@ -87,25 +69,12 @@ public class UserService {
         if (user.isBanned())
             throw new UserNotFoundException("Tài khoản đã bị khóa do đăng nhập sai quá nhiều lần.");
 
-        String inputHash = PasswordUtil.hashPassword(password);
+        String inputHash = password;
 
         if (!user.getPasswordHash().equals(inputHash)) {
-            user.incrementFailedLoginAttempts();
-            userDAO.update(user);
-            if (user.getFailedLoginAttempts() >= 5) {
-                user.setBanned(true);
-                userDAO.update(user);
-            }
             // [SỬA] Throw exception khi sai mật khẩu - trước đây code trả về user luôn, không báo lỗi
-            throw new PasswordAuthenticationException("Sai mật khẩu. Còn " + (5 - user.getFailedLoginAttempts()) + " lần thử.");
+            throw new PasswordAuthenticationException("Sai mật khẩu ");
         }
-
-        // [SỬA] Reset số lần thất bại khi đăng nhập thành công - trước đây nằm trong block sai mật khẩu nên không bao giờ chạy
-        if (user.getFailedLoginAttempts() > 0) {
-            user.resetFailedLoginAttempts();
-            userDAO.update(user);
-        }
-
         return user;
     }
 
@@ -118,7 +87,7 @@ public class UserService {
             throw new UserNotFoundException("Tài khoản không tồn tại!");
         }
         if (user instanceof Bidder) {
-            Seller seller = new Seller(user.getId(), user.getName(), user.getEmail(), user.getPasswordHash());
+            Seller seller = new Seller(user.getId(), user.getName(), user.getPasswordHash());
             seller.setShopName(shopname);
             userDAO.update(seller);
         }

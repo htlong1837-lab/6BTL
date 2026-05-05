@@ -3,8 +3,8 @@ package com.auction.user.model;
 public class Seller extends User {
     private String shopName;
     private double revenue;
-    public Seller(String id, String name, String email, String passwordHash) {
-        super(id, name, email, passwordHash);
+    public Seller(String id, String name, String passwordHash) {
+        super(id, name, passwordHash);
         this.shopName = name + "'s shop";
         this.revenue = 0.0;
     }

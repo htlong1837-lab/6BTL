@@ -34,7 +34,7 @@ public class BidServiceTest {
         bidService = new BidService(auctionDAO, bidDAO, lockManager);
 
         // Tạo một Bidder giả: id, name, email, passwordHash
-        bidder = new Bidder("user-001", "TestUser", "test@x.com", "hashed");
+        bidder = new Bidder("user-001", "TestUser", "hashed");
         // Mặc định balance = 0 khi mới tạo
 
     }
@@ -54,7 +54,7 @@ public class BidServiceTest {
 
         assertEquals(500000, bidder.getBalance(),
             "Số dư sau khi nạp phải là 500,000");
-    }
+    }  
 
     @Test
     @DisplayName("Nạp tiền bằng 0 - báo lỗi")

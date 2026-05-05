@@ -15,9 +15,4 @@ public class PasswordUtil {
         }
         return hasUpper && hasLower && hasDigit;
     }
-
-    // Hash password đơn giản
-    public static String hashPassword(String password) {
-        return Integer.toHexString(password.hashCode());
-    }
 }
