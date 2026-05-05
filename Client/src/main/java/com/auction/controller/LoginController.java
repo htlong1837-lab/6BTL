@@ -18,7 +18,7 @@ import java.util.List;
 
 public class LoginController {
 
-    @FXML private TextField emailField;
+    @FXML private TextField nameTextField;
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
 
@@ -29,29 +29,24 @@ public class LoginController {
 
     @FXML
     private void handleLogin() {
-        String email    = emailField.getText().trim();
+        String nameText    = nameTextField.getText().trim();
         String password = passwordField.getText();
 
-        if (email.isEmpty() || password.isEmpty() || password.length() < 6) {
+        if (nameText.isEmpty() || password.isEmpty() || password.length() < 6) {
             showError("Vui lòng nhập đầy đủ thông tin");
             return;
         }
 
-        if (!email.endsWith("@gmail.com")
-            || email.indexOf("@") == 0
-            || email.contains("..")
-            || email.indexOf("@") != email.lastIndexOf("@")
-            || !Character.isLetterOrDigit(email.charAt(0))
-            || email.length() > 30
-            || email.length() < 6) {
+        /*if (// TODO : làm lại các trường hợp login chỉ để chữ cái và số
+        ){
             showError("Email không hợp lệ.");
             return;
-        }
+        }*/
 
         // TODO: thay bằng gọi server — hiện dùng fake data
         List<UserItem> users = FakeDataHelper.makeUsers();
         UserItem matched = users.stream()
-            .filter(u -> u.getEmail().equalsIgnoreCase(email))
+            .filter(u -> u.getEmail().equalsIgnoreCase(nameText))
             .findFirst()
             .orElse(null);
 
@@ -87,7 +82,7 @@ public class LoginController {
         }
         try {
             Parent root = FXMLLoader.load(getClass().getResource(fxml));
-            Stage stage = (Stage) emailField.getScene().getWindow();
+            Stage stage = (Stage) passwordField.getScene().getWindow();
             stage.setScene(new Scene(root, width, height));
             stage.show();
         } catch (Exception e) {
@@ -118,7 +113,7 @@ public class LoginController {
                 getClass().getResource("/com/client/view/RegisterView.fxml")
             );
             Parent root = loader.load();
-            Stage stage = (Stage) emailField.getScene().getWindow();
+            Stage stage = (Stage) passwordField.getScene().getWindow();
             stage.setScene(new Scene(root, 750, 700));
             stage.show();
         } catch (Exception e) {

@@ -43,22 +43,14 @@ public class RegisterController {
             password.isEmpty() || role == null) {
             showError("Vui lòng nhập đầy đủ thông tin");
             return;
-        }
+        // chỉ cho phép nhập chữ thường chữ in hoa và số 
+        // Tài khoản full chữ cho phép chữ thường và chữ in hoa
+        // Mật khẩu full số chỉ cho phép số
 
-        if(!email.contains("@")) {
-            showError("Email không hợp lệ!");
-            return;
         }
-
-        if (password.length() < 6) {
-            showError("Mật khẩu phải có ít nhất 6 kí tự");
-            return;
-        }
-
-        if (!confirmPassword.equals(password)){
-            showError("Mật khẩu nhập lại chưa đúng");
-            return;
-        }
+        // kiểm tra confirm passwword cho nó đúng với pass word
+        
+        
 
         // TODO: Gửi lên Server sau
         System.out.println("Đăng ký: " + name + " | " + email + " | " + role);

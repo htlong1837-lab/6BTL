@@ -28,14 +28,14 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <Label text="Email">
+            <Label text="Tài khảon">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="emailField" maxWidth="-Infinity" 
+            <TextField fx:id="nameTextField" maxWidth="-Infinity" 
                prefWidth="350.0" 
-               promptText="Nhập email" 
+               promptText="Nhập tài khoản" 
                style="-fx-background-radius: 8; 
                   -fx-border-radius: 8; 
                   -fx-border-color: #cccccc; 
