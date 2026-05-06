@@ -19,12 +19,12 @@
             <Label fx:id="usernameLabel" style=" -fx-font-size: 13; -fx-font-weight: bold;" />
             <Label fx:id="balanceLabel" style=" -fx-font-size: 11;" />
             <Separator />
-            <Button maxWidth="Infinity" onAction="#showAuctions" style="-fx-text-fill: white; -fx-background-color: #2196F3;" text="Phiên đấu giá" />
-            <Button maxWidth="Infinity" onAction="#showWallet" style="-fx-background-color: #fffaf0; -fx-border-color: #a9a9a9;" text="Ví của tôi" />
+            <Button maxWidth="Infinity" onAction="#showAuctions" style="-fx-text-fill: white; -fx-background-color: #2196F3;" stylesheets="@style.css" text="Phiên đấu giá" />
+            <Button maxWidth="Infinity" onAction="#showWallet" style="-fx-background-color: #fffaf0; -fx-border-color: #a9a9a9;" stylesheets="@style.css" text="Ví của tôi" />
             <Region VBox.vgrow="ALWAYS" />
          <ToolBar prefHeight="40.0" prefWidth="200.0" style="-fx-background-color: #f0f8ff;">
            <items>
-                  <Button maxWidth="Infinity" onAction="#handleLogout" style="-fx-text-fill: white; -fx-background-color: #0000ff;" text="Đăng xuất" />
+                  <Button maxWidth="Infinity" onAction="#handleLogout" style="-fx-text-fill: white; -fx-background-color: #0000ff;" stylesheets="@style.css" text="Đăng xuất" />
            </items>
          </ToolBar>
         </VBox>

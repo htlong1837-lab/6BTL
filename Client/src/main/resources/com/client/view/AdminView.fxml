@@ -20,7 +20,7 @@
             </Label>
             <VBox prefHeight="209.0" prefWidth="487.0">
                <children>
-                  <Button contentDisplay="CENTER" maxWidth="Infinity" onAction="#showAuctions" prefHeight="70.0" prefWidth="474.0" style="-fx-background-color: #fffaf0; -fx-border-color: #696969;" text="Quản lý đấu giá">
+                  <Button contentDisplay="CENTER" maxWidth="Infinity" onAction="#showAuctions" prefHeight="70.0" prefWidth="474.0" style="-fx-background-color: #fffaf0; -fx-border-color: #696969;" stylesheets="@style.css" text="Quản lý đấu giá">
                      <font>
                         <Font size="25.0" />
                      </font>
@@ -31,12 +31,12 @@
                         <Cursor fx:constant="DEFAULT" />
                      </cursor>
                   </Button>
-                  <Button mnemonicParsing="false" prefHeight="66.0" prefWidth="522.0" style="-fx-background-color: #87cefa; -fx-border-color: #808080;" text="Quản lý người dùng">
+                  <Button mnemonicParsing="false" prefHeight="66.0" prefWidth="522.0" style="-fx-background-color: #87cefa; -fx-border-color: #808080;" stylesheets="@style.css" text="Quản lý người dùng">
                      <font>
                         <Font size="22.0" />
                      </font>
                   </Button>
-                  <Button maxWidth="Infinity" onAction="#showApproval" prefHeight="62.0" prefWidth="478.0" style="-fx-text-fill: white; -fx-background-color: #2196F3; -fx-border-color: #696969;" text="Duyệt sản phẩm">
+                  <Button maxWidth="Infinity" onAction="#showApproval" prefHeight="62.0" prefWidth="478.0" style="-fx-text-fill: white; -fx-background-color: #2196F3; -fx-border-color: #696969;" stylesheets="@style.css" text="Duyệt sản phẩm">
                      <font>
                         <Font size="23.0" />
                      </font>
@@ -45,7 +45,7 @@
             </VBox>
             <ToolBar prefHeight="36.0" prefWidth="488.0" style="-fx-background-color: #f0f8ff;">
                <items>
-                  <Button maxWidth="Infinity" onAction="#handleLogout" prefHeight="26.0" prefWidth="91.0" style="-fx-text-fill: white; -fx-background-color: #0000ff;" text="Đăng xuất" />
+                  <Button maxWidth="Infinity" onAction="#handleLogout" prefHeight="26.0" prefWidth="91.0" style="-fx-text-fill: white; -fx-background-color: #0000ff;" stylesheets="@style.css" text="Đăng xuất" />
                </items>
             </ToolBar>
          </children>

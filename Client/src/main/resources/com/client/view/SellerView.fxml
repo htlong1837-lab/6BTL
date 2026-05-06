@@ -15,16 +15,16 @@
         <VBox prefWidth="190" style="-fx-padding: 20; -fx-background-color: #f0f8ff; -fx-spacing: 8; box-border-radius: 12;">
             <Label fx:id="usernameLabel" prefHeight="18.0" prefWidth="0.0" style="-fx-text-fill: black; -fx-font-weight: bold;" />
             <Separator />
-            <Button maxWidth="Infinity" onAction="#showMyItems" style="-fx-text-fill: black; -fx-background-color: #fffaf0; -fx-border-color: #a9a9a9; -ex-text-fill: bold; efx-blend-mode: gray;" text="Sản phẩm của tôi">
+            <Button maxWidth="Infinity" onAction="#showMyItems" style="-fx-text-fill: black; -fx-background-color: #fffaf0; -fx-border-color: #a9a9a9; -ex-text-fill: bold;" stylesheets="@style.css" text="Sản phẩm của tôi">
             <cursor>
                <Cursor fx:constant="DEFAULT" />
             </cursor></Button>
-            <Button maxWidth="Infinity" onAction="#showAddItem" style="-fx-background-color: #87cefa; box-border-color: #a9a9a9; tex-text-fill: bold;" text="Thêm sản phẩm" textFill="WHITE" />
-            <Button maxWidth="Infinity" onAction="#showCreateAuction" style="-fx-background-color: #2196F3; -ox-border-color: #a9a9a9; tex-text-fill: blod;" text="Tạo phiên đấu giá" textFill="WHITE" />
+            <Button maxWidth="Infinity" onAction="#showAddItem" style="-fx-background-color: #87cefa; box-border-color: #a9a9a9; tex-text-fill: bold;" stylesheets="@style.css" text="Thêm sản phẩm" textFill="WHITE" />
+            <Button maxWidth="Infinity" onAction="#showCreateAuction" style="-fx-background-color: #2196F3; -ox-border-color: #a9a9a9; tex-text-fill: blod;" stylesheets="@style.css" text="Tạo phiên đấu giá" textFill="WHITE" />
             <Region VBox.vgrow="ALWAYS" />
          <ToolBar prefHeight="38.0" prefWidth="111.0" style="-fx-background-color: #f0f8ff;">
            <items>
-                  <Button maxWidth="Infinity" onAction="#handleLogout" prefHeight="26.0" prefWidth="77.0" style="-fx-background-color: #0000ff;" text="Đăng xuất" textFill="WHITE" />
+                  <Button maxWidth="Infinity" onAction="#handleLogout" prefHeight="26.0" prefWidth="77.0" style="-fx-background-color: #0000ff;" stylesheets="@style.css" text="Đăng xuất" textFill="WHITE" />
            </items>
          </ToolBar>
         </VBox>

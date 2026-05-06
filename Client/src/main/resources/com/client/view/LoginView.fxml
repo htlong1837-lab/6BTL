@@ -8,20 +8,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" 
-            prefHeight="400.0" prefWidth="600.0"
-            xmlns="http://javafx.com/javafx/21" 
-            xmlns:fx="http://javafx.com/fxml/1" 
-            fx:controller="com.auction.controller.LoginController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.auction.controller.LoginController">
    <children>
-      <VBox fx:id="loginBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" 
-      prefHeight="420.0" prefWidth="380.0" spacing="12.0" 
-      style="-fx-background-color: #f0f8ff; 
-      -fx-background-radius: 12; 
-      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 4); 
-      -fx-padding: 40;" 
-      AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox fx:id="loginBox" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="420.0" prefWidth="380.0" spacing="12.0" style="-fx-background-color: #f0f8ff;        -fx-background-radius: 12;        -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 20, 0, 0, 4);        -fx-padding: 40;" stylesheets="@style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
             <Label text="Hệ Thông Đấu Giá" textFill="#1a1a2e">
                <font>
@@ -33,45 +22,16 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <TextField fx:id="userNameField" maxWidth="-Infinity" 
-               prefWidth="350.0" 
-               promptText="Nhập tài khoản" 
-               style="-fx-background-radius: 8; 
-                  -fx-border-radius: 8; 
-                  -fx-border-color: #cccccc; 
-                  -fx-padding: 8; 
-                  -fx-font-size: 12;" />
+            <TextField fx:id="userNameField" maxWidth="-Infinity" prefWidth="350.0" promptText="Nhập tài khoản" style="-fx-background-radius: 8;                    -fx-border-radius: 8;                    -fx-border-color: #cccccc;                    -fx-padding: 8;                    -fx-font-size: 12;" />
             <Label text="Mật Khẩu">
                <font>
                   <Font size="18.0" />
                </font>
             </Label>
-            <PasswordField fx:id="passwordField" maxWidth="-Infinity" 
-               prefWidth="350.0" 
-               promptText="Nhập mật khẩu" 
-               style="-fx-background-radius: 8; 
-                  -fx-border-radius: 8; 
-                  -fx-border-color: #cccccc; 
-                  -fx-padding: 8; 
-                  -fx-font-size: 12;" />
-            <Label fx:id="errorLabel" 
-               text="Tài khoản hoặc mật khẩu chưa chính xác" 
-               textFill="RED" 
-               visible="false"/>
-            <Button  onAction="#handleLogin"
-               mnemonicParsing="false" 
-               prefHeight="28.0" 
-               prefWidth="180.0" 
-               style="  -fx-background-color: #2196F3; 
-                        -fx-text-fill: white; 
-                        -fx-background-radius: 8;   
-                        -fx-font-size: 14; 
-                        -fx-font-weight: bold;
-                        -fx-cursor: hand;" 
-                        text="Đăng nhập" />
-            <Label text="Chưa có tài khoản? Đăng ký ngay"
-               style="-fx-text-fill: #2196F3; -fx-cursor: hand;"
-               onMouseClicked="#goToRegister"/>
+            <PasswordField fx:id="passwordField" maxWidth="-Infinity" prefWidth="350.0" promptText="Nhập mật khẩu" style="-fx-background-radius: 8;                    -fx-border-radius: 8;                    -fx-border-color: #cccccc;                    -fx-padding: 8;                    -fx-font-size: 12;" />
+            <Label fx:id="errorLabel" text="Tài khoản hoặc mật khẩu chưa chính xác" textFill="RED" visible="false" />
+            <Button mnemonicParsing="false" onAction="#handleLogin" prefHeight="28.0" prefWidth="180.0" style="  -fx-background-color: #2196F3;                          -fx-text-fill: white;                          -fx-background-radius: 8;                            -fx-font-size: 14;                          -fx-font-weight: bold;                         -fx-cursor: hand;" text="Đăng nhập" />
+            <Label onMouseClicked="#goToRegister" style="-fx-text-fill: #2196F3; -fx-cursor: hand;" text="Chưa có tài khoản? Đăng ký ngay" />
          </children>
       </VBox>
    </children>
