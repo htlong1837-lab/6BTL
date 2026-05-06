@@ -1,7 +1,11 @@
 package com.auction.user.service;
 
+import java.util.List;
+
+import com.auction.auction.model.Auction;
 import com.auction.exception.UserException.UserException;
 import com.auction.exception.UserException.UserNotFoundException;
+import com.auction.item.model.Product.Item;
 import com.auction.user.dao.UserDAO;
 import com.auction.user.model.Admin;
 import com.auction.user.model.User;
@@ -35,5 +39,28 @@ public class AdminService {
         if (user == null)
             throw new UserNotFoundException("Không tìm thấy tài khoản: " + username);
         return user;
+    }
+
+     // Xóa một phiên đấu giá khỏi danh sách */
+    public void removeAuction(List<Auction> auctions, Auction target) {
+        if (auctions.remove(target)) {
+            System.out.println("[Admin] Auction for \"" + target.getItem().getName() + "\" has been removed.");
+        } else {
+            System.out.println("[Admin] Auction not found.");
+        }
+    }
+ 
+    // Mở lại tài khoản người dùng
+    public void isActive(User user) {
+        user.setBanned(false);
+        System.out.println("[Admin] User \"" + user.getName() + "\" has been activated. You can now access");
+    }
+    // Duyệt sản phẩm
+    public void approveItem(Item item) {
+        if (item.isApproved()==true) {
+            System.out.println("[Admin] Item \"" + item.getName() + "\" is already approved. It's ready for auction right now");
+        } else {
+            System.out.println("[Admin] Item \"" + item.getName() + "\" is invalid. Please check the details and edit it for approval.");
+        }
     }
 }

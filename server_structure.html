@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cấu Trúc Chi Tiết Server - Tree Map</title>
+    <style>
+        body {
+            font-family: monospace;
+            background-color: #f4f4f4;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        pre {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cấu Trúc Chi Tiết Của Server (sever)</h1>
+    <p>Đây là tree map chi tiết bao gồm tất cả file và thư mục trong server, được tạo từ lệnh <code>tree /F /A</code>.</p>
+    <pre>
+Folder PATH listing
+Volume serial number is C45F-1258
+C:\USERS\ADMIN\DOCUMENTS\GITHUB\6BTL\SEVER
+|   auction.db
+|   pom.xml
+|   
++---src
+|   |   main.zip
+|   |   
+|   +---main
+|   |   \---java
+|   |       \---com
+|   |           \---auction
+|   |               +---auction
+|   |               |   +---controller
+|   |               |   |       AuctionController.java
+|   |               |   |       
+|   |               |   +---dao
+|   |               |   |       AuctionDAO.java
+|   |               |   |       AuctionDAOImpl.java
+|   |               |   |       
+|   |               |   +---model
+|   |               |   |       Auction.java
+|   |               |   |       AuctionStatus.java
+|   |               |   |       AutoBid.java
+|   |               |   |       
+|   |               |   \---service
+|   |               |           AuctionScheduler.java
+|   |               |           AuctionService.java
+|   |               |           
+|   |               +---bid
+|   |               |   +---controller
+|   |               |   |       BidController.java
+|   |               |   |       
+|   |               |   +---dao
+|   |               |   |       BidDAO.java
+|   |               |   |       BidDAOImpl.java
+|   |               |   |       
+|   |               |   +---model
+|   |               |   |       BidTransaction.java
+|   |               |   |       
+|   |               |   +---service
+|   |               |   |       AutoBidService.java
+|   |               |   |       BidLockManager.java
+|   |               |   |       BidService.java
+|   |               |   |       
+|   |               |   \---strategy
+|   |               |           AutoBidStrategy.java
+|   |               |           BidStrategy.java
+|   |               |           ManualBidStrategy.java
+|   |               |           
+|   |               +---common
+|   |               |   +---model
+|   |               |   |       Entity.java
+|   |               |   |       
+|   |               |   +---network
+|   |               |   |       ClientHandler.java
+|   |               |   |       RequestRouter.java
+|   |               |   |       SeverMain.java
+|   |               |   |       
+|   |               |   +---observer
+|   |               |   |       AuctionEvent.java
+|   |               |   |       AuctionEventManager.java
+|   |               |   |       AuctionListener.java
+|   |               |   |       EventType.java
+|   |               |   |       
+|   |               |   +---protocol
+|   |               |   |       Request.java
+|   |               |   |       Response.java
+|   |               |   |       
+|   |               |   \---until
+|   |               |           DatabaseConnection.java
+|   |               |           JsonHelper.java
+|   |               |           PasswordUtil.java
+|   |               |           
+|   |               +---exception
+|   |               |   +---AutionException
+|   |               |   |       AuctionClosedException.java
+|   |               |   |       AuctionException.java
+|   |               |   |       BidTooLowException.java
+|   |               |   |       InsufficientBalanceException.java
+|   |               |   |       
+|   |               |   +---SystemException
+|   |               |   |       SystemException.java
+|   |               |   |       
+|   |               |   \---UserException
+|   |               |           DuplicateDataException.java
+|   |               |           InvalidDataException.java
+|   |               |           PasswordAuthenticationException.java
+|   |               |           UserException.java
+|   |               |           UserNotFoundException.java
+|   |               |           
+|   |               +---item
+|   |               |   +---controller
+|   |               |   |       ItemController.java
+|   |               |   |       
+|   |               |   +---dao
+|   |               |   |       ItemDAO.java
+|   |               |   |       ItemDAOImpl.java
+|   |               |   |       ItemDAOSQLiteImpl.java
+|   |               |   |       
+|   |               |   +---model
+|   |               |   |   +---Builder
+|   |               |   |   |       ArtBuilder.java
+|   |               |   |   |       ElectronicsBuilder.java
+|   |               |   |   |       ItemBuilder.java
+|   |               |   |   |       VehicleBuilder.java
+|   |               |   |   |       
+|   |               |   |   +---Factory
+|   |               |   |   |       ArtFactory.java
+|   |               |   |   |       ElectronicFactory.java
+|   |               |   |   |       ItemFactory.java
+|   |               |   |   |       VehicleFactory.java
+|   |               |   |   |       
+|   |               |   |   \---Product
+|   |               |   |           Art.java
+|   |               |   |           Electronics.java
+|   |               |   |           Item.java
+|   |               |   |           Vehicle.java
+|   |               |   |           
+|   |               |   \---service
+|   |               |           ItemService.java
+|   |               |           
+|   |               \---user
+|   |                   +---controller
+|   |                   |       UserController.java
+|   |                   |       
+|   |                   +---dao
+|   |                   |       UserDAO.java
+|   |                   |       UserDAOImpl.java
+|   |                   |       UserDAOSQLiteImpl.java
+|   |                   |       
+|   |                   +---model
+|   |                   |       Admin.java
+|   |                   |       Bidder.java
+|   |                   |       Seller.java
+|   |                   |       User.java
+|   |                   |       
+|   |                   \---service
+|   |                           AdminService.java
+|   |                           UserService.java
+|   |                           
+|   \---test
+|       \---java
+|           \---com
+|               \---auction
+|                   \---user
+|                       \---service
+|                               BidServiceTest.java
+|                               UserServiceTest.java
+|                               
+\---target
+    +---classes
+    |   \---com
+    |       \---auction
+    |           +---auction
+    |           |   +---controller
+    |           |   |       AuctionController.class
+    |           |   |       
+    |           |   +---dao
+    |           |   |       AuctionDAO.class
+    |           |   |       AuctionDAOImpl.class
+    |           |   |       
+    |           |   +---model
+    |           |   |       Auction.class
+    |           |   |       AuctionStatus.class
+    |           |   |       AutoBid.class
+    |           |   |       
+    |           |   \---service
+    |           |           AuctionScheduler$1.class
+    |           |           AuctionScheduler.class
+    |           |           AuctionService.class
+    |           |           
+    |           +---bid
+    |           |   +---controller
+    |           |   |       BidController.class
+    |           |   |       
+    |           |   +---dao
+    |           |   |       BidDAO.class
+    |           |   |       BidDAOImpl.class
+    |           |   |       
+    |           |   +---model
+    |           |   |       BidTransaction.class
+    |           |   |       
+    |           |   +---service
+    |           |   |       AutoBidService.class
+    |           |   |       BidLockManager.class
+    |           |   |       BidService.class
+    |           |   |       
+    |           |   \---strategy
+    |           |           AutoBidStrategy.class
+    |           |           BidStrategy.class
+    |           |           ManualBidStrategy.class
+    |           |           
+    |           +---common
+    |           |   +---model
+    |           |   |       Entity.class
+    |           |   |       
+    |           |   +---network
+    |           |   |       ClientHandler.class
+    |           |   |       RequestRouter.class
+    |           |   |       SeverMain.class
+    |           |   |       
+    |           |   +---observer
+    |           |   |       AuctionEvent.class
+    |           |   |       AuctionEventManager$1.class
+    |           |   |       AuctionEventManager.class
+    |           |   |       AuctionListener.class
+    |           |   |       EventType.class
+    |           |   |       
+    |           |   +---protocol
+    |           |   |       Request.class
+    |           |   |       Response.class
+    |           |   |       
+    |           |   \---until
+    |           |           DatabaseConnection.class
+    |           |           JsonHelper.class
+    |           |           PasswordUtil.class
+    |           |           
+    |           +---exception
+    |           |   +---AutionException
+    |           |   |       AuctionClosedException.class
+    |           |   |       AuctionException.class
+    |           |   |       BidTooLowException.class
+    |           |   |       InsufficientBalanceException.class
+    |           |   |       
+    |           |   +---SystemException
+    |           |   |       SystemException.class
+    |           |   |       
+    |           |   \---UserException
+    |           |           DuplicateDataException.class
+    |           |           InvalidDataException.class
+    |           |           PasswordAuthenticationException.class
+    |           |           UserException.class
+    |           |           UserNotFoundException.class
+    |           |           
+    |           +---item
+    |           |   +---controller
+    |           |   |       ItemController.class
+    |           |   |       
+    |           |   +---dao
+    |           |   |       ItemDAO.class
+    |           |   |       ItemDAOImpl.class
+    |           |   |       ItemDAOSQLiteImpl.class
+    |           |   |       
+    |           |   +---model
+    |           |   |   +---Builder
+    |           |   |   |       ArtBuilder.class
+    |           |   |   |       ElectronicsBuilder.class
+    |           |   |   |       ItemBuilder.class
+    |           |   |   |       VehicleBuilder.class
+    |           |   |   |       
+    |           |   |   +---Factory
+    |           |   |   |       ArtFactory.class
+    |           |   |   |       ElectronicFactory.class
+    |           |   |   |       ItemFactory.class
+    |           |   |   |       VehicleFactory.class
+    |           |   |   |       
+    |           |   |   \---Product
+    |           |   |           Art.class
+    |           |   |           Electronics.class
+    |           |   |           Item.class
+    |           |   |           Vehicle.class
+    |           |   |           
+    |           |   \---service
+    |           |           ItemService.class
+    |           |           
+    |           \---user
+    |               +---controller
+    |               |       UserController.class
+    |               |       
+    |               +---dao
+    |               |       UserDAO.class
+    |               |       UserDAOImpl.class
+    |               |       UserDAOSQLiteImpl.class
+    |               |       
+    |               +---model
+    |               |       Admin.class
+    |               |       Bidder.class
+    |               |       Seller.class
+    |               |       User.class
+    |               |       
+    |               \---service
+    |                       AdminService.class
+    |                       UserService.class
+    |                       
+    +---generated-sources
+    |   \---annotations
+    +---maven-status
+    |   \---maven-compiler-plugin
+    |       \---compile
+    |           \---default-compile
+    |                   createdFiles.lst
+    |                   inputFiles.lst
+    |                   
+    \---test-classes
+        \---com
+            \---auction
+                \---user
+                    \---service
+                            BidServiceTest.class
+                            UserServiceTest.class
+    </pre>
+</body>
+</html>

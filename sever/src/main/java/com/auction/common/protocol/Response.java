@@ -20,7 +20,7 @@ public class Response {
     // Tạo nhanh response thất bại 
     public static Response fall (String message) {
         Response r = new Response();
-        r.success = false ;
+        r.success = false;
         r.data = null;
         r.message = message;
         return r;

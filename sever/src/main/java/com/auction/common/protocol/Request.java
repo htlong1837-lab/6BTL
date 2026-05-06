@@ -16,7 +16,7 @@ public class Request {
     public String getToken() {return token;}
     public Object getPayload() {return payload;}
 
-    public void setAction(String action ) { this.action = action; }
+    public void setAction(String action) { this.action = action; }
     public void setToken(String token) {this.token = token ;}
     public void setData (Object payload) {this.payload = payload ;}
     
