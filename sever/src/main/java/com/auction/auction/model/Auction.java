@@ -24,7 +24,6 @@ public class Auction {
 
     private long startTime;
     private long endTime;
-    private List<AutoBid> autoBids = new ArrayList<>();
 
 // contructor
     public Auction(Item item , Seller seller , long durationMillis) {
@@ -99,7 +98,6 @@ public class Auction {
 
         System.out.println(bidder.getName() + " bid " + amount);
 
-        processAutoBids();
 
         return true;
 
@@ -148,59 +146,5 @@ public class Auction {
     public Seller getSeller() { return seller;}
     public long getStartTime() {return startTime;}
     public long getEndTime() {return endTime;}
-    public void registerAutoBid(AutoBid autoBid) {autoBids.add(autoBid);}
-
-    private void processAutoBids() {
-    boolean updated = true;
-    while (updated) {
-        updated = false;
-
-        for (AutoBid auto : autoBids) {
-
-            // nếu user đang dẫn đầu thì bỏ qua
-            if (auto.getUser().equals(highestBidder)) continue;
-
-            double nextBid = currentPrice + auto.getIncrement();
-
-            if (nextBid <= auto.getMaxBid()) {
-
-                currentPrice = nextBid;
-                highestBidder = auto.getUser();
-
-                bidHistory.add(new BidTransaction(
-                        auto.getUser().getId(),
-                        auto.getUser().getName(),
-                        this.id,
-                        nextBid,
-                        System.currentTimeMillis()));
-
-                System.out.println("[AUTO] "
-                        + auto.getUser().getName()
-                        + " bid " + nextBid);
-
-                AuctionEventManager.getInstance().publish(id,
-                    new AuctionEvent(EventType.AUTO_BID_PLACED, id, item.getName(),
-                            nextBid, auto.getUser().getName()));
-
-                updated = true;
-                break;
-/**  sau mỗi lần có người thắng break thoát khỏi vòng for và quay lại while
-*từ đầu danh sách đảm bảo mọi người được xét tính công bằng
-vd : curPrice = 100 , A max = 120, B max = 110 , increase = 10k
-while 1 :
- update = false;
- chạy for :
-    A ko dẫn đầu nextBid =110 => A đang thắng 110k => updated = true => break chạy while 2
-
-while 2:
-update = false;
-chạy for
-    A dẫn đầu -> skip
-    B ko dẫn đầu B nextBid = 120 => udate = false => return B thắng luôn
- 
-*/
-            }
-        }
-    }
-}
+    
 }

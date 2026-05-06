@@ -1,7 +1,6 @@
 package com.auction.auction.controller;
 
 import com.auction.auction.model.Auction;
-import com.auction.auction.model.AutoBid;
 import com.auction.auction.service.AuctionService;
 import com.auction.item.model.Product.Item;
 import com.auction.user.model.User;
@@ -36,9 +35,5 @@ public class AuctionController {
  //  kết thúc
     public void endAuction(Auction auction) {
         auctionService.endAuction(auction);
-    }
-    
-    public void registerAutoBid(Auction auction, AutoBid autoBid) {
-    auctionService.registerAutoBid(auction, autoBid);
     }
 }
