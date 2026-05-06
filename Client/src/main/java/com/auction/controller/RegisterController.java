@@ -2,6 +2,8 @@ package com.auction.controller;
 
 import com.auction.client.ServerConnection;
 import com.auction.client.dto.Response;
+
+import javafx.animation.PauseTransition;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +15,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.util.Map;
@@ -64,7 +67,25 @@ public class RegisterController {
             ));
 
             if (res.isSuccess()) {
+                
                 showSuccess("Đăng ký thành công! Vui lòng đăng nhập.");
+
+                PauseTransition pause = new PauseTransition(Duration.seconds(2));
+                pause.setOnFinished(e -> {
+                    try {
+                        FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/client/view/LoginView.fxml"));
+                    Parent root = loader.load();
+                    Stage stage = (Stage) userNameField.getScene().getWindow();
+                    Scene scene = new Scene(root,500,700) ;
+                    stage.setScene(scene);
+                    stage.show();
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    } 
+                });
+                pause.play();
+                
             } else {
                 showError(res.getMessage());
             }

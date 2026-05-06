@@ -76,11 +76,21 @@ public class Auction {
 
         currentPrice = amount;
         highestBidder = bidder;
-
         
         BidTransaction bid = new BidTransaction(bidder.getId(), bidder.getName(), item.getId(), amount, System.currentTimeMillis());
-
+        
         bidHistory.add(bid);
+        
+        double remainingTime = endTime - System.currentTimeMillis();
+        if (remainingTime < 20000){
+            endTime += 60000;
+            System.out.println("AntiSniping gia hạn thêm 60s");
+
+            AuctionEventManager.getInstance().publish(id,
+                new AuctionEvent(EventType.AUCTION_EXTENDED, id,item.getName(),currentPrice, null));
+        }
+
+        
 
         AuctionEventManager.getInstance().publish(id,
             new AuctionEvent(EventType.BID_PLACED, id, item.getName(),
