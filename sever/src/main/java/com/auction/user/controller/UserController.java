@@ -22,15 +22,7 @@ public class UserController {
         }
     }
 
-    public boolean registerAsSeller(String username, String shopName) {
-        User user = userDAO.findByUsername(username);
-        if (user == null || user instanceof Seller) return false;
-        Seller seller = new Seller(user.getId(), user.getName(), user.getPasswordHash(), "SELLER");
-        seller.setShopName(shopName);
-        seller.setBalance(user.getBalance());
-        userDAO.update(seller);
-        return true;
-    }
+    //[Xoá register Seller]
 
     public User loginAccount(String username, String password) {
         try {
