@@ -11,6 +11,5 @@ public interface ItemDAO {
     List<Item> findAll();
     List<Item> findBySellerId(String sellerId);
     void update(Item item);
-    void delete(String id);
-    
+    void delete(String id); 
 }

@@ -1,6 +1,6 @@
 package com.auction.user.dao;
 
-import com.auction.common.until.DatabaseConnection;
+import com.auction.common.util.DatabaseConnection;
 import com.auction.user.model.Admin;
 import com.auction.user.model.Bidder;
 import com.auction.user.model.Seller;
@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserDAOSQLiteImpl implements UserDAO {
 
@@ -52,6 +54,18 @@ public class UserDAOSQLiteImpl implements UserDAO {
     public User findById(String id) {
         return queryOne("SELECT * FROM users WHERE id = ?", id);
     }
+    @Override
+    public List<User> findAll() {
+        List<User> result = new ArrayList<>();
+        try (PreparedStatement ps = conn().prepareStatement("SELECT * FROM users")) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) result.add(mapRow(rs));
+        } catch (SQLException e) {
+            System.err.println("[UserDAO] findAll lỗi: " + e.getMessage());
+        }
+        return result;
+    }
+
     @Override
     public void update(User user) {
         String sql =

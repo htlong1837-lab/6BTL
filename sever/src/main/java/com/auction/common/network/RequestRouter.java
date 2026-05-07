@@ -21,6 +21,7 @@ import com.auction.user.model.Bidder;
 import com.auction.user.model.Seller;
 import com.auction.user.model.User;
 
+import java.util.List;
 import java.util.Map;
 public class RequestRouter {
 
@@ -70,6 +71,13 @@ public class RequestRouter {
                     return handlePlaceBid(request.getPayload());
                 case "WITHDRAW_BID":
                     return handleWithdrawBid(request.getPayload());
+                // ===== ADMIN =====
+                case "LIST_USERS":
+                    return handleListUsers();
+                case "BAN_USER":
+                    return handleBanUser(request.getPayload());
+                case "APPROVE_ITEM":
+                    return handleApproveItem(request.getPayload());
 
                 default:
                     return Response.fall("Action không tồn tại: " + request.getAction());
@@ -235,4 +243,43 @@ public class RequestRouter {
             ? Response.ok(result, null)
             : Response.fall(result);
     }
+
+    private Response handleListUsers() {
+    List<User> users = userDAO.findAll();   // cần thêm findAll() vào UserDAO
+    List<Map<String, Object>> result = new java.util.ArrayList<>();
+    for (User u : users) {
+        Map<String, Object> m = new java.util.HashMap<>();
+        m.put("id",       u.getId());
+        m.put("username", u.getName());
+        m.put("banned",   u.isBanned());
+        m.put("role",     u instanceof com.auction.user.model.Admin  ? "ADMIN"
+                        : u instanceof com.auction.user.model.Seller ? "SELLER"
+                        : "BIDDER");
+        result.add(m);
+    }
+        return Response.ok("Danh sách người dùng", result);
+    }
+
+    private Response handleBanUser(Object payload) {
+        Map<String, Object> map = toMap(payload);
+        String userId = (String) map.get("userId");
+        boolean banned = Boolean.parseBoolean(map.get("banned").toString());
+        User user = userDAO.findById(userId);
+        if (user == null) return Response.fall("Không tìm thấy user: " + userId);
+        user.setBanned(banned);
+        userDAO.update(user);
+        return Response.ok((banned ? "Đã khóa: " : "Đã mở khóa: ") + user.getName(), null);
+    }
+
+    private Response handleApproveItem(Object payload) {
+        Map<String, Object> map = toMap(payload);
+        String itemId    = (String) map.get("itemId");
+        boolean approved = Boolean.parseBoolean(map.get("approved").toString());
+        Item item = itemController.getItem(itemId);
+        if (item == null) return Response.fall("Không tìm thấy sản phẩm: " + itemId);
+        item.setApproved(approved);
+        itemController.editItem(item);
+        return Response.ok((approved ? "Đã duyệt: " : "Đã từ chối: ") + item.getName(), null);
+    }
+
 }

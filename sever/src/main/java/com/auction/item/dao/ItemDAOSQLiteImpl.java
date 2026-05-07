@@ -27,8 +27,8 @@ public class ItemDAOSQLiteImpl implements ItemDAO {
     public void save(Item item) {
         String sql =
             "INSERT INTO items(id, name, description, start_price, category, seller_id, item_type," +
-            " artist, medium, make, model, year, brand, warranty_months)" +
-            " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            " artist, medium, make, model, year, brand, warranty_months, approved)" +
+            " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conn().prepareStatement(sql)) {
             fillBaseFields(ps, item);
             ps.executeUpdate();
@@ -78,9 +78,8 @@ public class ItemDAOSQLiteImpl implements ItemDAO {
     public void update(Item item) {
         String sql =
             "UPDATE items SET name=?, description=?, start_price=?, category=?, seller_id=?, item_type=?," +
-            " artist=?, medium=?, make=?, model=?, year=?, brand=?, warranty_months=? WHERE id=?";
+            " artist=?, medium=?, make=?, model=?, year=?, brand=?, warranty_months=?, approved=? WHERE id=?";
         try (PreparedStatement ps = conn().prepareStatement(sql)) {
-            // [THÊM] Dùng lại logic fill fields, chỉ thay đổi thứ tự param cuối cùng là id
             ps.setString(1,  item.getName());
             ps.setString(2,  item.getDes());
             ps.setDouble(3,  item.getStartPrice());
@@ -88,7 +87,8 @@ public class ItemDAOSQLiteImpl implements ItemDAO {
             ps.setString(5,  item.getSellerId());
             ps.setString(6,  typeOf(item));
             setTypeFields(ps, item, 7);
-            ps.setString(14, item.getId());
+            ps.setInt(14,    item.getApproved() ? 1 : 0);
+            ps.setString(15, item.getId());
             ps.executeUpdate();
         } catch (SQLException e) {
             System.err.println("[ItemDAO] update lỗi: " + e.getMessage());
@@ -115,25 +115,31 @@ public class ItemDAOSQLiteImpl implements ItemDAO {
         String category   = rs.getString("category");
         String sellerId   = rs.getString("seller_id");
         String itemType   = rs.getString("item_type");
+        boolean approved  = rs.getInt("approved") == 1;
 
+        Item item;
         switch (itemType) {
             case "ART":
-                return new Art(id, name, des, startPrice, category, sellerId,
+                item = new Art(id, name, des, startPrice, category, sellerId,
                     nvl(rs.getString("artist")),
                     nvl(rs.getString("medium")));
+                break;
             case "VEHICLE":
-                return new Vehicle(id, name, des, startPrice, category, sellerId,
+                item = new Vehicle(id, name, des, startPrice, category, sellerId,
                     nvl(rs.getString("make")),
                     nvl(rs.getString("model")),
                     rs.getInt("year"));
+                break;
             case "ELECTRONICS":
-                return new Electronics(id, name, des, startPrice, category, sellerId,
+                item = new Electronics(id, name, des, startPrice, category, sellerId,
                     nvl(rs.getString("brand")),
                     rs.getInt("warranty_months"));
+                break;
             default:
-                // [THÊM] Fallback nếu gặp item_type không xác định - không nên xảy ra
-                return new Art(id, name, des, startPrice, category, sellerId, "", "");
+                item = new Art(id, name, des, startPrice, category, sellerId, "", "");
         }
+        item.setApproved(approved);
+        return item;
     }
 
     // [THÊM] Helper fill 14 params cho INSERT - dùng lại cho cả save()
@@ -146,6 +152,7 @@ public class ItemDAOSQLiteImpl implements ItemDAO {
         ps.setString(6,  item.getSellerId());
         ps.setString(7,  typeOf(item));
         setTypeFields(ps, item, 8);
+        ps.setInt(15,    item.getApproved() ? 1 : 0);
     }
 
     // [THÊM] Fill các cột đặc thù theo từng loại Item (Art/Vehicle/Electronics)

@@ -5,6 +5,7 @@ import java.util.List;
 import com.auction.auction.model.Auction;
 import com.auction.exception.UserException.UserException;
 import com.auction.exception.UserException.UserNotFoundException;
+import com.auction.item.dao.ItemDAO;
 import com.auction.item.model.Product.Item;
 import com.auction.user.dao.UserDAO;
 import com.auction.user.model.Admin;
@@ -14,11 +15,12 @@ public class AdminService {
 
     private final Admin admin;
     private final UserDAO userDAO;
+    private final ItemDAO itemDAO;
 
-    // [SỬA] Thêm constructor nhận Admin và UserDAO - trước đây admin field = null nên permission check luôn fail
-    public AdminService(Admin admin, UserDAO userDAO) {
+    public AdminService(Admin admin, UserDAO userDAO, ItemDAO itemDAO) {
         this.admin   = admin;
         this.userDAO = userDAO;
+        this.itemDAO = itemDAO;
     }
 
     // Khóa hoặc mở khóa tài khoản user
@@ -55,12 +57,14 @@ public class AdminService {
         user.setBanned(false);
         System.out.println("[Admin] User \"" + user.getName() + "\" has been activated. You can now access");
     }
-    // Duyệt sản phẩm
-    public void approveItem(Item item) {
-        if (item.isApproved()==true) {
-            System.out.println("[Admin] Item \"" + item.getName() + "\" is already approved. It's ready for auction right now");
-        } else {
-            System.out.println("[Admin] Item \"" + item.getName() + "\" is invalid. Please check the details and edit it for approval.");
+    // Duyệt hoặc từ chối sản phẩm
+    public void approveItem(Item item, boolean approved) throws UserException {
+        if (admin == null) {
+            throw new UserNotFoundException("Chỉ Admin mới có quyền duyệt sản phẩm.");
         }
+        item.setApproved(approved);
+        itemDAO.update(item);
+        System.out.println("[Admin] Item \"" + item.getName()
+            + "\" → " + (approved ? "Đã duyệt." : "Đã từ chối."));
     }
 }

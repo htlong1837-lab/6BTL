@@ -7,6 +7,7 @@ public abstract class Item extends Entity {
     protected double startPrice;
     protected String category;
     protected String sellerId;
+    protected boolean approved = false;
     public Item(String id, String name, String des, double startPrice, String category, String sellerId) {
         super(id);
         this.name = name;
@@ -41,6 +42,9 @@ public abstract class Item extends Entity {
     public void setStartPrice(double startPrice) {
         this.startPrice = startPrice;
     }
+    public boolean getApproved() { return approved; }
+    public void setApproved(boolean approved) { this.approved = approved; }
+
         // Duyệt Item hợp lệ
     public boolean isApproved() {
         if (this.name != null && !this.name.isEmpty() &&

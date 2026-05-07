@@ -1,7 +1,9 @@
 package com.auction.user.dao;
 
 import com.auction.user.model.User;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UserDAOImpl implements UserDAO {
@@ -33,6 +35,11 @@ public class UserDAOImpl implements UserDAO {
     @Override
     public User findById(String id) {
         return usersById.get(id);
+    }
+
+    @Override
+    public List<User> findAll() {
+        return new ArrayList<>(usersById.values());
     }
 
     @Override

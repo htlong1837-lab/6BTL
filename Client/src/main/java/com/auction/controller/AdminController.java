@@ -20,7 +20,7 @@ public class AdminController {
     @FXML private StackPane contentArea;
     private final Gson gson = new Gson();
 
-    @FXML public void initialize() { showApproval(); }
+    @FXML public void initialize() { showAuctions(); }
 
     @FXML public void showApproval() {
         new Thread(() -> {
@@ -81,14 +81,19 @@ public class AdminController {
     }
 
     private void approveItem(String itemId, boolean approved) {
-        // TODO: Thêm case "APPROVE_ITEM" vào server RequestRouter:
-        // case "APPROVE_ITEM":
-        //     String id = (String) map.get("itemId");
-        //     boolean ok = Boolean.parseBoolean((String) map.get("approved"));
-        //     itemController.approveItem(id, ok);
-        //     return Response.ok("Đã " + (ok ? "duyệt" : "từ chối"), null);
-        new Alert(Alert.AlertType.INFORMATION,
-            "Server chưa có action APPROVE_ITEM.\nItem: " + itemId, ButtonType.OK).showAndWait();
+        new Thread(() -> {
+            try {
+                Response res = ServerConnection.getInstance()
+                    .send("APPROVE_ITEM", Map.of("itemId", itemId, "approved", approved));
+                Platform.runLater(() -> {
+                    new Alert(Alert.AlertType.INFORMATION, res.getMessage(), ButtonType.OK).showAndWait();
+                    if (res.isSuccess()) showApproval(); // làm mới bảng sau khi duyệt
+                });
+            } catch (IOException e) {
+                Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, "Lỗi: " + e.getMessage(), ButtonType.OK).showAndWait());
+            }
+        }).start();
     }
 
     @FXML public void showAuctions() {
@@ -125,6 +130,89 @@ public class AdminController {
             }
         }).start();
     }
+
+    @FXML public void showUsers() {
+    new Thread(() -> {
+        try {
+            Response res = ServerConnection.getInstance().send("LIST_USERS", Map.of());
+            Platform.runLater(() -> {
+                if (!res.isSuccess()) {
+                    contentArea.getChildren().setAll(
+                        new Label("Server chưa hỗ trợ LIST_USERS"));
+                    return;
+                }
+                ObservableList<JsonObject> data = FXCollections.observableArrayList();
+                for (JsonElement e : gson.toJsonTree(res.getData()).getAsJsonArray())
+                    data.add(e.getAsJsonObject());
+
+                TableView<JsonObject> table = new TableView<>(data);
+                table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+                TableColumn<JsonObject, String> cName = new TableColumn<>("Tên đăng nhập");
+                cName.setCellValueFactory(d ->
+                    new SimpleStringProperty(d.getValue().get("username").getAsString()));
+
+                TableColumn<JsonObject, String> cRole = new TableColumn<>("Vai trò");
+                cRole.setCellValueFactory(d ->
+                    new SimpleStringProperty(d.getValue().get("role").getAsString()));
+
+                TableColumn<JsonObject, String> cStatus = new TableColumn<>("Trạng thái");
+                cStatus.setCellValueFactory(d -> {
+                    boolean banned = d.getValue().has("banned")
+                                  && d.getValue().get("banned").getAsBoolean();
+                    return new SimpleStringProperty(banned ? "Đã khóa" : "Hoạt động");
+                });
+
+                TableColumn<JsonObject, String> cAct = new TableColumn<>("Thao tác");
+                cAct.setPrefWidth(160);
+                cAct.setCellFactory(col -> new TableCell<>() {
+                    final Button btnBan   = new Button("Khóa");
+                    final Button btnUnban = new Button("Mở khóa");
+                    final HBox   box      = new HBox(6, btnBan, btnUnban);
+                    {
+                        btnBan.setStyle("-fx-background-color:#e74c3c;-fx-text-fill:white;");
+                        btnUnban.setStyle("-fx-background-color:#27ae60;-fx-text-fill:white;");
+                        btnBan.setOnAction(e ->
+                            banUser(getTableView().getItems()
+                                .get(getIndex()).get("id").getAsString(), true));
+                        btnUnban.setOnAction(e ->
+                            banUser(getTableView().getItems()
+                                .get(getIndex()).get("id").getAsString(), false));
+                    }
+                    @Override protected void updateItem(String v, boolean empty) {
+                        super.updateItem(v, empty);
+                        setGraphic(empty ? null : box);
+                    }
+                });
+
+                table.getColumns().addAll(cName, cRole, cStatus, cAct);
+                VBox vbox = new VBox(10,
+                    new Label("Người dùng — " + data.size() + " tài khoản"), table);
+                VBox.setVgrow(table, Priority.ALWAYS);
+                contentArea.getChildren().setAll(vbox);
+                });
+            } catch (IOException e) {
+            Platform.runLater(() ->
+                contentArea.getChildren().setAll(new Label("Lỗi: " + e.getMessage())));
+            }
+        }).start();
+    }   
+
+    private void banUser(String userId, boolean banned) {
+        new Thread(() -> {
+            try {
+                Response res = ServerConnection.getInstance()
+                    .send("BAN_USER", Map.of("userId", userId, "banned", banned));
+                Platform.runLater(() ->
+                    new Alert(Alert.AlertType.INFORMATION,
+                        res.getMessage(), ButtonType.OK).showAndWait());
+            } catch (IOException e) {
+                Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait());
+            }
+        }).start();
+    }
+
 
     @FXML public void handleLogout() {
         SessionManager.getInstance().clear();
