@@ -1,9 +1,6 @@
 package com.auction.item.dao;
 
-// [THÊM] Toàn bộ file này là mới - ItemDAO dùng SQLite thay vì in-memory HashMap
-// Cần thiết để dữ liệu sản phẩm tồn tại sau khi server khởi động lại
-
-import com.auction.common.until.DatabaseConnection;
+import com.auction.common.util.DatabaseConnection;
 import com.auction.item.model.Product.Art;
 import com.auction.item.model.Product.Electronics;
 import com.auction.item.model.Product.Item;

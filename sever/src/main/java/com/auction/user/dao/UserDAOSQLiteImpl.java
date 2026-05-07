@@ -1,6 +1,6 @@
 package com.auction.user.dao;
 
-import com.auction.common.until.DatabaseConnection;
+import com.auction.common.util.DatabaseConnection;
 import com.auction.user.model.Admin;
 import com.auction.user.model.Bidder;
 import com.auction.user.model.Seller;

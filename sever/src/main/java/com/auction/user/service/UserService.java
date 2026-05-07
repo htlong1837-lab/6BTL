@@ -5,7 +5,7 @@ import com.auction.user.dao.UserDAO;
 import com.auction.user.model.Bidder;
 import com.auction.user.model.Seller;
 import com.auction.user.model.User;
-import com.auction.common.until.PasswordUtil;
+import com.auction.common.util.PasswordUtil;
 import com.auction.exception.UserException.*;
 
 import javax.naming.AuthenticationException;

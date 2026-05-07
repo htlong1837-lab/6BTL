@@ -1,4 +1,4 @@
-package com.auction.common.until;
+package com.auction.common.util;
 
 // [THÊM] Toàn bộ file này là mới - wrapper cho Gson để serialize/deserialize JSON
 // Cần thiết để ClientHandler đọc Request và ghi Response qua socket dưới dạng JSON

@@ -5,7 +5,7 @@ import java.net.Socket;
 
 import com.auction.common.protocol.Request;
 import com.auction.common.protocol.Response;
-import com.auction.common.until.JsonHelper;
+import com.auction.common.util.JsonHelper;
 
 public class ClientHandler {
 

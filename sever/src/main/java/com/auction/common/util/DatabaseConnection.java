@@ -1,4 +1,4 @@
-package com.auction.common.until;
+package com.auction.common.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
