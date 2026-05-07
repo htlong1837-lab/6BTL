@@ -74,7 +74,7 @@ public class RegisterController {
                 pause.setOnFinished(e -> {
                     try {
                         FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/client/view/LoginView.fxml"));
+                    getClass().getResource("/com/client/view/LoginViewfinal.fxml"));
                     Parent root = loader.load();
                     Stage stage = (Stage) userNameField.getScene().getWindow();
                     Scene scene = new Scene(root,500,700) ;

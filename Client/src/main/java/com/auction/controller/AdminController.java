@@ -129,7 +129,7 @@ public class AdminController {
     @FXML public void handleLogout() {
         SessionManager.getInstance().clear();
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/client/view/LoginView.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/client/view/LoginViewfinal.fxml"));
             Stage stage = (Stage) contentArea.getScene().getWindow();
             stage.setScene(new Scene(root, 500, 700));
         } catch (Exception e) { e.printStackTrace(); }

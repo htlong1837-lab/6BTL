@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<ScrollPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.auction.controller.ProductFormController"
+            fitToWidth="true"
+            style="-fx-background-color: #f1f5f9; -fx-background: #f1f5f9;">
+<VBox style="-fx-padding: 28; -fx-spacing: 20; -fx-background-color: #f1f5f9;">
+
+    <!-- Header -->
+    <VBox style="-fx-background-color: linear-gradient(to right, #0f172a, #1e3a5f);
+                 -fx-background-radius: 12; -fx-padding: 20 24; -fx-spacing: 4;">
+        <Label text="📦 Thêm Sản Phẩm Mới"
+               style="-fx-font-size: 18; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <Label text="Điền thông tin sản phẩm để đăng ký đấu giá"
+               style="-fx-font-size: 12; -fx-text-fill: #94a3b8;"/>
+    </VBox>
+
+    <!-- Base info card -->
+    <VBox style="-fx-background-color: white; -fx-background-radius: 12;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);
+                 -fx-padding: 24; -fx-spacing: 14;">
+        <Label text="Thông Tin Cơ Bản"
+               style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #0f172a;
+                      -fx-border-color: transparent transparent #e2e8f0 transparent;
+                      -fx-border-width: 0 0 1.5 0; -fx-padding: 0 0 10 0;"/>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="Tên sản phẩm:" prefWidth="140"
+                   style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+            <TextField fx:id="nameField" promptText="Nhập tên sản phẩm" HBox.hgrow="ALWAYS" prefHeight="40"
+                style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0;
+                       -fx-border-width: 1.5; -fx-padding: 8 12; -fx-font-size: 13; -fx-background-color: #f8fafc;"/>
+        </HBox>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="Mô tả:" prefWidth="140"
+                   style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+            <TextArea fx:id="descField" promptText="Mô tả chi tiết sản phẩm" prefRowCount="3" HBox.hgrow="ALWAYS"
+                style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0;
+                       -fx-border-width: 1.5; -fx-padding: 8 12; -fx-font-size: 13; -fx-background-color: #f8fafc;"/>
+        </HBox>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="Giá khởi điểm:" prefWidth="140"
+                   style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+            <TextField fx:id="priceField" promptText="VD: 5,000,000 VNĐ" HBox.hgrow="ALWAYS" prefHeight="40"
+                style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0;
+                       -fx-border-width: 1.5; -fx-padding: 8 12; -fx-font-size: 13; -fx-background-color: #f8fafc;"/>
+        </HBox>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="Loại sản phẩm:" prefWidth="140"
+                   style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+            <ComboBox fx:id="categoryCombo" onAction="#onCategoryChanged" maxWidth="Infinity" HBox.hgrow="ALWAYS"
+                prefHeight="40" promptText="Chọn loại sản phẩm..."
+                style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0;
+                       -fx-border-width: 1.5; -fx-padding: 4 10; -fx-font-size: 13; -fx-background-color: #f8fafc;"/>
+        </HBox>
+    </VBox>
+
+    <!-- ART fields -->
+    <VBox fx:id="artFields" spacing="12" managed="false" visible="false"
+          style="-fx-background-color: white; -fx-background-radius: 12;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);
+                 -fx-padding: 24;">
+        <Label text="🎨 Thông Tin Tác Phẩm Nghệ Thuật"
+               style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #0f172a;
+                      -fx-border-color: transparent transparent #e2e8f0 transparent;
+                      -fx-border-width: 0 0 1.5 0; -fx-padding: 0 0 10 0;"/>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="Họa sĩ:" prefWidth="140" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+            <TextField fx:id="artistField" HBox.hgrow="ALWAYS" prefHeight="40"
+                style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0; -fx-border-width: 1.5; -fx-padding: 8 12; -fx-font-size: 13; -fx-background-color: #f8fafc;"/>
+        </HBox>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="Chất liệu:" prefWidth="140" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+            <TextField fx:id="mediumField" HBox.hgrow="ALWAYS" prefHeight="40"
+                style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0; -fx-border-width: 1.5; -fx-padding: 8 12; -fx-font-size: 13; -fx-background-color: #f8fafc;"/>
+        </HBox>
+    </VBox>
+
+    <!-- VEHICLE fields -->
+    <VBox fx:id="vehicleFields" spacing="12" managed="false" visible="false"
+          style="-fx-background-color: white; -fx-background-radius: 12;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);
+                 -fx-padding: 24;">
+        <Label text="🚗 Thông Tin Xe"
+               style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #0f172a;
+                      -fx-border-color: transparent transparent #e2e8f0 transparent;
+                      -fx-border-width: 0 0 1.5 0; -fx-padding: 0 0 10 0;"/>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="Hãng xe:" prefWidth="140" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+            <TextField fx:id="makeField" HBox.hgrow="ALWAYS" prefHeight="40"
+                style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0; -fx-border-width: 1.5; -fx-padding: 8 12; -fx-font-size: 13; -fx-background-color: #f8fafc;"/>
+        </HBox>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="Dòng xe:" prefWidth="140" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+            <TextField fx:id="modelField" HBox.hgrow="ALWAYS" prefHeight="40"
+                style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0; -fx-border-width: 1.5; -fx-padding: 8 12; -fx-font-size: 13; -fx-background-color: #f8fafc;"/>
+        </HBox>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="Năm sản xuất:" prefWidth="140" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+            <TextField fx:id="yearField" HBox.hgrow="ALWAYS" prefHeight="40"
+                style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0; -fx-border-width: 1.5; -fx-padding: 8 12; -fx-font-size: 13; -fx-background-color: #f8fafc;"/>
+        </HBox>
+    </VBox>
+
+    <!-- ELECTRONICS fields -->
+    <VBox fx:id="electronicsFields" spacing="12" managed="false" visible="false"
+          style="-fx-background-color: white; -fx-background-radius: 12;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 8, 0, 0, 2);
+                 -fx-padding: 24;">
+        <Label text="💻 Thông Tin Điện Tử"
+               style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: #0f172a;
+                      -fx-border-color: transparent transparent #e2e8f0 transparent;
+                      -fx-border-width: 0 0 1.5 0; -fx-padding: 0 0 10 0;"/>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="Thương hiệu:" prefWidth="140" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+            <TextField fx:id="brandField" HBox.hgrow="ALWAYS" prefHeight="40"
+                style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0; -fx-border-width: 1.5; -fx-padding: 8 12; -fx-font-size: 13; -fx-background-color: #f8fafc;"/>
+        </HBox>
+        <HBox spacing="12" alignment="CENTER_LEFT">
+            <Label text="Bảo hành (tháng):" prefWidth="140" style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+            <TextField fx:id="warrantyField" HBox.hgrow="ALWAYS" prefHeight="40"
+                style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0; -fx-border-width: 1.5; -fx-padding: 8 12; -fx-font-size: 13; -fx-background-color: #f8fafc;"/>
+        </HBox>
+    </VBox>
+
+    <Button text="✅ THÊM SẢN PHẨM" onAction="#handleSubmit" maxWidth="Infinity" prefHeight="46"
+            style="-fx-background-color: linear-gradient(to right, #1e3a5f, #2563eb);
+                   -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;
+                   -fx-background-radius: 8; -fx-cursor: hand;"/>
+    <Label fx:id="messageLabel" wrapText="true"
+           style="-fx-font-size: 12; -fx-text-fill: #16a34a; -fx-padding: 0 4;"/>
+</VBox>
+</ScrollPane>

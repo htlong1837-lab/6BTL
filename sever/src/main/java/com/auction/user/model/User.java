@@ -16,11 +16,7 @@ public abstract class User extends Entity {
         this.isBanned = false;
         this.role = role;
     }
-    public User(String id, String name, String passwordHash){
-        super(id);
-        this.name=name;
-        this.passwordHash=passwordHash;
-    }
+   
     // Getters
     public String getName()         { return name; }
     public String getPasswordHash() { return passwordHash; }

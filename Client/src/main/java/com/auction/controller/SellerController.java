@@ -68,11 +68,11 @@ public class SellerController {
     }
 
     @FXML public void showAddItem() {
-        loadSubView("/com/client/view/ItemFormView.fxml");
+        loadSubView("/com/client/view/ItemFormViewfinal.fxml");
     }
 
     @FXML public void showCreateAuction() {
-        loadSubView("/com/client/view/CreateAuctionView.fxml");
+        loadSubView("/com/client/view/CreateAuctionViewfinal.fxml");
     }
 
     private void loadSubView(String path) {
@@ -85,7 +85,7 @@ public class SellerController {
     @FXML public void handleLogout() {
         SessionManager.getInstance().clear();
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/client/view/LoginView.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/client/view/LoginViewfinal.fxml"));
             Stage stage = (Stage) contentArea.getScene().getWindow();
             stage.setScene(new Scene(root, 500, 700));
         } catch (Exception e) { e.printStackTrace(); }

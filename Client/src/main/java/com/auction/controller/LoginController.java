@@ -73,15 +73,15 @@ private void handleLogin() {
         int width, height;
         switch (role) {
             case "ADMIN":
-                fxml = "/com/client/view/AdminView.fxml";
+                fxml = "/com/client/view/AdminViewfinal.fxml";
                 width = 1000; height = 650;
                 break;
             case "SELLER":
-                fxml = "/com/client/view/SellerView.fxml";
+                fxml = "/com/client/view/SellerViewfinal.fxml";
                 width = 900; height = 600;
                 break;
             default: // BIDDER
-                fxml = "/com/client/view/AuctionListView.fxml";
+                fxml = "/com/client/view/AuctionListViewfinal.fxml";
                 width = 900; height = 600;
                 break;
         }
@@ -109,7 +109,7 @@ private void handleLogin() {
     private void goToRegister(MouseEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/com/client/view/RegisterView.fxml")
+                getClass().getResource("/com/client/view/RegisterViewfinal.fxml")
             );
             Parent root = loader.load();
             Stage stage = (Stage) passwordField.getScene().getWindow();

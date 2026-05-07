@@ -22,7 +22,7 @@ public class App extends Application {
         }
 
         FXMLLoader loader = new FXMLLoader(
-            getClass().getResource("/com/client/view/LoginView.fxml")
+            getClass().getResource("/com/client/view/LoginViewfinal.fxml")
         );
         Scene scene = new Scene(loader.load(), 500, 700);
         stage.setTitle("Hệ thống đấu giá");
