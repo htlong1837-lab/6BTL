@@ -102,7 +102,7 @@ public class AuctionListController {
             Parent root = FXMLLoader.load(getClass().getResource("/com/client/view/WalletViewfinal.fxml"));
             Stage st = new Stage();
             st.setTitle("Ví của tôi");
-            st.setScene(new Scene(root, 380, 280));
+            st.setScene(new Scene(root, 300, 500));
             st.show();
         } catch (Exception e) { statusLabel.setText("Lỗi: " + e.getMessage()); }
     }

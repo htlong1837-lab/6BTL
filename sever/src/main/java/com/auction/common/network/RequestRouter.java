@@ -71,6 +71,9 @@ public class RequestRouter {
                     return handlePlaceBid(request.getPayload());
                 case "WITHDRAW_BID":
                     return handleWithdrawBid(request.getPayload());
+                case "DEPOSIT":
+                    return handleDeposit(request.getPayload());
+
                 // ===== ADMIN =====
                 case "LIST_USERS":
                     return handleListUsers();
@@ -200,6 +203,7 @@ public class RequestRouter {
 
         Item item = itemController.getItem(itemId);
         if (item == null) return Response.fall("Không tìm thấy sản phẩm: " + itemId);
+        if (!item.getApproved()) return Response.fall("Sản phẩm chưa được duyệt ");
 
         User user = userDAO.findById(sellerId);
         if (!(user instanceof Seller)) return Response.fall("Người dùng không phải Seller.");
@@ -245,14 +249,14 @@ public class RequestRouter {
     }
 
     private Response handleListUsers() {
-    List<User> users = userDAO.findAll();   // cần thêm findAll() vào UserDAO
-    List<Map<String, Object>> result = new java.util.ArrayList<>();
-    for (User u : users) {
-        Map<String, Object> m = new java.util.HashMap<>();
-        m.put("id",       u.getId());
-        m.put("username", u.getName());
-        m.put("banned",   u.isBanned());
-        m.put("role",     u instanceof com.auction.user.model.Admin  ? "ADMIN"
+        List<User> users = userDAO.findAll();   // cần thêm findAll() vào UserDAO
+        List<Map<String, Object>> result = new java.util.ArrayList<>();
+        for (User u : users) {
+            Map<String, Object> m = new java.util.HashMap<>();
+            m.put("id",       u.getId());
+            m.put("username", u.getName());
+            m.put("banned",   u.isBanned());
+            m.put("role",     u instanceof com.auction.user.model.Admin  ? "ADMIN"
                         : u instanceof com.auction.user.model.Seller ? "SELLER"
                         : "BIDDER");
         result.add(m);
@@ -280,6 +284,24 @@ public class RequestRouter {
         item.setApproved(approved);
         itemController.editItem(item);
         return Response.ok((approved ? "Đã duyệt: " : "Đã từ chối: ") + item.getName(), null);
+    }
+
+    private Response handleDeposit(Object payload) {
+        Map<String, Object> map = toMap(payload);
+        String bidderId = (String) map.get("bidderId");
+        double amount   = ((Number) map.get("amount")).doubleValue();
+
+        User user = userDAO.findById(bidderId);
+        if (!(user instanceof Bidder))
+            return Response.fall("Không tìm thấy Bidder: " + bidderId);
+
+        String result = bidController.handleDeposit((Bidder) user, amount);
+        if (result.contains("thành công")) {
+            userDAO.update(user);
+        }
+        return result.contains("thành công")
+            ? Response.ok(result, user.getBalance())
+            : Response.fall(result);
     }
 
 }
