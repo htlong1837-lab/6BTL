@@ -23,4 +23,27 @@
                    style="-fx-font-size: 30; -fx-font-weight: bold; -fx-text-fill: #f59e0b;"/>
         </VBox>
     </VBox>
+
+    <VBox style="-fx-background-color: white; -fx-background-radius: 16;
+                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.07), 12, 0, 0, 3);
+                 -fx-padding: 28; -fx-spacing: 12;"
+          maxWidth="420">
+
+        <Label text="Nạp tiền vào ví"
+               style="-fx-font-size: 15; -fx-font-weight: bold; -fx-text-fill: #0f172a;"/>
+        <Separator/>
+
+        <TextField fx:id="amountField"
+                   promptText="Nhập số tiền (VND)"
+                   style="-fx-font-size: 14; -fx-padding: 10; -fx-background-radius: 8;"/>
+
+        <Button text="Nạp tiền" onAction="#handleDeposit"
+                maxWidth="Infinity"
+                style="-fx-background-color: #2563eb; -fx-text-fill: white;
+                       -fx-font-size: 14; -fx-font-weight: bold;
+                       -fx-padding: 10; -fx-background-radius: 8; -fx-cursor: hand;"/>
+
+        <Label fx:id="messageLabel" text=""
+               style="-fx-font-size: 13;"/>
+    </VBox>
 </VBox>
