@@ -80,7 +80,7 @@ public class AuctionListController {
 
     private void openAuctionRoom(JsonObject auction) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/client/view/AuctionRoomView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/client/view/AuctionRoomViewfinal.fxml"));
             Parent root = loader.load();
             BiddingController ctrl = loader.getController();
             ctrl.setAuction(auction);
@@ -99,7 +99,7 @@ public class AuctionListController {
     @FXML
     void showWallet() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/client/view/WalletView.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/client/view/WalletViewfinal.fxml"));
             Stage st = new Stage();
             st.setTitle("Ví của tôi");
             st.setScene(new Scene(root, 380, 280));
@@ -111,7 +111,7 @@ public class AuctionListController {
     void handleLogout() {
         SessionManager.getInstance().clear();
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/client/view/LoginView.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/client/view/LoginViewfinal.fxml"));
             Stage stage = (Stage) auctionTable.getScene().getWindow();
             stage.setScene(new Scene(root, 500, 700));
         } catch (Exception e) { e.printStackTrace(); }
