@@ -8,4 +8,7 @@ public class Request {
         this.action  = action;
         this.payload = payload;
     }
+
+    public String getAction()  { return action; }
+    public Object getPayload() { return payload; }
 }
