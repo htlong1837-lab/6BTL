@@ -36,8 +36,10 @@ public class BiddingController {
         currentPriceLabel.setText("Giá hiện tại: " +
             String.format("%,.0f VND", auction.get("currentPrice").getAsDouble()));
         JsonElement leader = auction.get("highestBidder");
-        highestBidderLabel.setText("Người dẫn đầu: " +
-            (leader == null || leader.isJsonNull() ? "Chưa có" : leader.getAsString()));
+        String leaderName = (leader == null || leader.isJsonNull())
+            ? "Chưa có"
+            : leader.getAsJsonObject().get("name").getAsString();
+        highestBidderLabel.setText("Người dẫn đầu: " + leaderName);
 
         history.clear();
         JsonElement histArr = auction.get("bidHistory");

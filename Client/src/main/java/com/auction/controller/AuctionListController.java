@@ -38,7 +38,8 @@ public class AuctionListController {
             new SimpleStringProperty(String.format("%,.0f", d.getValue().get("currentPrice").getAsDouble())));
         colLeader.setCellValueFactory(d -> {
             JsonElement e = d.getValue().get("highestBidder");
-            return new SimpleStringProperty(e == null || e.isJsonNull() ? "Chưa có" : e.getAsString());
+            if (e == null || e.isJsonNull()) return new SimpleStringProperty("Chưa có");
+            return new SimpleStringProperty(e.getAsJsonObject().get("name").getAsString());
         });
         colStatus.setCellValueFactory(d ->
             new SimpleStringProperty(d.getValue().get("status").getAsString()));

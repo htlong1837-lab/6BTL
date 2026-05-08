@@ -31,12 +31,20 @@ public class CreateAuctionController {
                 Platform.runLater(() -> {
                     for (JsonElement e : gson.toJsonTree(res.getData()).getAsJsonArray()) {
                         JsonObject o = e.getAsJsonObject();
-                        if (myId.equals(o.get("sellerId").getAsString())) {
+                        boolean isMyItem   = myId.equals(o.get("sellerId").getAsString());
+                        boolean isApproved = o.has("approved") && o.get("approved").getAsBoolean();
+                        if (isMyItem && isApproved) {
                             String name = o.get("name").getAsString();
                             nameToId.put(name, o.get("id").getAsString());
                             itemCombo.getItems().add(name);
                         }
+
+                    if (itemCombo.getItems().isEmpty()) {
+                        msg("Chưa có sản phẩm nào được admin duyệt.", false);
+}
+
                     }
+                
                 });
             } catch (IOException e) {
                 Platform.runLater(() -> msg("Lỗi tải sản phẩm: " + e.getMessage(), false));
