@@ -47,8 +47,8 @@ public class RequestRouter {
                     return handleRegister(request.getPayload());
                 case "LOGIN":
                     return handleLogin(request.getPayload());
-                case "REGISTER_SELLER":
-                    return handleRegisterSeller(request.getPayload());
+
+                //[XOÁ REGISTER Seller]
 
                 // ===== ITEM =====
                 case "CREATE_ITEM":
@@ -132,16 +132,7 @@ public class RequestRouter {
         return Response.ok("Đăng nhập thành công!", safeUser);
     }
 
-    private Response handleRegisterSeller(Object payload) {
-        Map<String, Object> map = toMap(payload);
-        boolean success = userController.registerAsSeller(
-            (String) map.get("username"),
-            (String) map.get("shopName")
-        );
-        return success
-            ? Response.ok("Đăng ký Seller thành công!", null)
-            : Response.fall("Đăng ký Seller thất bại.");
-    }
+    //[Xoá handleRegister]
 
     private Response handleCreateItem(Object payload) {
         Map<String, Object> map = toMap(payload);
