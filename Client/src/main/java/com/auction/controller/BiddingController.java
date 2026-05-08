@@ -18,8 +18,11 @@ public class BiddingController {
     @FXML private TextField bidAmountField;
 
     private String auctionId;
+    private Runnable onBidSuccess;
     private final Gson gson = new Gson();
     private final ObservableList<String> history = FXCollections.observableArrayList();
+
+    public void setOnBidSuccess(Runnable callback) { this.onBidSuccess = callback; }
 
     @FXML public void initialize() { bidHistoryList.setItems(history); }
 
@@ -69,7 +72,11 @@ public class BiddingController {
                 ));
                 Platform.runLater(() -> {
                     show(res.getMessage(), res.isSuccess());
-                    if (res.isSuccess()) { bidAmountField.clear(); refreshAuction(); }
+                    if (res.isSuccess()) {
+                        bidAmountField.clear();
+                        refreshAuction();
+                        if (onBidSuccess != null) onBidSuccess.run();
+                    }
                 });
             } catch (IOException e) {
                 Platform.runLater(() -> show("Lỗi kết nối: " + e.getMessage(), false));

@@ -28,6 +28,10 @@ public class AuctionListController {
         SessionManager s = SessionManager.getInstance();
         usernameLabel.setText("Xin chào, " + s.getUsername());
         balanceLabel.setText("Số dư: " + String.format("%,.0f VND", s.getBalance()));
+        // Tự động cập nhật khi số dư thay đổi (sau khi nạp tiền)
+        s.balanceProperty().addListener((obs, old, newVal) ->
+            balanceLabel.setText("Số dư: " + String.format("%,.0f VND", newVal.doubleValue()))
+        );
 
         colName.setCellValueFactory(d -> {
             JsonElement item = d.getValue().get("item");
@@ -85,6 +89,8 @@ public class AuctionListController {
             Parent root = loader.load();
             BiddingController ctrl = loader.getController();
             ctrl.setAuction(auction);
+            // Khi đặt giá thành công → cập nhật lại bảng danh sách đấu giá
+            ctrl.setOnBidSuccess(this::loadAuctions);
             Stage stage = new Stage();
             stage.setTitle("Phòng đấu giá — " +
                 auction.getAsJsonObject("item").get("name").getAsString());
