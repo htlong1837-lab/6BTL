@@ -4,7 +4,7 @@ import com.auction.auction.controller.AuctionController;
 import com.auction.auction.dao.AuctionDAOImpl;
 import com.auction.auction.model.Auction;
 import com.auction.bid.controller.BidController;
-import com.auction.bid.dao.BidDAOImpl;
+import com.auction.bid.dao.BidDAOSQLiteImpl;
 import com.auction.bid.service.BidLockManager;
 import com.auction.bid.service.BidService;
 import com.auction.common.protocol.Request;
@@ -29,7 +29,7 @@ public class RequestRouter {
     private final ItemController itemController = new ItemController();
     private final AuctionController auctionController = new AuctionController();
     private final BidController bidController = new BidController(
-        new BidService(new AuctionDAOImpl(), new BidDAOImpl(), new BidLockManager())
+        new BidService(new AuctionDAOImpl(), new BidDAOSQLiteImpl(), new BidLockManager())
     );
     // Dùng trực tiếp để tra cứu User theo ID khi xử lý auction/bid
     private final UserDAO userDAO = new UserDAOSQLiteImpl();

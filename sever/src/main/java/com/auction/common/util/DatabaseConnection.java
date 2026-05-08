@@ -53,6 +53,12 @@ public class DatabaseConnection {
                 "  item_type TEXT NOT NULL, artist TEXT, medium TEXT," +
                 "  make TEXT, model TEXT, year INTEGER, brand TEXT, warranty_months INTEGER)"
             );
+            stmt.executeUpdate(
+                "CREATE TABLE IF NOT EXISTS bids (" +
+                "  id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "  bidder_id TEXT NOT NULL, bidder_name TEXT NOT NULL," +
+                "  auction_id TEXT NOT NULL, amount REAL NOT NULL, timestamp INTEGER NOT NULL)"
+            );
         }
     }
 
