@@ -2,7 +2,6 @@ package com.auction.bid.dao;
 
 import com.auction.bid.model.BidTransaction;
 import com.auction.common.util.DatabaseConnection;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -11,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BidDAOSQLiteImpl implements BidDAO {
-
     private Connection conn() {
         return DatabaseConnection.getInstance().getConnection();
     }
@@ -93,3 +91,4 @@ public class BidDAOSQLiteImpl implements BidDAO {
         );
     }
 }
+
