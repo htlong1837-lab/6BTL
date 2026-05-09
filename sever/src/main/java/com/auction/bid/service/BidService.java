@@ -62,6 +62,7 @@ public class BidService {
                 bidAmount,
                 System.currentTimeMillis()
             ));
+            auctionDAO.save(auction); // persist currentPrice, highestBidder, endTime (anti-snipe)
 
             List<String> active = getList(activeBids, bidder.getId());
             if (!active.contains(auctionId)) active.add(auctionId);

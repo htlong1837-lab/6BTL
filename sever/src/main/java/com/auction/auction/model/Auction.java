@@ -40,6 +40,20 @@ public class Auction {
 
     }
 
+    // Constructor phục hồi trạng thái từ DB — không sinh UUID mới, không gọi start()
+    public Auction(String id, Item item, Seller seller, double currentPrice,
+                   User highestBidder, AuctionStatus status, long startTime, long endTime) {
+        this.id            = id;
+        this.item          = item;
+        this.seller        = seller;
+        this.currentPrice  = currentPrice;
+        this.highestBidder = highestBidder;
+        this.status        = status;
+        this.bidHistory    = new ArrayList<>();
+        this.startTime     = startTime;
+        this.endTime       = endTime;
+    }
+
 // begin to dau gia 
     public void start() {
         if (status == AuctionStatus.OPEN) {
@@ -138,12 +152,13 @@ public class Auction {
         }
     }
 
-    public String getId()  { return id; } 
+    public String getId()  { return id; }
     public User getHighestBidder() {return highestBidder;}
     public List<BidTransaction> getBidHistory() {return bidHistory;}
     public AuctionStatus getStatus() {return status ;}
     public Item getItem() {return item;}
     public Seller getSeller() { return seller;}
+    public double getCurrentPrice() { return currentPrice; }
     public long getStartTime() {return startTime;}
     public long getEndTime() {return endTime;}
     

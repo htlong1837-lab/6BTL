@@ -18,8 +18,11 @@ public class BiddingController {
     @FXML private TextField bidAmountField;
 
     private String auctionId;
+    private Runnable onBidSuccess;
     private final Gson gson = new Gson();
     private final ObservableList<String> history = FXCollections.observableArrayList();
+
+    public void setOnBidSuccess(Runnable callback) { this.onBidSuccess = callback; }
 
     @FXML public void initialize() { bidHistoryList.setItems(history); }
 
@@ -36,8 +39,10 @@ public class BiddingController {
         currentPriceLabel.setText("Giá hiện tại: " +
             String.format("%,.0f VND", auction.get("currentPrice").getAsDouble()));
         JsonElement leader = auction.get("highestBidder");
-        highestBidderLabel.setText("Người dẫn đầu: " +
-            (leader == null || leader.isJsonNull() ? "Chưa có" : leader.getAsString()));
+        String leaderName = (leader == null || leader.isJsonNull())
+            ? "Chưa có"
+            : leader.getAsJsonObject().get("name").getAsString();
+        highestBidderLabel.setText("Người dẫn đầu: " + leaderName);
 
         history.clear();
         JsonElement histArr = auction.get("bidHistory");
@@ -67,7 +72,11 @@ public class BiddingController {
                 ));
                 Platform.runLater(() -> {
                     show(res.getMessage(), res.isSuccess());
-                    if (res.isSuccess()) { bidAmountField.clear(); refreshAuction(); }
+                    if (res.isSuccess()) {
+                        bidAmountField.clear();
+                        refreshAuction();
+                        if (onBidSuccess != null) onBidSuccess.run();
+                    }
                 });
             } catch (IOException e) {
                 Platform.runLater(() -> show("Lỗi kết nối: " + e.getMessage(), false));

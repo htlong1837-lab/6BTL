@@ -1,7 +1,7 @@
 package com.auction.common.network;
 
 import com.auction.auction.controller.AuctionController;
-import com.auction.auction.dao.AuctionDAOImpl;
+import com.auction.auction.dao.AuctionSQLiteDAOImpl;
 import com.auction.auction.model.Auction;
 import com.auction.bid.controller.BidController;
 import com.auction.bid.dao.BidDAOSQLiteImpl;
@@ -29,7 +29,7 @@ public class RequestRouter {
     private final ItemController itemController = new ItemController();
     private final AuctionController auctionController = new AuctionController();
     private final BidController bidController = new BidController(
-        new BidService(new AuctionDAOImpl(), new BidDAOSQLiteImpl(), new BidLockManager())
+        new BidService(new AuctionSQLiteDAOImpl(), new BidDAOSQLiteImpl(), new BidLockManager())
     );
     // Dùng trực tiếp để tra cứu User theo ID khi xử lý auction/bid
     private final UserDAO userDAO = new UserDAOSQLiteImpl();
@@ -79,8 +79,6 @@ public class RequestRouter {
                     return handleListUsers();
                 case "BAN_USER":
                     return handleBanUser(request.getPayload());
-                case "APPROVE_ITEM":
-                    return handleApproveItem(request.getPayload());
 
                 default:
                     return Response.fall("Action không tồn tại: " + request.getAction());
@@ -194,7 +192,6 @@ public class RequestRouter {
 
         Item item = itemController.getItem(itemId);
         if (item == null) return Response.fall("Không tìm thấy sản phẩm: " + itemId);
-        if (!item.getApproved()) return Response.fall("Sản phẩm chưa được duyệt ");
 
         User user = userDAO.findById(sellerId);
         if (!(user instanceof Seller)) return Response.fall("Người dùng không phải Seller.");
@@ -264,17 +261,6 @@ public class RequestRouter {
         user.setBanned(banned);
         userDAO.update(user);
         return Response.ok((banned ? "Đã khóa: " : "Đã mở khóa: ") + user.getName(), null);
-    }
-
-    private Response handleApproveItem(Object payload) {
-        Map<String, Object> map = toMap(payload);
-        String itemId    = (String) map.get("itemId");
-        boolean approved = Boolean.parseBoolean(map.get("approved").toString());
-        Item item = itemController.getItem(itemId);
-        if (item == null) return Response.fall("Không tìm thấy sản phẩm: " + itemId);
-        item.setApproved(approved);
-        itemController.editItem(item);
-        return Response.ok((approved ? "Đã duyệt: " : "Đã từ chối: ") + item.getName(), null);
     }
 
     private Response handleDeposit(Object payload) {

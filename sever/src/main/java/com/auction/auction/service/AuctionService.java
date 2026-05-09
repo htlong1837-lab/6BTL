@@ -1,7 +1,7 @@
 package com.auction.auction.service;
 
 import com.auction.auction.dao.AuctionDAO;
-import com.auction.auction.dao.AuctionDAOImpl;
+import com.auction.auction.dao.AuctionSQLiteDAOImpl;
 import com.auction.auction.model.*;
 import com.auction.item.model.Product.Item;
 import com.auction.user.model.Seller;
@@ -11,8 +11,8 @@ import java.util.List;
 
 public class AuctionService {
 
-    private AuctionDAO auctionDAO = new AuctionDAOImpl();
-    private AuctionScheduler scheduler = new AuctionScheduler();
+    private final AuctionDAO auctionDAO = new AuctionSQLiteDAOImpl();
+    private final AuctionScheduler scheduler = new AuctionScheduler(auctionDAO);
  /**tạo auction*/    
     public Auction createAuction(Item item, Seller seller, long durationMillis) {
 

@@ -16,12 +16,7 @@ public class ItemController {
         return itemService.addItem(item);
     }
 
-    // Kiểm tra sản phẩm có hợp lệ để đấu giá không
-    public boolean isApproved(Item item) {
-        return item.isApproved();
-    }
-
-    // Chỉnh sửa sản phẩm khi bị từ chối duyệt
+    // Chỉnh sửa sản phẩm
     public String editItem(Item item) {
         return itemService.updateItem(item);
     }
