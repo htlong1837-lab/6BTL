@@ -51,8 +51,14 @@ public class DatabaseConnection {
                 "  id TEXT PRIMARY KEY, name TEXT NOT NULL, description TEXT," +
                 "  start_price REAL NOT NULL, category TEXT, seller_id TEXT NOT NULL," +
                 "  item_type TEXT NOT NULL, artist TEXT, medium TEXT," +
-                "  make TEXT, model TEXT, year INTEGER, brand TEXT, warranty_months INTEGER)"
+                "  make TEXT, model TEXT, year INTEGER, brand TEXT, warranty_months INTEGER," +
+                "  approved INTEGER DEFAULT 0)"
             );
+            // Migration: thêm cột approved cho DB cũ chưa có
+            if (!tableHasColumn("items", "approved")) {
+                stmt.executeUpdate("ALTER TABLE items ADD COLUMN approved INTEGER DEFAULT 0");
+                System.out.println("[DB] Đã thêm cột approved vào bảng items.");
+            }
             stmt.executeUpdate(
                 "CREATE TABLE IF NOT EXISTS bids (" +
                 "  id INTEGER PRIMARY KEY AUTOINCREMENT," +
