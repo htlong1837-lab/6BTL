@@ -13,7 +13,25 @@ public class AuctionService {
 
     private final AuctionDAO auctionDAO = new AuctionSQLiteDAOImpl();
     private final AuctionScheduler scheduler = new AuctionScheduler(auctionDAO);
- /**tạo auction*/    
+
+    public AuctionService() {
+        restoreRunningAuctions();
+    }
+
+    private void restoreRunningAuctions() {
+        for (Auction a : auctionDAO.findAll()) {
+            if (a.getStatus() == com.auction.auction.model.AuctionStatus.RUNNING) {
+                if (System.currentTimeMillis() >= a.getEndTime()) {
+                    a.endAuction();
+                    auctionDAO.save(a);
+                } else {
+                    scheduler.scheduleAuctionEnd(a);
+                }
+            }
+        }
+    }
+
+ /**tạo auction*/
     public Auction createAuction(Item item, Seller seller, long durationMillis) {
 
         Auction auction = new Auction(item, seller, durationMillis);
