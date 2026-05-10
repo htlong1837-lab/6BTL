@@ -10,10 +10,11 @@ import com.auction.bid.service.BidService;
 import com.auction.common.protocol.Request;
 import com.auction.common.protocol.Response;
 import com.auction.item.controller.ItemController;
-import com.auction.item.model.Product.Art;
-import com.auction.item.model.Product.Electronics;
+import com.auction.item.model.Factory.ArtFactory;
+import com.auction.item.model.Factory.ElectronicFactory;
+import com.auction.item.model.Factory.ItemFactory;
+import com.auction.item.model.Factory.VehicleFactory;
 import com.auction.item.model.Product.Item;
-import com.auction.item.model.Product.Vehicle;
 import com.auction.user.controller.UserController;
 import com.auction.user.dao.UserDAO;
 import com.auction.user.dao.UserDAOSQLiteImpl;
@@ -142,27 +143,28 @@ public class RequestRouter {
         String category = (String) map.get("category");
         String sellerId = (String) map.get("sellerId");
 
-        Item item;
+        ItemFactory factory;
         switch (type.toUpperCase()) {
             case "ART":
-                item = new Art(id, name, des, price, category, sellerId,
+                factory = new ArtFactory(id, name, des, price, category, sellerId,
                     (String) map.get("artist"),
                     (String) map.get("medium"));
                 break;
             case "VEHICLE":
-                item = new Vehicle(id, name, des, price, category, sellerId,
+                factory = new VehicleFactory(id, name, des, price, category, sellerId,
                     (String) map.get("make"),
                     (String) map.get("model"),
                     ((Number) map.get("year")).intValue());
                 break;
             case "ELECTRONICS":
-                item = new Electronics(id, name, des, price, category, sellerId,
+                factory = new ElectronicFactory(id, name, des, price, category, sellerId,
                     (String) map.get("brand"),
                     ((Number) map.get("warrantyMonths")).intValue());
                 break;
             default:
                 return Response.fall("Loại sản phẩm không hợp lệ: " + type);
         }
+        Item item = factory.createItem();
         String result = itemController.createItem(item);
         return result.contains("thành công") ? Response.ok(result, item) : Response.fall(result);
     }
