@@ -3,6 +3,7 @@ package com.auction.client;
 import com.auction.client.dto.Request;
 import com.auction.client.dto.Response;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.*;
 import java.net.Socket;
@@ -19,9 +20,11 @@ public class ServerConnection {
     private PrintWriter    out;
     private BufferedReader in;
     private final Gson     gson = new Gson();
-
     private ServerConnection() {}
 
+    //1 kết nối dùng chung cho toàn client”
+    // nên tránh lặp lại nhiều socket và giữ trạng thái kết nối ổn định.
+    //static nghĩa là gọi trực tiếp bằng ServerConnection.getInstance(), không cần đối tượng.
     public static ServerConnection getInstance() {
         if (instance == null) {
             instance = new ServerConnection();
@@ -31,7 +34,10 @@ public class ServerConnection {
     
     public void connect() throws IOException {
         socket = new Socket(HOST, PORT);
+
+        //client gủi request vào server thông qua luồng I/O của socket
         out    = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
+        //client nhận response từ server
         in     = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
         System.out.println("[Client] Đã kết nối server " + HOST + ":" + PORT);
     }
@@ -50,11 +56,14 @@ public class ServerConnection {
             throw new IOException("Chưa kết nối server. Gọi connect() trước.");
         }
 
-        String json = gson.toJson(new Request(action, payload));
-        out.println(json);
+        String json = gson.toJson(new Request(action, payload));//chuyển request thành json để gửi đi
+        out.println(json);//gửi request đến server
 
-        String raw = in.readLine();
+        String raw = in.readLine();//đọc response từ server
         if (raw == null) throw new IOException("Server đóng kết nối bất ngờ.");
-        return gson.fromJson(raw, Response.class);
+        try{ return gson.fromJson(raw, Response.class);
+        } catch (JsonSyntaxException e) {
+            throw new IOException("Response không hợp lệ: " + raw);
+        }
     }
 }
