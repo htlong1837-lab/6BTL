@@ -60,6 +60,12 @@ public class DatabaseConnection {
                 System.out.println("[DB] Đã thêm cột approved vào bảng items.");
             }
             stmt.executeUpdate(
+                "CREATE TABLE IF NOT EXISTS auctions (" +
+                "  id TEXT PRIMARY KEY, item_id TEXT NOT NULL, seller_id TEXT NOT NULL," +
+                "  current_price REAL NOT NULL, highest_bidder_id TEXT," +
+                "  status TEXT NOT NULL, start_time INTEGER NOT NULL, end_time INTEGER NOT NULL)"
+            );
+            stmt.executeUpdate(
                 "CREATE TABLE IF NOT EXISTS bids (" +
                 "  id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "  bidder_id TEXT NOT NULL, bidder_name TEXT NOT NULL," +
