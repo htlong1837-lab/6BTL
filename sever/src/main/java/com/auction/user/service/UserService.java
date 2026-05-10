@@ -8,6 +8,8 @@ import com.auction.user.model.User;
 import com.auction.common.util.PasswordUtil;
 import com.auction.exception.UserException.*;
 
+import java.util.UUID;
+
 import javax.naming.AuthenticationException;
 
 public class UserService {
@@ -22,16 +24,12 @@ public class UserService {
     //                     ĐĂNG KÝ
     //=====================================================
 
-    public String signUp(String id,String username,
+    public String signUp(String username,
                          String password, String confirmPassword, String role) throws UserException, AuthenticationException {
 
 
         //========================ID===========================
-        if(id == null || id.isBlank())
-            throw new InvalidDataException("ID không được để trống.") ;
-        if(userDAO.existsById(id))
-            throw new DuplicateDataException("ID đã tồn tại.");
-
+        String id = UUID.randomUUID().toString();
 
         //========================USERNAME===========================
 
