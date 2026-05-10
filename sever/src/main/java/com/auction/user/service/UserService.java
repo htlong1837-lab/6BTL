@@ -53,11 +53,12 @@ public class UserService {
 
         if (role == null || role.isBlank())
             throw new InvalidDataException("Vai trò không được để trống.");
+        String passwordHash = PasswordUtil.hash(password);
         if (role.equals("Bidder")) {
-            User newUser = new Bidder(id, username, password, role);
+            User newUser = new Bidder(id, username, passwordHash, role);
             userDAO.save(newUser);
         } else if (role.equals("Seller")){
-            User newUser = new Seller(id, username, password, role);
+            User newUser = new Seller(id, username, passwordHash, role);
             userDAO.save(newUser);
         }
 
@@ -78,7 +79,7 @@ public class UserService {
         if (user.isBanned())
             throw new UserNotFoundException("Tài khoản đã bị khóa do đăng nhập sai quá nhiều lần.");
 
-        String inputHash = password;
+        String inputHash = PasswordUtil.hash(password);
 
         if (!user.getPasswordHash().equals(inputHash)) {
             // [SỬA] Throw exception khi sai mật khẩu - trước đây code trả về user luôn, không báo lỗi

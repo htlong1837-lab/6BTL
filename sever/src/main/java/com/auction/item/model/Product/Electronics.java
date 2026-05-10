@@ -15,30 +15,6 @@ public class Electronics extends Item {
 
     public void setBrand(String brand) { this.brand = brand; }
     public void setWarrantyMonths(int warrantyMonths) { this.warrantyMonths = warrantyMonths; }
-    //duyệt hợp lệ
-    @Override
-    public boolean isApproved() {
-        if (!super.isApproved()) return false;
-        if (brand == null || brand.isEmpty()) {
-            return false;
-        }
-        if (warrantyMonths <= 0) {
-            return false;
-        }
-        return true;
-    }
-    //chỉnh sửa khi duyệt lỗi
-
-    public void editItemError(Electronics item) {
-        super.editItemError(item);
-        if (item.brand != null && !item.brand.isEmpty()) {
-            this.brand = item.brand;
-        }
-        if (item.warrantyMonths > 0) {
-            this.warrantyMonths = item.warrantyMonths;
-        }
-    }
- 
     @Override
     public void printInfo() {
         super.printInfo();

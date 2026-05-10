@@ -1,15 +1,14 @@
 package com.auction.user.controller;
 
 import com.auction.user.dao.UserDAOSQLiteImpl;
-import com.auction.user.model.Seller;
 import com.auction.user.model.User;
 import com.auction.user.service.UserService;
 import com.auction.exception.UserException.UserException;
 
 public class UserController {
 
-    private final UserService userService = new UserService(new UserDAOSQLiteImpl());
     private final UserDAOSQLiteImpl userDAO = new UserDAOSQLiteImpl();
+    private final UserService userService = new UserService(userDAO);
 
     public boolean createAccount(String id, String username,
                                   String password, String confirmPassword, String role) {

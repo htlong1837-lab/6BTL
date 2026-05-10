@@ -31,36 +31,6 @@ public class Vehicle extends Item {
     public void setYear(int year) {
         this.year = year;
     }
-    //duyệt hợp lệ
-    @Override
-
-    public boolean isApproved() {
-        super.isApproved();
-        if (make == null || make.isEmpty()) {
-            return false;
-        }
-        if (model == null || model.isEmpty()) {
-            return false;
-        }
-        if (year <= 0) {
-            return false;
-        }
-        return true;
-    }
-    //chỉnh sửa khi duyệt lỗi
-    public void editItemError(Vehicle item) {
-        super.editItemError(item);
-        if (item.make == null || item.make.isEmpty()) {
-            this.make = item.make;
-        }
-        if (item.model == null || item.model.isEmpty()) {
-            this.model = item.model;
-        }
-        if (item.year <= 0) {
-            this.year = item.year;
-        }
-    }
- 
     @Override
     public void printInfo() {
         super.printInfo(); 

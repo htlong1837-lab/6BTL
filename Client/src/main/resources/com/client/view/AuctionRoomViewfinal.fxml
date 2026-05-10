@@ -31,6 +31,12 @@
                     <Label fx:id="highestBidderLabel"
                            style="-fx-font-size: 15; -fx-text-fill: #22d3ee; -fx-font-weight: bold;"/>
                 </VBox>
+                <VBox spacing="2">
+                    <Label text="THỜI GIAN CÒN LẠI"
+                           style="-fx-font-size: 10; -fx-text-fill: #94a3b8; -fx-letter-spacing: 1;"/>
+                    <Label fx:id="timerLabel"
+                           style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #4ade80;"/>
+                </VBox>
             </HBox>
         </VBox>
     </top>

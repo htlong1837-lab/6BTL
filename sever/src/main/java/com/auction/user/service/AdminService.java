@@ -5,8 +5,6 @@ import java.util.List;
 import com.auction.auction.model.Auction;
 import com.auction.exception.UserException.UserException;
 import com.auction.exception.UserException.UserNotFoundException;
-import com.auction.item.dao.ItemDAO;
-import com.auction.item.model.Product.Item;
 import com.auction.user.dao.UserDAO;
 import com.auction.user.model.Admin;
 import com.auction.user.model.User;
@@ -15,12 +13,10 @@ public class AdminService {
 
     private final Admin admin;
     private final UserDAO userDAO;
-    private final ItemDAO itemDAO;
 
-    public AdminService(Admin admin, UserDAO userDAO, ItemDAO itemDAO) {
+    public AdminService(Admin admin, UserDAO userDAO) {
         this.admin   = admin;
         this.userDAO = userDAO;
-        this.itemDAO = itemDAO;
     }
 
     // Khóa hoặc mở khóa tài khoản user
@@ -56,15 +52,5 @@ public class AdminService {
     public void isActive(User user) {
         user.setBanned(false);
         System.out.println("[Admin] User \"" + user.getName() + "\" has been activated. You can now access");
-    }
-    // Duyệt hoặc từ chối sản phẩm
-    public void approveItem(Item item, boolean approved) throws UserException {
-        if (admin == null) {
-            throw new UserNotFoundException("Chỉ Admin mới có quyền duyệt sản phẩm.");
-        }
-        item.setApproved(approved);
-        itemDAO.update(item);
-        System.out.println("[Admin] Item \"" + item.getName()
-            + "\" → " + (approved ? "Đã duyệt." : "Đã từ chối."));
     }
 }

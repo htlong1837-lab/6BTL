@@ -60,11 +60,51 @@ public class SellerController {
         cPrice.setCellValueFactory(d -> new SimpleStringProperty(
             String.format("%,.0f VND", d.getValue().get("startPrice").getAsDouble())));
 
-        table.getColumns().addAll(cName, cCat, cPrice);
+        TableColumn<JsonObject, String> cAct = new TableColumn<>("Thao tác");
+        cAct.setPrefWidth(100);
+        cAct.setCellFactory(col -> new TableCell<>() {
+            final Button btnDelete = new Button("Xóa");
+            {
+                btnDelete.setStyle("-fx-background-color:#e74c3c;-fx-text-fill:white;-fx-cursor:hand;");
+                btnDelete.setOnAction(e -> {
+                    JsonObject item = getTableView().getItems().get(getIndex());
+                    String itemId   = item.get("id").getAsString();
+                    String itemName = item.get("name").getAsString();
+
+                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                        "Xóa sản phẩm \"" + itemName + "\"?", ButtonType.YES, ButtonType.NO);
+                    confirm.showAndWait().ifPresent(btn -> {
+                        if (btn == ButtonType.YES) deleteItem(itemId);
+                    });
+                });
+            }
+            @Override protected void updateItem(String v, boolean empty) {
+                super.updateItem(v, empty);
+                setGraphic(empty ? null : btnDelete);
+            }
+        });
+
+        table.getColumns().addAll(cName, cCat, cPrice, cAct);
 
         VBox vbox = new VBox(10, new Label("Sản phẩm của tôi (" + data.size() + ")"), table);
         VBox.setVgrow(table, Priority.ALWAYS);
         return vbox;
+    }
+
+    private void deleteItem(String itemId) {
+        new Thread(() -> {
+            try {
+                Response res = ServerConnection.getInstance()
+                    .send("DELETE_ITEM", Map.of("id", itemId));
+                Platform.runLater(() -> {
+                    new Alert(Alert.AlertType.INFORMATION, res.getMessage(), ButtonType.OK).showAndWait();
+                    if (res.isSuccess()) showMyItems();
+                });
+            } catch (IOException e) {
+                Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, "Lỗi: " + e.getMessage(), ButtonType.OK).showAndWait());
+            }
+        }).start();
     }
 
     @FXML public void showAddItem() {

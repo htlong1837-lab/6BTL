@@ -4,22 +4,30 @@ import com.auction.client.ServerConnection;
 import com.auction.client.SessionManager;
 import com.auction.client.dto.Response;
 import com.google.gson.*;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.util.Duration;
 import java.io.IOException;
 import java.util.Map;
 
 public class BiddingController {
 
     @FXML private Label productNameLabel, productDescLabel, currentPriceLabel, highestBidderLabel, messageLabel;
+    @FXML private Label timerLabel;
     @FXML private ListView<String> bidHistoryList;
     @FXML private TextField bidAmountField;
 
     private String auctionId;
+    private Runnable onBidSuccess;
     private final Gson gson = new Gson();
     private final ObservableList<String> history = FXCollections.observableArrayList();
+    private Timeline countdown;
+
+    public void setOnBidSuccess(Runnable callback) { this.onBidSuccess = callback; }
 
     @FXML public void initialize() { bidHistoryList.setItems(history); }
 
@@ -36,8 +44,10 @@ public class BiddingController {
         currentPriceLabel.setText("Giá hiện tại: " +
             String.format("%,.0f VND", auction.get("currentPrice").getAsDouble()));
         JsonElement leader = auction.get("highestBidder");
-        highestBidderLabel.setText("Người dẫn đầu: " +
-            (leader == null || leader.isJsonNull() ? "Chưa có" : leader.getAsString()));
+        String leaderName = (leader == null || leader.isJsonNull())
+            ? "Chưa có"
+            : leader.getAsJsonObject().get("name").getAsString();
+        highestBidderLabel.setText("Người dẫn đầu: " + leaderName);
 
         history.clear();
         JsonElement histArr = auction.get("bidHistory");
@@ -49,6 +59,38 @@ public class BiddingController {
                     bid.get("amount").getAsDouble()));
             }
         }
+
+        JsonElement endTimeEl = auction.get("endTime");
+        if (endTimeEl != null && !endTimeEl.isJsonNull()) {
+            startCountdown(endTimeEl.getAsLong());
+        }
+    }
+
+    private void startCountdown(long endTime) {
+        if (countdown != null) countdown.stop();
+
+        countdown = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
+            long remaining = endTime - System.currentTimeMillis();
+            if (remaining <= 0) {
+                timerLabel.setText("Đã kết thúc");
+                timerLabel.setStyle("-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #ef4444;");
+                countdown.stop();
+                return;
+            }
+            long hours   = remaining / 3_600_000;
+            long minutes = (remaining % 3_600_000) / 60_000;
+            long seconds = (remaining % 60_000) / 1_000;
+            String text  = hours > 0
+                ? String.format("%02d:%02d:%02d", hours, minutes, seconds)
+                : String.format("%02d:%02d", minutes, seconds);
+            timerLabel.setText(text);
+
+            // Đổi màu đỏ khi còn dưới 30 giây (bao gồm khi anti-snip chưa kịp extend)
+            String color = remaining < 30_000 ? "#ef4444" : "#4ade80";
+            timerLabel.setStyle("-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: " + color + ";");
+        }));
+        countdown.setCycleCount(Timeline.INDEFINITE);
+        countdown.play();
     }
 
     @FXML
@@ -67,7 +109,11 @@ public class BiddingController {
                 ));
                 Platform.runLater(() -> {
                     show(res.getMessage(), res.isSuccess());
-                    if (res.isSuccess()) { bidAmountField.clear(); refreshAuction(); }
+                    if (res.isSuccess()) {
+                        bidAmountField.clear();
+                        refreshAuction();
+                        if (onBidSuccess != null) onBidSuccess.run();
+                    }
                 });
             } catch (IOException e) {
                 Platform.runLater(() -> show("Lỗi kết nối: " + e.getMessage(), false));

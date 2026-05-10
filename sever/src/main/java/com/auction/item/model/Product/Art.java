@@ -23,24 +23,6 @@ public class Art extends Item {
     public void setMedium(String medium) {
         this.medium = medium;
     }
-//duyệt hợp lệ
-    @Override
-    public boolean isApproved() {
-        if (!super.isApproved()) return false;
-        if (artist == null || artist.isEmpty()) return false;
-        if (medium == null || medium.isEmpty()) return false;
-        return true;
-    }
-
-    public void editItemError(Art item) {
-        super.editItemError(item);
-        if (item.artist != null && !item.artist.isEmpty()) {
-            this.artist = item.artist;
-        }
-        if (item.medium != null && !item.medium.isEmpty()) {
-            this.medium = item.medium;
-        }
-    }
     @Override
     public void printInfo() {
         super.printInfo();

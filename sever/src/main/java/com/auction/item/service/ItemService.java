@@ -13,8 +13,6 @@ public class ItemService {
     }
 
     public String addItem(Item item) {
-        if (!item.isApproved())
-            return "Sản phẩm không hợp lệ. Vui lòng kiểm tra lại thông tin.";
         itemDAO.save(item);
         return "Thêm sản phẩm thành công: " + item.getName();
     }
