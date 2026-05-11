@@ -8,8 +8,6 @@ import com.auction.user.model.User;
 import com.auction.common.util.PasswordUtil;
 import com.auction.exception.UserException.*;
 
-import java.util.UUID;
-
 import javax.naming.AuthenticationException;
 
 public class UserService {
@@ -24,12 +22,16 @@ public class UserService {
     //                     ĐĂNG KÝ
     //=====================================================
 
-    public String signUp(String username,
+    public String signUp(String id,String username,
                          String password, String confirmPassword, String role) throws UserException, AuthenticationException {
 
 
         //========================ID===========================
-        String id = UUID.randomUUID().toString();
+        if(id == null || id.isBlank())
+            throw new InvalidDataException("ID không được để trống.") ;
+        if(userDAO.existsById(id))
+            throw new DuplicateDataException("ID đã tồn tại.");
+
 
         //========================USERNAME===========================
 
@@ -51,12 +53,11 @@ public class UserService {
 
         if (role == null || role.isBlank())
             throw new InvalidDataException("Vai trò không được để trống.");
-        String passwordHash = PasswordUtil.hash(password);
         if (role.equals("Bidder")) {
-            User newUser = new Bidder(id, username, passwordHash, role);
+            User newUser = new Bidder(id, username, password, role);
             userDAO.save(newUser);
         } else if (role.equals("Seller")){
-            User newUser = new Seller(id, username, passwordHash, role);
+            User newUser = new Seller(id, username, password, role);
             userDAO.save(newUser);
         }
 
@@ -77,7 +78,7 @@ public class UserService {
         if (user.isBanned())
             throw new UserNotFoundException("Tài khoản đã bị khóa do đăng nhập sai quá nhiều lần.");
 
-        String inputHash = PasswordUtil.hash(password);
+        String inputHash = password;
 
         if (!user.getPasswordHash().equals(inputHash)) {
             // [SỬA] Throw exception khi sai mật khẩu - trước đây code trả về user luôn, không báo lỗi

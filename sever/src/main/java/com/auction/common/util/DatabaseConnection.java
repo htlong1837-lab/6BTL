@@ -17,10 +17,10 @@ public class DatabaseConnection {
         try {
             connection = DriverManager.getConnection(DB_URL);
             try (Statement st = connection.createStatement()) {
-                st.execute("PRAGMA journal_mode=WAL");
+                st.execute("PRAGMA journal_mode=WAL"); // nhiều gười đọc 1 ng ghi
                 st.execute("PRAGMA busy_timeout=5000");
             }
-            initSchema();
+            initSchema();// tạo bảng
             System.out.println("[DB] Kết nối SQLite thành công.");
         } catch (SQLException e) {
             System.err.println("[DB] Lỗi kết nối: " + e.getMessage());
@@ -76,10 +76,8 @@ public class DatabaseConnection {
                 "  auction_id TEXT NOT NULL, amount REAL NOT NULL, timestamp INTEGER NOT NULL)"
             );
             stmt.executeUpdate(
-                "CREATE TABLE IF NOT EXISTS auctions (" +
-                "  id TEXT PRIMARY KEY, item_id TEXT NOT NULL, seller_id TEXT NOT NULL," +
-                "  current_price REAL NOT NULL, highest_bidder_id TEXT," +
-                "  status TEXT NOT NULL, start_time INTEGER NOT NULL, end_time INTEGER NOT NULL)"
+                "INSERT OR IGNORE INTO users(id,username,password_hash,balance,failed_attempts,is_banned,role)" +
+                " VALUES('admin-default','admin','Admin123',0,0,0,'ADMIN')"
             );
         }
     }
