@@ -10,10 +10,10 @@ public class UserController {
     private final UserDAOSQLiteImpl userDAO = new UserDAOSQLiteImpl();
     private final UserService userService = new UserService(userDAO);
 
-    public boolean createAccount(String id, String username,
+    public boolean createAccount(String username,
                                   String password, String confirmPassword, String role) {
         try {
-            userService.signUp(id, username, password, confirmPassword, role);
+            userService.signUp(username, password, confirmPassword, role);
             return true;
         } catch (Exception e) {
             System.out.println("[UserController] Lỗi đăng ký: " + e.getMessage());

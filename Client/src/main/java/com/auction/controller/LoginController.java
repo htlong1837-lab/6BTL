@@ -28,7 +28,12 @@ public class LoginController {
     @FXML
     public void initialize() {
         errorLabel.setVisible(false);
+        // Ẩn label báo lỗi lúc mới mở form.
+        // Nếu không:
+        // có thể label trống vẫn chiếm chỗ
+        // hoặc hiện lỗi cũ
     }
+
 
     @FXML
 private void handleLogin() {
@@ -37,9 +42,10 @@ private void handleLogin() {
 
     if (username.isEmpty() || password.isEmpty() || password.length() < 6) {
         showError("Vui lòng nhập đầy đủ thông tin");
-        return;
+        return;// Nếu thông tin không hợp lệ, hiển thị lỗi và dừng xử lý tiếp.
     }
 
+    
     try {
         
         Response res = ServerConnection.getInstance().send("LOGIN", Map.of(

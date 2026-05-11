@@ -59,6 +59,8 @@ public class ServerConnection {
         String json = gson.toJson(new Request(action, payload));//chuyển request thành json để gửi đi
         out.println(json);//gửi request đến server
 
+        //chờ server phản hồi
+
         String raw = in.readLine();//đọc response từ server
         if (raw == null) throw new IOException("Server đóng kết nối bất ngờ.");
         try{ return gson.fromJson(raw, Response.class);

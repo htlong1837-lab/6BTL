@@ -103,7 +103,6 @@ public class RequestRouter {
         String role = (String) map.get("role");
         if (role == null || role.isBlank()) role = "Bidder";
         boolean success = userController.createAccount(
-            (String) map.get("id"),
             (String) map.get("username"),
             (String) map.get("password"),
             (String) map.get("confirmPassword"),
