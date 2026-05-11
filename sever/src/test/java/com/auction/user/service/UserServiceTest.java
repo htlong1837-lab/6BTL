@@ -30,7 +30,7 @@ public class UserServiceTest {
     @DisplayName("Đăng ký thành công với thông tin hợp lệ")
     public void testSuccessfulSignUp() {
         String result = assertDoesNotThrow(
-            () -> userService.signUp("Nguyen Thi Kim Ngan", "Ngan1234", "Ngan1234", "Bidder")
+            () -> userService.signUp("id", "Nguyen Thi Kim Ngan", "Ngan1234", "Ngan1234", "Bidder")
         );
         assertEquals("Đăng ký thành công!", result);
     }
@@ -38,10 +38,10 @@ public class UserServiceTest {
     @Test
     @DisplayName("Username trùng - lỗi DuplicateDataException")
     void testSignUpwithExistingUsername() throws AuthenticationException, UserException {
-        userService.signUp("Nguyen Thi Kim Ngan", "Ngan1234", "Ngan1234", "Bidder");
+        userService.signUp("id", "Nguyen Thi Kim Ngan", "Ngan1234", "Ngan1234", "Bidder");
 
         assertThrows(DuplicateDataException.class, () -> {
-            userService.signUp("Tran Van Teo", "Ngan1234", "Ngan1234", "Bidder");
+            userService.signUp("id", "Tran Van Teo", "Ngan1234", "Ngan1234", "Bidder");
         });
     }
 
@@ -49,7 +49,7 @@ public class UserServiceTest {
     @DisplayName("Đăng ký mật khẩu xác nhận không khớp - lỗi PasswordAuthentication")
     void testSignUpwithPasswordMismatch() {
         assertThrows(PasswordAuthenticationException.class, () -> {
-            userService.signUp( "Name", "Hihi1234", "Other1234", "Bidder");
+            userService.signUp("id",  "Name", "Hihi1234", "Other1234", "Bidder");
         });
     }
 
@@ -57,7 +57,7 @@ public class UserServiceTest {
     @DisplayName("Đăng ký mật khẩu yếu - lỗi InvalidData")
     void testSignUpwithWeakPassWord() {
         assertThrows(InvalidDataException.class, () -> {
-            userService.signUp("Name", "weak", "weak", "Bidder");
+            userService.signUp("id", "Name", "weak", "weak", "Bidder");
         });
     }
 
@@ -65,7 +65,7 @@ public class UserServiceTest {
     @DisplayName("Đăng ký với username rỗng - lỗi InvalidData")
     void testSignUpwithEmptyUsername() {
         assertThrows(InvalidDataException.class, () -> {
-            userService.signUp("", "Pass1234", "Pass1234", "Bidder");
+            userService.signUp("id", "", "Pass1234", "Pass1234", "Bidder");
         });
     }
 
@@ -76,7 +76,7 @@ public class UserServiceTest {
     @Test
     @DisplayName("Đăng nhập thành công")
     void testSuccessfulLogin() throws UserException, AuthenticationException {
-        userService.signUp("Name", "Password1", "Password1", "Bidder");
+        userService.signUp("id", "Name", "Password1", "Password1", "Bidder");
 
         User result = assertDoesNotThrow(() -> userService.login("Name", "Password1"));
 
@@ -95,7 +95,7 @@ public class UserServiceTest {
     @Test
     @DisplayName("Đăng nhập với mật khẩu sai - lỗi PasswordAuthenticationException")
     void testLoginWithWrongPassword() throws AuthenticationException, UserException {
-        userService.signUp("Name", "Password1", "Password1", "Bidder");
+        userService.signUp("id", "Name", "Password1", "Password1", "Bidder");
 
         assertThrows(PasswordAuthenticationException.class, () -> {
             userService.login("Name", "wrongpassword");
