@@ -17,8 +17,8 @@ public class ItemService {
         return "Thêm sản phẩm thành công: " + item.getName();
     }
 
-    public Item getItem(String id) {
-        return itemDAO.findById(id);
+    public Item getItem(String name) {
+        return itemDAO.findByName(name);
     }
 
     public List<Item> getAllItems() {
