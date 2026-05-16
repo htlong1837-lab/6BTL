@@ -46,6 +46,18 @@ public class ItemDAOSQLiteImpl implements ItemDAO {
         return null;
     }
 
+    @Override 
+    public Item findByName(String name) {
+        try (PreparedStatement ps = conn().prepareStatement("SELECT * FROM items WHERE name = ?")) {
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return mapRow(rs);
+        } catch (SQLException e) {
+            System.err.println("[ItemDAO] findByName lỗi: " + e.getMessage());
+        }
+        return null;
+    }
+
     @Override
     public List<Item> findAll() {
         List<Item> result = new ArrayList<>();
