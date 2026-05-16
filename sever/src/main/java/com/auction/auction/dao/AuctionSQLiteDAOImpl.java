@@ -3,6 +3,9 @@ package com.auction.auction.dao;
 import com.auction.auction.model.Auction;
 import com.auction.auction.model.AuctionStatus;
 import com.auction.common.util.DatabaseConnection;
+import com.auction.bid.dao.BidDAO;
+import com.auction.bid.dao.BidDAOSQLiteImpl;
+import com.auction.bid.model.BidTransaction;
 import com.auction.item.dao.ItemDAO;
 import com.auction.item.dao.ItemDAOSQLiteImpl;
 import com.auction.item.model.Product.Item;
@@ -23,15 +26,18 @@ public class AuctionSQLiteDAOImpl implements AuctionDAO {
 
     private final ItemDAO itemDAO;
     private final UserDAO userDAO;
+    private final BidDAO bidDAO;
 
     public AuctionSQLiteDAOImpl() {
         this.itemDAO = new ItemDAOSQLiteImpl();
         this.userDAO = new UserDAOSQLiteImpl();
+        this.bidDAO  = new BidDAOSQLiteImpl();
     }
 
     public AuctionSQLiteDAOImpl(ItemDAO itemDAO, UserDAO userDAO) {
         this.itemDAO = itemDAO;
         this.userDAO = userDAO;
+        this.bidDAO  = new BidDAOSQLiteImpl();
     }
 
     private Connection conn() {
@@ -117,7 +123,10 @@ public class AuctionSQLiteDAOImpl implements AuctionDAO {
         long startTime        = rs.getLong("start_time");
         long endTime          = rs.getLong("end_time");
 
-        return new Auction(id, item, (Seller) seller, currentPrice,
+        Auction auction = new Auction(id, item, (Seller) seller, currentPrice,
                            highestBidder, status, startTime, endTime);
+        List<BidTransaction> bids = bidDAO.findByAuctionId(id);
+        bids.forEach(b -> auction.getBidHistory().add(b));
+        return auction;
     }
 }

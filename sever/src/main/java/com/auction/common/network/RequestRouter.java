@@ -66,6 +66,8 @@ public class RequestRouter {
                     return handleCreateAuction(request.getPayload());
                 case "LIST_AUCTIONS":
                     return handleListAuctions();
+                case "DELETE_AUCTION":
+                    return handleDeleteAuction(request.getPayload());
 
                 // ===== BID =====
                 case "PLACE_BID":
@@ -74,6 +76,10 @@ public class RequestRouter {
                     return handleWithdrawBid(request.getPayload());
                 case "DEPOSIT":
                     return handleDeposit(request.getPayload());
+
+                // ===== USER INFO =====
+                case "GET_BALANCE":
+                    return handleGetBalance(request.getPayload());
 
                 // ===== ADMIN =====
                 case "LIST_USERS":
@@ -208,6 +214,15 @@ public class RequestRouter {
         return Response.ok("Danh sách phiên đấu giá", auctionController.getAllAuctions());
     }
 
+    private Response handleDeleteAuction(Object payload) {
+        Map<String, Object> map = toMap(payload);
+        String auctionId = (String) map.get("auctionId");
+        Auction auction = auctionController.getAuctionById(auctionId);
+        if (auction == null) return Response.fall("Không tìm thấy phiên đấu giá: " + auctionId);
+        auctionController.endAuction(auction);
+        return Response.ok("Đã xóa phiên đấu giá.", null);
+    }
+
     private Response handlePlaceBid(Object payload) {
         Map<String, Object> map = toMap(payload);
         String bidderId  = (String) map.get("bidderId");
@@ -263,6 +278,14 @@ public class RequestRouter {
         user.setBanned(banned);
         userDAO.update(user);
         return Response.ok((banned ? "Đã khóa: " : "Đã mở khóa: ") + user.getName(), null);
+    }
+
+    private Response handleGetBalance(Object payload) {
+        Map<String, Object> map = toMap(payload);
+        String userId = (String) map.get("userId");
+        User user = userDAO.findById(userId);
+        if (user == null) return Response.fall("Không tìm thấy user: " + userId);
+        return Response.ok("Số dư hiện tại", user.getBalance());
     }
 
     private Response handleDeposit(Object payload) {

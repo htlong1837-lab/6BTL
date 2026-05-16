@@ -31,14 +31,6 @@ public class AdminService {
         System.out.println("[Admin] Tài khoản " + target.getName() + (banned ? " đã bị khóa." : " đã được mở khóa."));
     }
 
-    // [THÊM] Lấy thông tin user theo username - Admin cần xem danh sách user
-    public User getUser(String username) throws UserException {
-        User user = userDAO.findByUsername(username);
-        if (user == null)
-            throw new UserNotFoundException("Không tìm thấy tài khoản: " + username);
-        return user;
-    }
-
      // Xóa một phiên đấu giá khỏi danh sách */
     public void removeAuction(List<Auction> auctions, Auction target) {
         if (auctions.remove(target)) {

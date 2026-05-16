@@ -107,6 +107,68 @@ public class SellerController {
         }).start();
     }
 
+    @FXML public void showMyAuctions() {
+        String myId = SessionManager.getInstance().getUserId();
+        new Thread(() -> {
+            try {
+                Response aRes = ServerConnection.getInstance().send("LIST_AUCTIONS", Map.of());
+                Response bRes = ServerConnection.getInstance().send("GET_BALANCE", Map.of("userId", myId));
+                Platform.runLater(() -> {
+                    ObservableList<JsonObject> data = FXCollections.observableArrayList();
+                    if (aRes.isSuccess()) {
+                        for (JsonElement e : gson.toJsonTree(aRes.getData()).getAsJsonArray()) {
+                            JsonObject o = e.getAsJsonObject();
+                            JsonObject seller = o.has("seller") ? o.getAsJsonObject("seller") : null;
+                            if (seller != null && myId.equals(seller.get("id").getAsString())) {
+                                data.add(o);
+                            }
+                        }
+                    }
+
+                    // Bảng phiên đấu giá
+                    TableView<JsonObject> table = new TableView<>(data);
+                    table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+                    TableColumn<JsonObject, String> cItem = new TableColumn<>("Sản phẩm");
+                    cItem.setCellValueFactory(d -> {
+                        JsonObject item = d.getValue().getAsJsonObject("item");
+                        return new SimpleStringProperty(item != null ? item.get("name").getAsString() : "?");
+                    });
+
+                    TableColumn<JsonObject, String> cStatus = new TableColumn<>("Trạng thái");
+                    cStatus.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().get("status").getAsString()));
+
+                    TableColumn<JsonObject, String> cPrice = new TableColumn<>("Giá cuối");
+                    cPrice.setCellValueFactory(d -> new SimpleStringProperty(
+                        String.format("%,.0f VND", d.getValue().get("currentPrice").getAsDouble())));
+
+                    TableColumn<JsonObject, String> cWinner = new TableColumn<>("Người thắng");
+                    cWinner.setCellValueFactory(d -> {
+                        JsonElement hb = d.getValue().get("highestBidder");
+                        if (hb == null || hb.isJsonNull()) return new SimpleStringProperty("Không có");
+                        JsonObject bidder = hb.getAsJsonObject();
+                        return new SimpleStringProperty(bidder.get("name").getAsString());
+                    });
+
+                    table.getColumns().addAll(cItem, cStatus, cPrice, cWinner);
+
+                    double balance = (bRes.isSuccess() && bRes.getData() != null)
+                        ? gson.toJsonTree(bRes.getData()).getAsDouble() : 0;
+                    Label balLabel = new Label(String.format("Số dư hiện tại: %,.0f VND", balance));
+                    balLabel.setStyle("-fx-font-size:14;-fx-font-weight:bold;-fx-text-fill:#16a34a;");
+
+                    VBox vbox = new VBox(10,
+                        new Label("Phiên đấu giá của tôi (" + data.size() + ")"),
+                        balLabel, table);
+                    VBox.setVgrow(table, Priority.ALWAYS);
+                    contentArea.getChildren().setAll(vbox);
+                });
+            } catch (IOException e) {
+                Platform.runLater(() -> contentArea.getChildren().setAll(new Label("Lỗi: " + e.getMessage())));
+            }
+        }).start();
+    }
+
     @FXML public void showAddItem() {
         loadSubView("/com/client/view/ItemFormViewfinal.fxml");
     }

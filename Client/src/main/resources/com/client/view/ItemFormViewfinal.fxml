@@ -124,7 +124,7 @@
         </HBox>
     </VBox>
 
-    <Button text="✅ THÊM SẢN PHẨM" onAction="#handleSubmit" maxWidth="Infinity" prefHeight="46"
+    <Button fx:id="submitBtn" text="✅ THÊM SẢN PHẨM" onAction="#handleSubmit" maxWidth="Infinity" prefHeight="46"
             style="-fx-background-color: linear-gradient(to right, #1e3a5f, #2563eb);
                    -fx-text-fill: white; -fx-font-size: 14; -fx-font-weight: bold;
                    -fx-background-radius: 8; -fx-cursor: hand;"/>

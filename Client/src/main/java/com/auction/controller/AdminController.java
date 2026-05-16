@@ -45,7 +45,22 @@ public class AdminController {
                     cPrice.setCellValueFactory(d -> new SimpleStringProperty(
                         String.format("%,.0f VND", d.getValue().get("currentPrice").getAsDouble())));
 
-                    table.getColumns().addAll(cId, cStatus, cPrice);
+                    TableColumn<JsonObject, String> cDel = new TableColumn<>("Thao tác");
+                    cDel.setPrefWidth(100);
+                    cDel.setCellFactory(col -> new TableCell<>() {
+                        final Button btn = new Button("Xóa");
+                        {
+                            btn.setStyle("-fx-background-color:#e74c3c;-fx-text-fill:white;");
+                            btn.setOnAction(e -> deleteAuction(
+                                getTableView().getItems().get(getIndex()).get("id").getAsString()));
+                        }
+                        @Override protected void updateItem(String v, boolean empty) {
+                            super.updateItem(v, empty);
+                            setGraphic(empty ? null : btn);
+                        }
+                    });
+
+                    table.getColumns().addAll(cId, cStatus, cPrice, cDel);
 
                     VBox vbox = new VBox(10, new Label("Các phiên đấu giá — " + data.size() + " mục"), table);
                     VBox.setVgrow(table, Priority.ALWAYS);
@@ -129,9 +144,11 @@ public class AdminController {
             try {
                 Response res = ServerConnection.getInstance()
                     .send("BAN_USER", Map.of("userId", userId, "banned", banned));
-                Platform.runLater(() ->
+                Platform.runLater(() -> {
                     new Alert(Alert.AlertType.INFORMATION,
-                        res.getMessage(), ButtonType.OK).showAndWait());
+                        res.getMessage(), ButtonType.OK).showAndWait();
+                    showUsers();
+                });
             } catch (IOException e) {
                 Platform.runLater(() ->
                     new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait());
@@ -139,6 +156,23 @@ public class AdminController {
         }).start();
     }
 
+
+    private void deleteAuction(String auctionId) {
+        new Thread(() -> {
+            try {
+                Response res = ServerConnection.getInstance()
+                    .send("DELETE_AUCTION", Map.of("auctionId", auctionId));
+                Platform.runLater(() -> {
+                    new Alert(Alert.AlertType.INFORMATION,
+                        res.getMessage(), ButtonType.OK).showAndWait();
+                    showAuctions();
+                });
+            } catch (IOException e) {
+                Platform.runLater(() ->
+                    new Alert(Alert.AlertType.ERROR, e.getMessage(), ButtonType.OK).showAndWait());
+            }
+        }).start();
+    }
 
     @FXML public void handleLogout() {
         SessionManager.getInstance().clear();

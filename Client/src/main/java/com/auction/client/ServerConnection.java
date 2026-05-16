@@ -8,11 +8,22 @@ import com.google.gson.JsonSyntaxException;
 import java.io.*;
 import java.net.Socket;
 import java.util.Map;
+import java.util.Properties;
 
 public class ServerConnection {
 
-    private static final String HOST = "localhost";
-    private static final int    PORT = 5000;
+    private static final String HOST;
+    private static final int    PORT;
+
+    static {
+        Properties props = new Properties();
+        try (InputStream is = ServerConnection.class
+                .getResourceAsStream("/config.properties")) {
+            if (is != null) props.load(is);
+        } catch (IOException ignored) {}
+        HOST = props.getProperty("server.host", "localhost");
+        PORT = Integer.parseInt(props.getProperty("server.port", "5000"));
+    }
 
     private static ServerConnection instance;
 

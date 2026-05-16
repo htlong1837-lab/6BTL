@@ -4,6 +4,8 @@ import com.auction.auction.dao.AuctionDAO;
 import com.auction.auction.dao.AuctionSQLiteDAOImpl;
 import com.auction.auction.model.*;
 import com.auction.item.model.Product.Item;
+import com.auction.user.dao.UserDAO;
+import com.auction.user.dao.UserDAOSQLiteImpl;
 import com.auction.user.model.Seller;
 import com.auction.user.model.User;
 
@@ -12,7 +14,8 @@ import java.util.List;
 public class AuctionService {
 
     private final AuctionDAO auctionDAO = new AuctionSQLiteDAOImpl();
-    private final AuctionScheduler scheduler = new AuctionScheduler(auctionDAO);
+    private final UserDAO    userDAO    = new UserDAOSQLiteImpl();
+    private final AuctionScheduler scheduler = new AuctionScheduler(auctionDAO, userDAO);
 
     public AuctionService() {
         restoreRunningAuctions();
@@ -23,6 +26,7 @@ public class AuctionService {
             if (a.getStatus() == com.auction.auction.model.AuctionStatus.RUNNING) {
                 if (System.currentTimeMillis() >= a.getEndTime()) {
                     a.endAuction();
+                    scheduler.settle(a);
                     auctionDAO.save(a);
                 } else {
                     scheduler.scheduleAuctionEnd(a);

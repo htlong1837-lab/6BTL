@@ -17,6 +17,7 @@ public class ProductFormController {
     @FXML private TextArea  descField;
     @FXML private ComboBox<String> categoryCombo;
     @FXML private Label messageLabel;
+    @FXML private Button submitBtn;
 
     // Dynamic containers
     @FXML private VBox artFields, vehicleFields, electronicsFields;
@@ -90,12 +91,19 @@ public class ProductFormController {
                 break;
         }
 
+        if (submitBtn != null) submitBtn.setDisable(true);
         new Thread(() -> {
             try {
                 Response res = ServerConnection.getInstance().send("CREATE_ITEM", payload);
-                javafx.application.Platform.runLater(() -> msg(res.getMessage(), res.isSuccess()));
+                javafx.application.Platform.runLater(() -> {
+                    msg(res.getMessage(), res.isSuccess());
+                    if (submitBtn != null) submitBtn.setDisable(false);
+                });
             } catch (IOException e) {
-                javafx.application.Platform.runLater(() -> msg("Lỗi: " + e.getMessage(), false));
+                javafx.application.Platform.runLater(() -> {
+                    msg("Lỗi: " + e.getMessage(), false);
+                    if (submitBtn != null) submitBtn.setDisable(false);
+                });
             }
         }).start();
     }
