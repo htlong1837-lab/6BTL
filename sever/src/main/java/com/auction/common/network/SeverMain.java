@@ -5,9 +5,11 @@ import java.net.*;
 
 public class SeverMain {
 
-    private static final int PORT = 5000;
-
     public static void main(String[] args) {
+        int PORT = 5000;
+        String envPort = System.getenv("PORT");
+        if (envPort != null) PORT = Integer.parseInt(envPort);
+
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
 
             System.out.println("[Server] Đang lắng nghe trên port " + PORT);

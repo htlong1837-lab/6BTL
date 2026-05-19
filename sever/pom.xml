@@ -114,21 +114,24 @@
                 </configuration>
             </plugin>
 
-            <!-- Plugin đóng gói thành file .jar có thể chạy được
-                 mainClass: class nào chứa hàm main() để chạy server -->
+            <!-- Fat JAR: đóng gói tất cả dependencies vào 1 file .jar duy nhất -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <!-- Khi chạy "java -jar auction-server.jar"
-                                 JVM sẽ tìm class này để chạy đầu tiên -->
-                            <mainClass>com.auction.common.network.SeverMain</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals><goal>shade</goal></goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.auction.common.network.SeverMain</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
         </plugins>
