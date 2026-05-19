@@ -81,6 +81,7 @@
 
     <!-- ====== CẤU HÌNH BUILD ====== -->
     <build>
+        <finalName>server</finalName>
         <plugins>
 
             <!-- Plugin compile: dịch .java → .class
