@@ -17,9 +17,7 @@ public class BidService {
     private final BidDAO bidDAO;
     private final BidLockManager lockManager;
 
-    private Map<String, List<String>> activeBids  = new HashMap<>();    //user đang tham gia phiên nào
-    private Map<String, List<String>> wonAuctions = new HashMap<>();    //user đã thắng phiên nào
-    private Map<String, List<String>> bidHistory  = new HashMap<>();    //user đã đặt giá phiên nào (có thể trùng với active hoặc won)
+    private Map<String, List<String>> activeBids = new HashMap<>();    //user đang tham gia phiên nào
 
     public BidService(AuctionDAO auctionDAO, BidDAO bidDAO, BidLockManager lockManager) {
         this.auctionDAO  = auctionDAO;
@@ -81,25 +79,4 @@ public class BidService {
         return "Đã rút khỏi phiên: " + auctionId;
     }
 
-    public String receiveWin(Bidder bidder, String auctionId) {
-        getList(wonAuctions, bidder.getId()).add(auctionId);
-        getList(activeBids,  bidder.getId()).remove(auctionId);
-        return "Chúc mừng " + bidder.getName() + " thắng phiên: " + auctionId;
-    }
-
-    public String viewActiveBids(Bidder bidder) {
-        List<String> active = getList(activeBids, bidder.getId());
-        if (active.isEmpty()) return "Bạn chưa tham gia phiên nào.";
-        StringBuilder sb = new StringBuilder("Phiên đang tham gia\n");
-        active.forEach(a -> sb.append("  | ").append(a).append("\n"));
-        return sb.toString();
-    }
-
-    public String viewBidHistory(Bidder bidder) {
-        List<String> history = getList(bidHistory, bidder.getId());
-        if (history.isEmpty()) return "Chưa có lịch sử đấu giá.";
-        StringBuilder sb = new StringBuilder("Lịch sử đấu giá\n");
-        history.forEach(r -> sb.append("  | ").append(r).append("\n"));
-        return sb.toString();
-    }
 }

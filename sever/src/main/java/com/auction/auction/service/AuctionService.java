@@ -68,8 +68,4 @@ public class AuctionService {
         auction.endAuction();
     }
 
-    //  xóa
-    public void deleteAuction(Auction auction) {
-        auctionDAO.delete(auction);
-    }
 }

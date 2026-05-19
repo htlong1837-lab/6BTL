@@ -17,11 +17,6 @@ public class AuctionController {
         return auctionService.createAuction(item, seller, durationMillis);
     }
 
-// đặt giá
-    public boolean placeBid(Auction auction, User user, double amount) {
-        return auctionService.placeBid(auction, user, amount);
-    }
-
 //lấy danh sách
     public List<Auction> getAllAuctions() {
         return auctionService.getAllAuctions();

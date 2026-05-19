@@ -16,13 +16,4 @@ public class BidController {
     public String handleWithdraw(Bidder bidder, String auctionId) {
         return bidService.withdrawBid(bidder, auctionId);
     }
-    public String handleViewHistory(Bidder bidder) {
-        return bidService.viewBidHistory(bidder);
-    }
-    public String handleViewActive(Bidder bidder) {
-        return bidService.viewActiveBids(bidder);
-    }
-
-
-    
 }
