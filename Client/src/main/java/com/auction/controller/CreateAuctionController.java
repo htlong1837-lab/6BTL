@@ -59,7 +59,11 @@ public class CreateAuctionController {
             msg("Chọn sản phẩm và nhập thời gian.", false); return;
         }
         long durationMillis;
-        try { durationMillis = Long.parseLong(durText) * 3600_000L; }
+        try {
+            double hours = Double.parseDouble(durText);
+            if (hours <= 0) { msg("Thời gian phải lớn hơn 0.", false); return; }
+            durationMillis = (long)(hours * 3_600_000L);
+        }
         catch (NumberFormatException e) { msg("Thời gian không hợp lệ.", false); return; }
 
         new Thread(() -> {

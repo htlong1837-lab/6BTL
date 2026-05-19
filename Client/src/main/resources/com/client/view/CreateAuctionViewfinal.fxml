@@ -32,7 +32,7 @@
             <Label text="Thời gian đấu giá (giờ)"
                    style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
             <TextField fx:id="durationField" prefHeight="42" maxWidth="Infinity"
-                promptText="Ví dụ: 24"
+                promptText="Ví dụ: 0.5"
                 style="-fx-background-radius: 8; -fx-border-radius: 8;
                        -fx-border-color: #e2e8f0; -fx-border-width: 1.5;
                        -fx-padding: 10 14; -fx-font-size: 13; -fx-background-color: #f8fafc;"/>
