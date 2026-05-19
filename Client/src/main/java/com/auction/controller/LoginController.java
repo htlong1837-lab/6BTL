@@ -46,32 +46,28 @@ private void handleLogin() {
     }
 
     
-    try {
-        
-        Response res = ServerConnection.getInstance().send("LOGIN", Map.of(
-            "username",username ,
-            "password",password
-        ));
-
-        if (!res.isSuccess()) {
-            showError(res.getMessage());
-            return;
+    new Thread(() -> {
+        try {
+            Response res = ServerConnection.getInstance().send("LOGIN", Map.of(
+                "username", username,
+                "password", password
+            ));
+            javafx.application.Platform.runLater(() -> {
+                if (!res.isSuccess()) { showError(res.getMessage()); return; }
+                Gson gson = new Gson();
+                JsonObject userJson = gson.toJsonTree(res.getData()).getAsJsonObject();
+                String role    = userJson.get("role").getAsString();
+                String userId  = userJson.get("id").getAsString();
+                String name    = userJson.get("username").getAsString();
+                double balance = userJson.has("balance") ? userJson.get("balance").getAsDouble() : 0.0;
+                SessionManager.getInstance().init(userId, name, role, balance);
+                navigateByRole(role);
+            });
+        } catch (IOException e) {
+            javafx.application.Platform.runLater(() ->
+                showError("Lỗi kết nối server: " + e.getMessage()));
         }
-
-        // Server trả user object trong data — parse role
-        // Tạm dùng Gson để lấy role
-        Gson gson = new Gson();
-        JsonObject userJson = gson.toJsonTree(res.getData()).getAsJsonObject();
-        String role    = userJson.get("role").getAsString(); // "ADMIN" / "SELLER" / "BIDDER"
-        String userId  = userJson.get("id").getAsString();
-        String name    = userJson.get("username").getAsString();
-        double balance = userJson.has("balance") ? userJson.get("balance").getAsDouble() : 0.0;
-        SessionManager.getInstance().init(userId, name, role, balance);
-        navigateByRole(role);
-
-    } catch (IOException e) {
-        showError("Lỗi kết nối server: " + e.getMessage());
-    }
+    }).start();
 }
 
     private void navigateByRole(String role) {

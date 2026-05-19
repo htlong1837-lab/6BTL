@@ -6,13 +6,25 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Map;
+import java.util.Properties;
 
 public class ServerConnection {
 
-    private static final String HOST = "localhost";
-    private static final int    PORT = 5000;
+    private static final String HOST;
+    private static final int    PORT;
+
+    static {
+        Properties props = new Properties();
+        try (InputStream is = ServerConnection.class
+                .getResourceAsStream("/config.properties")) {
+            if (is != null) props.load(is);
+        } catch (IOException ignored) {}
+        HOST = props.getProperty("server.host", "localhost");
+        PORT = Integer.parseInt(props.getProperty("server.port", "5000"));
+    }
 
     private static ServerConnection instance;
 
@@ -33,13 +45,23 @@ public class ServerConnection {
     }
     
     public void connect() throws IOException {
-        socket = new Socket(HOST, PORT);
-
-        //client gủi request vào server thông qua luồng I/O của socket
-        out    = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
-        //client nhận response từ server
-        in     = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-        System.out.println("[Client] Đã kết nối server " + HOST + ":" + PORT);
+        String host = HOST;
+        try {
+            Socket s = new Socket();
+            s.connect(new InetSocketAddress(host, PORT), 5000);
+            socket = s;
+        } catch (IOException e) {
+            // HOST không phải localhost → thử fallback localhost (máy chạy cả server lẫn client)
+            if (host.equals("localhost") || host.equals("127.0.0.1")) throw e;
+            Socket s = new Socket();
+            s.connect(new InetSocketAddress("localhost", PORT), 3000);
+            socket = s;
+            host = "localhost";
+        }
+        socket.setSoTimeout(10000);
+        out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
+        in  = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
+        System.out.println("[Client] Đã kết nối server " + host + ":" + PORT);
     }
 
     public boolean isConnected() {
@@ -53,7 +75,7 @@ public class ServerConnection {
     }
     public Response send(String action, Map<String, Object> payload) throws IOException {
         if (!isConnected()) {
-            throw new IOException("Chưa kết nối server. Gọi connect() trước.");
+            connect();
         }
 
         String json = gson.toJson(new Request(action, payload));//chuyển request thành json để gửi đi
