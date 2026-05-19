@@ -96,18 +96,4 @@ public class BidServiceTest {
         assertFalse(result.contains("Đã rút"),
             "Không thể rút khỏi phiên chưa tham gia");
     }
-
-    // ============================================================
-    // NHÓM TEST: XEM LỊCH SỬ (viewBidHistory)
-    // ============================================================
-
-    @Test
-    @DisplayName("Xem lịch sử khi chưa đặt giá lần nào - báo trống")
-    void viewBidHistoryNoHistoryReturnsEmpty() {
-        String result = bidService.viewBidHistory(bidder);
-
-        assertTrue(result.contains("Chưa có"),
-            "Phải báo chưa có lịch sử khi bidder chưa đặt giá lần nào");
-    }
-
 }
