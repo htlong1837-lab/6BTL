@@ -15,6 +15,7 @@ public abstract class Item extends Entity {
         this.category = category;
         this.sellerId = sellerId;
     }
+    //getter
     public String getName() {
         return name;
     }
@@ -25,24 +26,26 @@ public abstract class Item extends Entity {
     public double getStartPrice() {
         return startPrice;
     }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setDes(String des) {
-        this.des = des;
-    
-    }
     public String getCategory() {
         return category;
     }
     public String getSellerId() {
         return sellerId;
     }
+    public boolean getApproved() { return approved; }
+    
+    //setter
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setDes(String des) {
+        this.des = des;
+    }
     public void setStartPrice(double startPrice) {
         this.startPrice = startPrice;
     }
-    public boolean getApproved() { return approved; }
     public void setApproved(boolean approved) { this.approved = approved; }
+
     @Override
     public void printInfo() {
         System.out.println("sản phẩm:" + name + "mô tả:" + des + "có giá khởi điểm" + startPrice);
