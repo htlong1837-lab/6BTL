@@ -25,6 +25,9 @@ public class AdminService {
         if (admin == null) {
             throw new UserNotFoundException("Chỉ Admin mới có quyền khóa tài khoản.");
         }
+        if (target instanceof Admin) {
+            throw new UserNotFoundException("Không có quyền ban Admin");
+        }
         target.setBanned(banned);
         // [THÊM] Cập nhật trạng thái bị khóa vào database sau khi thay đổi
         userDAO.update(target);
@@ -42,15 +45,15 @@ public class AdminService {
      // Xóa một phiên đấu giá khỏi danh sách */
     public void removeAuction(List<Auction> auctions, Auction target) {
         if (auctions.remove(target)) {
-            System.out.println("[Admin] Auction for \"" + target.getItem().getName() + "\" has been removed.");
+            System.out.println("[Admin] Phiên đấu giá \"" + target.getItem().getName() + "\" đã được xóa.");
         } else {
-            System.out.println("[Admin] Auction not found.");
+            System.out.println("[Admin] Phiên đấu giá \"" + target.getItem().getName() + "\" không tồn tại trong danh sách.");
         }
     }
  
     // Mở lại tài khoản người dùng
     public void isActive(User user) {
         user.setBanned(false);
-        System.out.println("[Admin] User \"" + user.getName() + "\" has been activated. You can now access");
+        System.out.println("[Admin] Tài khoản \"" + user.getName() + "\" đã được mở khóa.");
     }
 }
