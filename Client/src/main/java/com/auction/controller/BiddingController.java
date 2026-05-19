@@ -26,15 +26,27 @@ public class BiddingController {
     private final Gson gson = new Gson();
     private final ObservableList<String> history = FXCollections.observableArrayList();
     private Timeline countdown;
+    private Timeline pollTimer;
 
     public void setOnBidSuccess(Runnable callback) { this.onBidSuccess = callback; }
 
-    @FXML public void initialize() { bidHistoryList.setItems(history); }
+    @FXML public void initialize() {
+        bidHistoryList.setItems(history);
+        // Tự động cập nhật giá và lịch sử đặt giá mỗi 3 giây
+        pollTimer = new Timeline(new KeyFrame(Duration.seconds(3), e -> refreshAuction()));
+        pollTimer.setCycleCount(Timeline.INDEFINITE);
+        pollTimer.play();
+    }
 
     /** Được gọi từ AuctionListController khi mở phòng */
     public void setAuction(JsonObject auction) {
         this.auctionId = auction.get("id").getAsString();
         updateUI(auction);
+    }
+
+    public void stopPolling() {
+        if (pollTimer != null) pollTimer.stop();
+        if (countdown != null) countdown.stop();
     }
 
     private void updateUI(JsonObject auction) {

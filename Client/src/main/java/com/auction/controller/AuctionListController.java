@@ -95,6 +95,7 @@ public class AuctionListController {
             stage.setTitle("Phòng đấu giá — " +
                 auction.getAsJsonObject("item").get("name").getAsString());
             stage.setScene(new Scene(root, 700, 520));
+            stage.setOnCloseRequest(e -> ctrl.stopPolling());
             stage.show();
         } catch (Exception e) {
             statusLabel.setText("Không mở được phòng: " + e.getMessage());
