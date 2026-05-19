@@ -54,45 +54,40 @@ public class RegisterController {
             return;
         }
 
-        // Gửi lên server
-        try {
-            String id = UUID.randomUUID().toString();
-
-            Response res = ServerConnection.getInstance().send("REGISTER", Map.of(
-                "id",              id,
-                "username",        username,
-                "password",        password,
-                "confirmPassword", confirmPassword,
-                "role",            role
-            ));
-
-            if (res.isSuccess()) {
-                
-                showSuccess("Đăng ký thành công! Vui lòng đăng nhập.");
-
-                PauseTransition pause = new PauseTransition(Duration.seconds(2));
-                pause.setOnFinished(e -> {
-                    try {
-                        FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/client/view/LoginViewfinal.fxml"));
-                    Parent root = loader.load();
-                    Stage stage = (Stage) userNameField.getScene().getWindow();
-                    Scene scene = new Scene(root,500,700) ;
-                    stage.setScene(scene);
-                    stage.show();
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                    } 
+        // Gửi lên server trên background thread để không block UI
+        String id = UUID.randomUUID().toString();
+        new Thread(() -> {
+            try {
+                Response res = ServerConnection.getInstance().send("REGISTER", Map.of(
+                    "id",              id,
+                    "username",        username,
+                    "password",        password,
+                    "confirmPassword", confirmPassword,
+                    "role",            role
+                ));
+                javafx.application.Platform.runLater(() -> {
+                    if (res.isSuccess()) {
+                        showSuccess("Đăng ký thành công! Vui lòng đăng nhập.");
+                        PauseTransition pause = new PauseTransition(Duration.seconds(2));
+                        pause.setOnFinished(e -> {
+                            try {
+                                Parent root = FXMLLoader.load(
+                                    getClass().getResource("/com/client/view/LoginViewfinal.fxml"));
+                                Stage stage = (Stage) userNameField.getScene().getWindow();
+                                stage.setScene(new Scene(root, 500, 700));
+                                stage.show();
+                            } catch (IOException ex) { ex.printStackTrace(); }
+                        });
+                        pause.play();
+                    } else {
+                        showError(res.getMessage());
+                    }
                 });
-                pause.play();
-                
-            } else {
-                showError(res.getMessage());
+            } catch (IOException e) {
+                javafx.application.Platform.runLater(() ->
+                    showError("Lỗi kết nối server: " + e.getMessage()));
             }
-
-        } catch (IOException e) {
-            showError("Lỗi kết nối server: " + e.getMessage());
-        }
+        }).start();
     } 
 
     private void showError(String message) {

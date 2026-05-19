@@ -108,14 +108,14 @@ public class RequestRouter {
         Map<String, Object> map = toMap(payload);
         String role = (String) map.get("role");
         if (role == null || role.isBlank()) role = "Bidder";
-        boolean success = userController.createAccount(
+        String error = userController.createAccount(
             (String) map.get("id"),
             (String) map.get("username"),
             (String) map.get("password"),
             (String) map.get("confirmPassword"),
             role
         );
-        return success ? Response.ok("Đăng ký thành công!", null) : Response.fall("Đăng ký thất bại.");
+        return error == null ? Response.ok("Đăng ký thành công!", null) : Response.fall(error);
     }
 
     private Response handleLogin(Object payload) {

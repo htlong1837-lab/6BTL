@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.Map;
 import java.util.Properties;
@@ -44,10 +45,23 @@ public class ServerConnection {
     }
     
     public void connect() throws IOException {
-        socket = new Socket(HOST, PORT);
+        String host = HOST;
+        try {
+            Socket s = new Socket();
+            s.connect(new InetSocketAddress(host, PORT), 5000);
+            socket = s;
+        } catch (IOException e) {
+            // HOST không phải localhost → thử fallback localhost (máy chạy cả server lẫn client)
+            if (host.equals("localhost") || host.equals("127.0.0.1")) throw e;
+            Socket s = new Socket();
+            s.connect(new InetSocketAddress("localhost", PORT), 3000);
+            socket = s;
+            host = "localhost";
+        }
+        socket.setSoTimeout(10000);
         out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
         in  = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-        System.out.println("[Client] Đã kết nối server " + HOST + ":" + PORT);
+        System.out.println("[Client] Đã kết nối server " + host + ":" + PORT);
     }
 
     public boolean isConnected() {

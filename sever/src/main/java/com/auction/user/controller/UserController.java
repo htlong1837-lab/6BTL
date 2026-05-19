@@ -10,14 +10,14 @@ public class UserController {
     private final UserDAOSQLiteImpl userDAO = new UserDAOSQLiteImpl();
     private final UserService userService = new UserService(userDAO);
 
-    public boolean createAccount(String id, String username,
-                                  String password, String confirmPassword, String role) {
+    public String createAccount(String id, String username,
+                                String password, String confirmPassword, String role) {
         try {
             userService.signUp(id, username, password, confirmPassword, role);
-            return true;
+            return null; // null = thành công
         } catch (Exception e) {
             System.out.println("[UserController] Lỗi đăng ký: " + e.getMessage());
-            return false;
+            return e.getMessage(); // trả về lý do lỗi
         }
     }
 
