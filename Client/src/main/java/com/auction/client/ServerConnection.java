@@ -44,18 +44,10 @@ public class ServerConnection {
     }
     
     public void connect() throws IOException {
-        try {
-            socket = new Socket(HOST, PORT);
-        } catch (IOException e) {
-            // Nếu kết nối tới HOST thất bại (ví dụ firewall chặn IP nội bộ),
-            // thử lại với localhost — dành cho máy chạy cả server lẫn client.
-            if (HOST.equals("localhost") || HOST.equals("127.0.0.1")) throw e;
-            socket = new Socket("localhost", PORT);
-            System.out.println("[Client] Fallback sang localhost:" + PORT);
-        }
+        socket = new Socket(HOST, PORT);
         out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
         in  = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-        System.out.println("[Client] Đã kết nối server " + socket.getInetAddress() + ":" + PORT);
+        System.out.println("[Client] Đã kết nối server " + HOST + ":" + PORT);
     }
 
     public boolean isConnected() {
