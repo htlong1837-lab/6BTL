@@ -23,10 +23,13 @@ public class AuctionScheduler {
     }
 
     // Lên lịch kiểm tra kết thúc phiên đấu giá mỗi giây
-    public void scheduleAuctionEnd(Auction auction) {
+    public void scheduleAuctionEnd(Auction initialAuction) {
+        String auctionId = initialAuction.getId();
         ScheduledFuture<?>[] ref = new ScheduledFuture<?>[1];
         ref[0] = scheduler.scheduleWithFixedDelay(() -> {
-            if (auction.getStatus() != AuctionStatus.RUNNING) {
+            // Reload từ DB mỗi tick để lấy highestBidder và endTime mới nhất (tránh stale object)
+            Auction auction = auctionDAO.findById(auctionId);
+            if (auction == null || auction.getStatus() != AuctionStatus.RUNNING) {
                 ref[0].cancel(false);
                 return;
             }
