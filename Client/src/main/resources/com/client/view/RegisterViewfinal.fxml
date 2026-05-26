@@ -58,7 +58,7 @@
                      <Label text="Mật khẩu *"
                             style="-fx-font-size: 13; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
                      <PasswordField fx:id="passwordField" maxWidth="Infinity" prefHeight="42"
-                        promptText="Tối thiểu 6 ký tự"
+                        promptText="Tối thiểu 8 ký tự"
                         style="-fx-background-radius: 8; -fx-border-radius: 8;
                                -fx-border-color: #e2e8f0; -fx-border-width: 1.5;
                                -fx-padding: 10 14; -fx-font-size: 13;
