@@ -3,6 +3,8 @@ import com.auction.auction.dao.AuctionDAO;
 import com.auction.auction.model.Auction;
 import com.auction.bid.dao.BidDAO;
 import com.auction.bid.model.BidTransaction;
+import com.auction.exception.AutionException.AuctionClosedException;
+import com.auction.exception.AutionException.BidTooLowException;
 import com.auction.user.model.Bidder;
 
 import java.util.ArrayList;
@@ -49,9 +51,11 @@ public class BidService {
             if (auction == null)
                 return "Phiên đấu giá không tồn tại.";
 
-            boolean success = auction.placeBid(bidder, bidAmount);
-            if (!success)
-                return "Đặt giá thất bại. Giá phải cao hơn giá hiện tại hoặc phiên đã đóng.";
+            try {
+                auction.placeBid(bidder, bidAmount);
+            } catch (AuctionClosedException | BidTooLowException e) {
+                return e.getMessage();
+            }
 
             bidDAO.save(new BidTransaction(
                 bidder.getId(),
@@ -60,7 +64,7 @@ public class BidService {
                 bidAmount,
                 System.currentTimeMillis()
             ));
-            auctionDAO.save(auction); // persist currentPrice, highestBidder, endTime (anti-snipe)
+            auctionDAO.save(auction);
 
             List<String> active = getList(activeBids, bidder.getId());
             if (!active.contains(auctionId)) active.add(auctionId);

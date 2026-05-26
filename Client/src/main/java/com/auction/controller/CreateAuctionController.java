@@ -38,13 +38,9 @@ public class CreateAuctionController {
                             nameToId.put(name, o.get("id").getAsString());
                             itemCombo.getItems().add(name);
                         }
-
-                    if (itemCombo.getItems().isEmpty()) {
-                        msg("Chưa có sản phẩm nào được admin duyệt.", false);
-}
-
                     }
-                
+                    if (itemCombo.getItems().isEmpty())
+                        msg("Chưa có sản phẩm nào được admin duyệt.", false);
                 });
             } catch (IOException e) {
                 Platform.runLater(() -> msg("Lỗi tải sản phẩm: " + e.getMessage(), false));
