@@ -170,11 +170,23 @@ public class SellerController {
     }
 
     @FXML public void showAddItem() {
-        loadSubView("/com/client/view/ItemFormViewfinal.fxml");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/client/view/ItemFormViewfinal.fxml"));
+            Node node = loader.load();
+            ProductFormController ctrl = loader.getController();
+            ctrl.setOnSuccess(this::showMyItems);
+            contentArea.getChildren().setAll(node);
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML public void showCreateAuction() {
-        loadSubView("/com/client/view/CreateAuctionViewfinal.fxml");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/client/view/CreateAuctionViewfinal.fxml"));
+            Node node = loader.load();
+            CreateAuctionController ctrl = loader.getController();
+            ctrl.setOnSuccess(this::showMyAuctions);
+            contentArea.getChildren().setAll(node);
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     private void loadSubView(String path) {
