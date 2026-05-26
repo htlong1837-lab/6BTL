@@ -193,21 +193,25 @@ public class RequestRouter {
         return msg.contains("Đã xóa") ? Response.ok(msg, null) : Response.fall(msg);
     }
     private Response handleCreateAuction(Object payload) {
-        Map<String, Object> map = toMap(payload);
-        String itemId       = (String) map.get("itemId");
-        String sellerId     = (String) map.get("sellerId");
-        long duration       = ((Number) map.get("durationMillis")).longValue();
+        try {
+            Map<String, Object> map = toMap(payload);
+            String itemId   = (String) map.get("itemId");
+            String sellerId = (String) map.get("sellerId");
+            long duration   = ((Number) map.get("durationMillis")).longValue();
 
-        Item item = itemController.getItem(itemId);
-        if (item == null) return Response.fall("Không tìm thấy sản phẩm: " + itemId);
+            Item item = itemController.getItem(itemId);
+            if (item == null) return Response.fall("Không tìm thấy sản phẩm: " + itemId);
 
-        User user = userDAO.findById(sellerId);
-        if (!(user instanceof Seller)) return Response.fall("Người dùng không phải Seller.");
+            User user = userDAO.findById(sellerId);
+            if (!(user instanceof Seller)) return Response.fall("Người dùng không phải Seller.");
 
-        Auction auction = auctionController.createAuction(item, (Seller) user, duration);
-        return auction != null
-            ? Response.ok("Tạo phiên đấu giá thành công!", auction)
-            : Response.fall("Tạo phiên đấu giá thất bại.");
+            Auction auction = auctionController.createAuction(item, (Seller) user, duration);
+            return Response.ok("Tạo phiên đấu giá thành công!", auction);
+        } catch (com.auction.exception.AutionException.InvalidAuctionDataException e) {
+            return Response.fall(e.getMessage());
+        } catch (Exception e) {
+            return Response.fall("Lỗi tạo phiên đấu giá: " + e.getMessage());
+        }
     }
 
     private Response handleListAuctions() {
@@ -215,27 +219,34 @@ public class RequestRouter {
     }
 
     private Response handleDeleteAuction(Object payload) {
-        Map<String, Object> map = toMap(payload);
-        String auctionId = (String) map.get("auctionId");
-        Auction auction = auctionController.getAuctionById(auctionId);
-        if (auction == null) return Response.fall("Không tìm thấy phiên đấu giá: " + auctionId);
-        auctionController.endAuction(auction);
-        return Response.ok("Đã xóa phiên đấu giá.", null);
+        try {
+            Map<String, Object> map = toMap(payload);
+            String auctionId = (String) map.get("auctionId");
+            Auction auction = auctionController.getAuctionById(auctionId);
+            auctionController.endAuction(auction);
+            return Response.ok("Đã xóa phiên đấu giá.", null);
+        } catch (com.auction.exception.AutionException.AuctionNotFoundException e) {
+            return Response.fall(e.getMessage());
+        }
     }
 
     private Response handlePlaceBid(Object payload) {
-        Map<String, Object> map = toMap(payload);
-        String bidderId  = (String) map.get("bidderId");
-        String auctionId = (String) map.get("auctionId");
-        double amount    = ((Number) map.get("bidAmount")).doubleValue();
+        try {
+            Map<String, Object> map = toMap(payload);
+            String bidderId  = (String) map.get("bidderId");
+            String auctionId = (String) map.get("auctionId");
+            double amount    = ((Number) map.get("bidAmount")).doubleValue();
 
-        User user = userDAO.findById(bidderId);
-        if (!(user instanceof Bidder)) return Response.fall("Người dùng không phải Bidder.");
+            User user = userDAO.findById(bidderId);
+            if (!(user instanceof Bidder)) return Response.fall("Người dùng không phải Bidder.");
 
-        String result = bidController.handlePlaceBid((Bidder) user, auctionId, amount);
-        return result.contains("thành công")
-            ? Response.ok(result, null)
-            : Response.fall(result);
+            String result = bidController.handlePlaceBid((Bidder) user, auctionId, amount);
+            return result.contains("thành công")
+                ? Response.ok(result, null)
+                : Response.fall(result);
+        } catch (Exception e) {
+            return Response.fall("Lỗi đặt giá: " + e.getMessage());
+        }
     }
 
     // Payload: {bidderId, auctionId}

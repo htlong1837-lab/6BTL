@@ -1,8 +1,5 @@
 package com.auction.user.service;
 
-import java.util.List;
-
-import com.auction.auction.model.Auction;
 import com.auction.exception.UserException.UserException;
 import com.auction.exception.UserException.UserNotFoundException;
 import com.auction.user.dao.UserDAO;
@@ -34,18 +31,4 @@ public class AdminService {
         System.out.println("[Admin] Tài khoản " + target.getName() + (banned ? " đã bị khóa." : " đã được mở khóa."));
     }
 
-     // Xóa một phiên đấu giá khỏi danh sách */
-    public void removeAuction(List<Auction> auctions, Auction target) {
-        if (auctions.remove(target)) {
-            System.out.println("[Admin] Phiên đấu giá \"" + target.getItem().getName() + "\" đã được xóa.");
-        } else {
-            System.out.println("[Admin] Phiên đấu giá \"" + target.getItem().getName() + "\" không tồn tại trong danh sách.");
-        }
-    }
- 
-    // Mở lại tài khoản người dùng
-    public void isActive(User user) {
-        user.setBanned(false);
-        System.out.println("[Admin] Tài khoản \"" + user.getName() + "\" đã được mở khóa.");
-    }
 }

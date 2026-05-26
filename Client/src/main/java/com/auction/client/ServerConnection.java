@@ -45,23 +45,13 @@ public class ServerConnection {
     }
     
     public void connect() throws IOException {
-        String host = HOST;
-        try {
-            Socket s = new Socket();
-            s.connect(new InetSocketAddress(host, PORT), 5000);
-            socket = s;
-        } catch (IOException e) {
-            // HOST không phải localhost → thử fallback localhost (máy chạy cả server lẫn client)
-            if (host.equals("localhost") || host.equals("127.0.0.1")) throw e;
-            Socket s = new Socket();
-            s.connect(new InetSocketAddress("localhost", PORT), 3000);
-            socket = s;
-            host = "localhost";
-        }
+        Socket s = new Socket();
+        s.connect(new InetSocketAddress(HOST, PORT), 5000);
+        socket = s;
         socket.setSoTimeout(10000);
         out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), "UTF-8"), true);
         in  = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-        System.out.println("[Client] Đã kết nối server " + host + ":" + PORT);
+        System.out.println("[Client] Đã kết nối server " + HOST + ":" + PORT);
     }
 
     public boolean isConnected() {

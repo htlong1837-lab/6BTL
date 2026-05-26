@@ -26,11 +26,6 @@ public class ItemController {
         return itemService.getAllItems();
     }
 
-    // [THÊM] Lấy sản phẩm của một Seller cụ thể - cần cho màn hình quản lý sản phẩm của Seller
-    public List<Item> listItemsBySeller(String sellerId) {
-        return itemService.getItemsBySeller(sellerId);
-    }
-
     // Lấy sản phẩm theo mã
     public Item getItem(String id) {
         return itemService.getItem(id);
@@ -41,15 +36,4 @@ public class ItemController {
         return itemService.deleteItem(id);
     }
 
-    // In danh sách sản phẩm ra màn hình
-    public void printAllItems(List<Item> items) {
-        for (Item item : items) {
-            System.out.println("Name: "          + item.getName());
-            System.out.println("Description: "   + item.getDes());
-            System.out.println("Starting Price: " + item.getStartPrice());
-            System.out.println("Category: "      + item.getCategory());
-            System.out.println("Seller ID: "     + item.getSellerId());
-            System.out.println("---------------------------");
-        }
-    }
 }

@@ -1,5 +1,5 @@
 package com.auction.auction.model;
-//Enum: OPEN, RUNNING, FINISHED, PAID, CANCELED
+//Enum: OPEN, RUNNING, FINISHED, PAID, CANCELLED
 public enum AuctionStatus {
-    OPEN, RUNNING, FINISHED, PAID, CANCELED
+    OPEN, RUNNING, FINISHED, PAID, CANCELLED
 }

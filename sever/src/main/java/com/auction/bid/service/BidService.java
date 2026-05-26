@@ -3,6 +3,8 @@ import com.auction.auction.dao.AuctionDAO;
 import com.auction.auction.model.Auction;
 import com.auction.bid.dao.BidDAO;
 import com.auction.bid.model.BidTransaction;
+import com.auction.exception.AutionException.AuctionClosedException;
+import com.auction.exception.AutionException.BidTooLowException;
 import com.auction.user.model.Bidder;
 
 import java.util.ArrayList;
@@ -17,9 +19,7 @@ public class BidService {
     private final BidDAO bidDAO;
     private final BidLockManager lockManager;
 
-    private Map<String, List<String>> activeBids  = new HashMap<>();    //user đang tham gia phiên nào
-    private Map<String, List<String>> wonAuctions = new HashMap<>();    //user đã thắng phiên nào
-    private Map<String, List<String>> bidHistory  = new HashMap<>();    //user đã đặt giá phiên nào (có thể trùng với active hoặc won)
+    private Map<String, List<String>> activeBids = new HashMap<>();    //user đang tham gia phiên nào
 
     public BidService(AuctionDAO auctionDAO, BidDAO bidDAO, BidLockManager lockManager) {
         this.auctionDAO  = auctionDAO;
@@ -51,9 +51,11 @@ public class BidService {
             if (auction == null)
                 return "Phiên đấu giá không tồn tại.";
 
-            boolean success = auction.placeBid(bidder, bidAmount);
-            if (!success)
-                return "Đặt giá thất bại. Giá phải cao hơn giá hiện tại hoặc phiên đã đóng.";
+            try {
+                auction.placeBid(bidder, bidAmount);
+            } catch (AuctionClosedException | BidTooLowException e) {
+                return e.getMessage();
+            }
 
             bidDAO.save(new BidTransaction(
                 bidder.getId(),
@@ -62,7 +64,7 @@ public class BidService {
                 bidAmount,
                 System.currentTimeMillis()
             ));
-            auctionDAO.save(auction); // persist currentPrice, highestBidder, endTime (anti-snipe)
+            auctionDAO.save(auction);
 
             List<String> active = getList(activeBids, bidder.getId());
             if (!active.contains(auctionId)) active.add(auctionId);
@@ -81,25 +83,4 @@ public class BidService {
         return "Đã rút khỏi phiên: " + auctionId;
     }
 
-    public String receiveWin(Bidder bidder, String auctionId) {
-        getList(wonAuctions, bidder.getId()).add(auctionId);
-        getList(activeBids,  bidder.getId()).remove(auctionId);
-        return "Chúc mừng " + bidder.getName() + " thắng phiên: " + auctionId;
-    }
-
-    public String viewActiveBids(Bidder bidder) {
-        List<String> active = getList(activeBids, bidder.getId());
-        if (active.isEmpty()) return "Bạn chưa tham gia phiên nào.";
-        StringBuilder sb = new StringBuilder("Phiên đang tham gia\n");
-        active.forEach(a -> sb.append("  | ").append(a).append("\n"));
-        return sb.toString();
-    }
-
-    public String viewBidHistory(Bidder bidder) {
-        List<String> history = getList(bidHistory, bidder.getId());
-        if (history.isEmpty()) return "Chưa có lịch sử đấu giá.";
-        StringBuilder sb = new StringBuilder("Lịch sử đấu giá\n");
-        history.forEach(r -> sb.append("  | ").append(r).append("\n"));
-        return sb.toString();
-    }
 }

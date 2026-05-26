@@ -11,7 +11,6 @@ import com.auction.bid.dao.BidDAO;
 import com.auction.bid.service.BidLockManager;
 import com.auction.bid.service.BidService;
 import com.auction.user.model.Bidder;
-
 public class BidServiceTest {
 
     private BidService bidService;   // service cần test
@@ -32,11 +31,9 @@ public class BidServiceTest {
         // Mặc định balance = 0 khi mới tạo
 
     }
-
     // ============================================================
     // NHÓM TEST: NẠP TIỀN (deposit)
     // ============================================================
-
     @Test
     @DisplayName("Nạp tiền hợp lệ - số dư tăng")
     void depositValidAmountIncreasesBalance() {
@@ -56,11 +53,9 @@ public class BidServiceTest {
         String result = bidService.deposit(bidder, 0);
         assertFalse(result.contains("thành công"));
     }
-
     // ============================================================
     // NHÓM TEST: ĐẶT GIÁ (placeBid)
     // ============================================================
-
     @Test
     @DisplayName("Đặt giá khi số dư không đủ - báo lỗi")
     void placeBidInsufficientBalanceReturnsError() {
@@ -95,19 +90,6 @@ public class BidServiceTest {
 
         assertFalse(result.contains("Đã rút"),
             "Không thể rút khỏi phiên chưa tham gia");
-    }
-
-    // ============================================================
-    // NHÓM TEST: XEM LỊCH SỬ (viewBidHistory)
-    // ============================================================
-
-    @Test
-    @DisplayName("Xem lịch sử khi chưa đặt giá lần nào - báo trống")
-    void viewBidHistoryNoHistoryReturnsEmpty() {
-        String result = bidService.viewBidHistory(bidder);
-
-        assertTrue(result.contains("Chưa có"),
-            "Phải báo chưa có lịch sử khi bidder chưa đặt giá lần nào");
     }
 
 }
