@@ -30,7 +30,7 @@ public class Auction {
         this.id = UUID.randomUUID().toString();
         this.item = item;
         this.seller = seller;
-        this.currentPrice = item.getStartPrice(); // cần định nghãi hàm getStartPrice
+        this.currentPrice = item.getStartPrice(); // cần định nghĩa hàm getStartPrice
         this.status = AuctionStatus.OPEN;
 
         this.bidHistory = new ArrayList<>();
@@ -68,7 +68,7 @@ public class Auction {
     }
 
 // đặt giá 
-    public synchronized boolean placeBid(User bidder ,double amount ) {// chặn hành trường hợp 2 thằng cùng đặt giá
+    public synchronized boolean placeBid(User bidder ,double amount ) {// chặn hành trường hợp 2 ng cùng đặt giá
 // neu phiên chưa chạy
         if (status != AuctionStatus.RUNNING) {
             System.out.println(" Phiên đấu giá chưa chạy");
@@ -83,7 +83,7 @@ public class Auction {
 
 // giá ko hợp lệ 
         if ( amount <= currentPrice){
-            System.out.println("bids too low");
+            System.out.println("Giá đặt phải cao hơn giá hiện tại");
             return false;
         }
 
@@ -114,8 +114,6 @@ public class Auction {
 
 
         return true;
-
-        
     }
 
     public synchronized void endAuction(){

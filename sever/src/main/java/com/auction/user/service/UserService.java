@@ -75,7 +75,7 @@ public class UserService {
 
         // [SỬA] Throw exception khi tài khoản bị khóa thay vì chỉ println rồi vẫn tiếp tục
         if (user.isBanned())
-            throw new UserNotFoundException("Tài khoản đã bị khóa do đăng nhập sai quá nhiều lần.");
+            throw new UserNotFoundException("Tài khoản đã bị khóa.");
 
         String inputHash = password;
 

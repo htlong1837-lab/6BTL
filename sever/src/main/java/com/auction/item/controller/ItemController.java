@@ -8,7 +8,7 @@ import com.auction.item.service.ItemService;
 
 public class ItemController {
 
-    // [SỬA] Dùng SQLite DAO thay vì in-memory DAO - sản phẩm tồn tại sau khi server restart
+    // [SỬA] Dùng SQLite DAO thay vì in-memory DAO(tức db lưu trong RAM) - sản phẩm tồn tại sau khi server restart
     private final ItemService itemService = new ItemService(new ItemDAOSQLiteImpl());
 
     // Tạo sản phẩm mới - trả về message kết quả

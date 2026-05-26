@@ -22,6 +22,7 @@ public class AuctionScheduler {
         this.userDAO    = userDAO;
     }
 
+    // Lên lịch kiểm tra kết thúc phiên đấu giá mỗi giây
     public void scheduleAuctionEnd(Auction auction) {
         ScheduledFuture<?>[] ref = new ScheduledFuture<?>[1];
         ref[0] = scheduler.scheduleWithFixedDelay(() -> {

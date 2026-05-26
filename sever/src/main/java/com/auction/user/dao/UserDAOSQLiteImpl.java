@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDAOSQLiteImpl implements UserDAO {
-
+    // Kết nối DB qua singleton DatabaseConnection
     private Connection conn() {
         return DatabaseConnection.getInstance().getConnection();
     }
@@ -84,6 +84,7 @@ public class UserDAOSQLiteImpl implements UserDAO {
             System.err.println("[UserDAO] update lỗi: " + e.getMessage());
         }
     }
+    // Đếm số dòng thỏa mãn điều kiện (dùng để kiểm tra tồn tại)
     private int countWhere(String sql, String param) {
         try (PreparedStatement ps = conn().prepareStatement(sql)) {
             ps.setString(1, param);
@@ -94,6 +95,7 @@ public class UserDAOSQLiteImpl implements UserDAO {
         }
         return 0;
     }
+    // Truy vấn 1 user theo điều kiện (id hoặc username)
     private User queryOne(String sql, String param) {
         try (PreparedStatement ps = conn().prepareStatement(sql)) {
             ps.setString(1, param);
@@ -104,6 +106,7 @@ public class UserDAOSQLiteImpl implements UserDAO {
         }
         return null;
     }
+    // Chuyển 1 dòng kết quả thành User (Seller/Admin/Bidder)
     private User mapRow(ResultSet rs) throws SQLException {
         String id        = rs.getString("id");
         String username  = rs.getString("username");
