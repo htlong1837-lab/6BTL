@@ -83,8 +83,10 @@ public class AdminController {
                     return;
                 }
                 ObservableList<JsonObject> data = FXCollections.observableArrayList();
-                for (JsonElement e : gson.toJsonTree(res.getData()).getAsJsonArray())
-                    data.add(e.getAsJsonObject());
+                for (JsonElement e : gson.toJsonTree(res.getData()).getAsJsonArray()) {
+                    JsonObject o = e.getAsJsonObject();
+                    if (!"ADMIN".equals(o.get("role").getAsString())) data.add(o);
+                }
 
                 TableView<JsonObject> table = new TableView<>(data);
                 table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
