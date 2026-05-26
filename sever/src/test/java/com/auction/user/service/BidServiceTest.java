@@ -91,5 +91,4 @@ public class BidServiceTest {
         assertFalse(result.contains("Đã rút"),
             "Không thể rút khỏi phiên chưa tham gia");
     }
-
 }

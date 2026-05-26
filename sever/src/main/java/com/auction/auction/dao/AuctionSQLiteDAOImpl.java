@@ -96,6 +96,18 @@ public class AuctionSQLiteDAOImpl implements AuctionDAO {
     }
 
     @Override
+    public void updateStatus(String id, AuctionStatus status) {
+        String sql = "UPDATE auctions SET status = ? WHERE id = ?";
+        try (PreparedStatement ps = conn().prepareStatement(sql)) {
+            ps.setString(1, status.name());
+            ps.setString(2, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            System.err.println("[AuctionDAO] updateStatus lỗi: " + e.getMessage());
+        }
+    }
+
+    @Override
     public void delete(Auction auction) {
         if (auction == null) return;
         try (PreparedStatement ps = conn().prepareStatement("DELETE FROM auctions WHERE id = ?")) {
@@ -107,21 +119,28 @@ public class AuctionSQLiteDAOImpl implements AuctionDAO {
     }
 
     private Auction mapRow(ResultSet rs) throws SQLException {
-        String id       = rs.getString("id");
-        Item item       = itemDAO.findById(rs.getString("item_id"));
-        User seller     = userDAO.findById(rs.getString("seller_id"));
+        // Đọc TOÀN BỘ dữ liệu từ rs TRƯỚC khi gọi sub-queries (itemDAO, userDAO),
+        // tránh sub-query trên cùng Connection làm mất trạng thái của outer ResultSet.
+        String id           = rs.getString("id");
+        String itemId       = rs.getString("item_id");
+        String sellerId     = rs.getString("seller_id");
+        double currentPrice = rs.getDouble("current_price");
+        String hbId         = rs.getString("highest_bidder_id");
+        String statusStr    = rs.getString("status");
+        long startTime      = rs.getLong("start_time");
+        long endTime        = rs.getLong("end_time");
+
+        // Sub-queries SAU khi rs đã đọc xong
+        Item item   = itemDAO.findById(itemId);
+        User seller = userDAO.findById(sellerId);
 
         if (item == null || !(seller instanceof Seller)) {
             System.err.println("[AuctionDAO] mapRow: thiếu item hoặc seller cho auction " + id);
             return null;
         }
 
-        double currentPrice   = rs.getDouble("current_price");
-        String hbId           = rs.getString("highest_bidder_id");
-        User highestBidder    = (hbId != null && !hbId.isEmpty()) ? userDAO.findById(hbId) : null;
-        AuctionStatus status  = AuctionStatus.valueOf(rs.getString("status"));
-        long startTime        = rs.getLong("start_time");
-        long endTime          = rs.getLong("end_time");
+        User highestBidder   = (hbId != null && !hbId.isEmpty()) ? userDAO.findById(hbId) : null;
+        AuctionStatus status = AuctionStatus.valueOf(statusStr);
 
         Auction auction = new Auction(id, item, (Seller) seller, currentPrice,
                            highestBidder, status, startTime, endTime);

@@ -5,37 +5,37 @@
 Hệ thống gồm 3 lớp networking cho phép Client (JavaFX) giao tiếp với Server (Java Socket):
 
 ```
-┌─ CLIENT (JavaFX App) ─────────────────────────────────────┐
-│ (chưa implement - sẽ làm lần sau)                          │
-│                                                              │
-│ ServerConnection (Socket client kết nối tới server)        │
-│ ↓ gửi JSON Request                                          │
+┌─ CLIENT (JavaFX App)─────────────────────────────────────┐
+│ (chưa implement - sẽ làm lần sau)                        │
+│                                                          │
+│ ServerConnection (Socket client kết nối tới server)      │
+│ ↓ gửi JSON Request                                       │
 └──────────────────────────────────────────────────────────┘
                             ↓ (socket stream)
-┌─ SERVER (Java Socket) ────────────────────────────────────┐
-│ SeverMain                                                   │
-│  └─ ServerSocket:5000 (lắng nghe localhost:5000)           │
-│      ↓ accept() → new Socket                               │
-│      └─ spawn thread → ClientHandler                       │
-│                                                              │
-│ ClientHandler (xử lý 1 client connection)                   │
-│  └─ BufferedReader in (đọc JSON từ socket)                 │
-│  └─ PrintWriter out (ghi JSON vào socket)                  │
-│      ↓ JsonHelper.fromJson() → Request object              │
-│      └─ gọi RequestRouter.route(request)                   │
-│                                                              │
-│ RequestRouter (định tuyến request → controller)             │
-│  └─ switch(request.getAction())                             │
-│      ├─ REGISTER → UserController.createAccount()          │
-│      ├─ LOGIN → UserController.loginAccount()              │
-│      ├─ CREATE_ITEM → ItemController.createItem()          │
-│      ├─ LIST_ITEMS → ItemController.listAllItems()         │
-│      ├─ PLACE_BID → BidController.placeBid()               │
-│      └─ ...                                                  │
-│         ↓ gọi Service → DAO → SQLite                        │
-│         → Response object                                   │
-│      ↓ JsonHelper.toJson() → JSON string                    │
-│      └─ ghi JSON trở lại client qua socket                 │
+┌─ SERVER (Java Socket)────────────────────────────────────┐
+│ SeverMain                                                │
+│  └─ ServerSocket:5000 (lắng nghe localhost:5000)         │
+│      ↓ accept() → new Socket                             │
+│      └─ spawn thread → ClientHandler                     │
+│                                                          │
+│ ClientHandler (xử lý 1 client connection)                │
+│  └─ BufferedReader in (đọc JSON từ socket)               │
+│  └─ PrintWriter out (ghi JSON vào socket)                │
+│      ↓ JsonHelper.fromJson() → Request object            │
+│      └─ gọi RequestRouter.route(request)                 │
+│                                                          │
+│ RequestRouter (định tuyến request → controller)          │
+│  └─ switch(request.getAction())                          │
+│      ├─ REGISTER → UserController.createAccount()        │
+│      ├─ LOGIN → UserController.loginAccount()            │
+│      ├─ CREATE_ITEM → ItemController.createItem()        │
+│      ├─ LIST_ITEMS → ItemController.listAllItems()       │
+│      ├─ PLACE_BID → BidController.placeBid()             │
+│      └─ ...                                              │
+│         ↓ gọi Service → DAO → SQLite                     │
+│         → Response object                                │
+│      ↓ JsonHelper.toJson() → JSON string                 │
+│      └─ ghi JSON trở lại client qua socket               │
 └──────────────────────────────────────────────────────────┘
 ```
 

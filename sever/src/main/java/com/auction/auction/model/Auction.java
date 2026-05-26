@@ -144,6 +144,14 @@ public class Auction {
         }
     }
 
+    // Dùng khi cần nạp lại highest bidder từ bảng bids (tránh stale null sau khi server restart)
+    public synchronized void setHighestBidderAndPrice(User bidder, double price) {
+        if (this.highestBidder == null) {
+            this.highestBidder = bidder;
+            this.currentPrice  = price;
+        }
+    }
+
     public String getId()  { return id; }
     public User getHighestBidder() {return highestBidder;}
     public List<BidTransaction> getBidHistory() {return bidHistory;}

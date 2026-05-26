@@ -3,6 +3,9 @@ package com.auction.auction.service;
 import com.auction.auction.dao.AuctionDAO;
 import com.auction.auction.dao.AuctionSQLiteDAOImpl;
 import com.auction.auction.model.*;
+import com.auction.bid.dao.BidDAO;
+import com.auction.bid.dao.BidDAOSQLiteImpl;
+import com.auction.bid.model.BidTransaction;
 import com.auction.exception.AutionException.AuctionNotFoundException;
 import com.auction.exception.AutionException.InvalidAuctionDataException;
 import com.auction.item.model.Product.Item;
@@ -17,7 +20,8 @@ public class AuctionService {
 
     private final AuctionDAO auctionDAO = new AuctionSQLiteDAOImpl();
     private final UserDAO    userDAO    = new UserDAOSQLiteImpl();
-    private final AuctionScheduler scheduler = new AuctionScheduler(auctionDAO, userDAO);
+    private final BidDAO     bidDAO     = new BidDAOSQLiteImpl();
+    private final AuctionScheduler scheduler = new AuctionScheduler(auctionDAO, userDAO, bidDAO);
 
     public AuctionService() {
         restoreRunningAuctions();
@@ -25,15 +29,30 @@ public class AuctionService {
 
     private void restoreRunningAuctions() {
         for (Auction a : auctionDAO.findAll()) {
-            if (a.getStatus() == com.auction.auction.model.AuctionStatus.RUNNING) {
+            if (a.getStatus() == AuctionStatus.RUNNING) {
                 if (System.currentTimeMillis() >= a.getEndTime()) {
+                    // Nếu auction đã hết giờ nhưng chưa settle (server restart),
+                    // dùng bids table để lấy winner chính xác thay vì dựa vào in-memory object
+                    enrichHighestBidder(a);
                     a.endAuction();
                     scheduler.settle(a);
-                    auctionDAO.save(a);
+                    auctionDAO.updateStatus(a.getId(), AuctionStatus.FINISHED);
                 } else {
                     scheduler.scheduleAuctionEnd(a);
                 }
             }
+        }
+    }
+
+    // Nạp lại highest bidder từ bảng bids nếu auction object có null (do stale read)
+    private void enrichHighestBidder(Auction a) {
+        if (a.getHighestBidder() != null) return;
+        BidTransaction highest = bidDAO.findHighestBidByAuction(a.getId());
+        if (highest == null) return;
+        User winner = userDAO.findById(highest.getBidderId());
+        if (winner != null) {
+            // Cập nhật in-memory để settle() dùng đúng dữ liệu
+            a.setHighestBidderAndPrice(winner, highest.getAmount());
         }
     }
 
@@ -49,11 +68,13 @@ public class AuctionService {
         scheduler.scheduleAuctionEnd(auction);
         return auction;
     }
+
     public void placeBid(Auction auction, User bidder, double amount)
             throws com.auction.exception.AutionException.AuctionClosedException,
                    com.auction.exception.AutionException.BidTooLowException {
         auction.placeBid(bidder, amount);
     }
+
     public List<Auction> getAllAuctions() {
         return auctionDAO.findAll();
     }
@@ -63,6 +84,7 @@ public class AuctionService {
         if (auction == null) throw new AuctionNotFoundException("Không tìm thấy phiên đấu giá: " + id);
         return auction;
     }
+
     public void endAuction(Auction auction) {
         auction.endAuction();
     }
