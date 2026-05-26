@@ -6,6 +6,8 @@ import com.auction.client.SessionManager;
 import com.auction.client.dto.Response;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import javafx.scene.layout.VBox;
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,8 +16,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-
+import javafx.util.Duration;
 import java.io.IOException;
 import java.util.Map;
 
@@ -24,10 +27,15 @@ public class LoginController {
     @FXML private TextField userNameField;
     @FXML private PasswordField passwordField;
     @FXML private Label errorLabel;
-
+    @FXML 
+    private VBox loginBox;
     @FXML
     public void initialize() {
         errorLabel.setVisible(false);
+        TranslateTransition slideIn = new TranslateTransition(Duration.seconds(2), loginBox);
+        slideIn.setFromX(-600);   // bắt đầu từ vị trí ngoài bên phải
+        slideIn.setToX(0);       // kết thúc tại vị trí gốc
+        slideIn.play(); 
         // Ẩn label báo lỗi lúc mới mở form.
         // Nếu không:
         // có thể label trống vẫn chiếm chỗ
