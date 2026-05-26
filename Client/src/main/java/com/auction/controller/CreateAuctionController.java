@@ -18,7 +18,10 @@ public class CreateAuctionController {
     @FXML private Label messageLabel;
 
     private final Gson gson = new Gson();
-    private final Map<String, String> nameToId = new HashMap<>();  // tên → itemId
+    private final Map<String, String> nameToId = new HashMap<>();
+    private Runnable onSuccess;
+
+    public void setOnSuccess(Runnable onSuccess) { this.onSuccess = onSuccess; }
 
     @FXML public void initialize() { loadMyItems(); }
 
@@ -69,7 +72,14 @@ public class CreateAuctionController {
                     "sellerId",       SessionManager.getInstance().getUserId(),
                     "durationMillis", durationMillis   // long → server parse đúng
                 ));
-                Platform.runLater(() -> msg(res.getMessage(), res.isSuccess()));
+                Platform.runLater(() -> {
+                    msg(res.getMessage(), res.isSuccess());
+                    if (res.isSuccess() && onSuccess != null) {
+                        javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(1));
+                        pause.setOnFinished(e -> onSuccess.run());
+                        pause.play();
+                    }
+                });
             } catch (IOException e) {
                 Platform.runLater(() -> msg("Lỗi: " + e.getMessage(), false));
             }

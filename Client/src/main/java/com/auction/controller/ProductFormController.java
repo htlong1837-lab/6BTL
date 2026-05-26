@@ -19,6 +19,8 @@ public class ProductFormController {
     @FXML private Label messageLabel;
     @FXML private Button submitBtn;
 
+    private Runnable onSuccess;
+
     // Dynamic containers
     @FXML private VBox artFields, vehicleFields, electronicsFields;
 
@@ -40,20 +42,30 @@ public class ProductFormController {
         show(electronicsFields, "Electronics".equals(sel));
     }
 
+    public void setOnSuccess(Runnable onSuccess) { this.onSuccess = onSuccess; }
+
     private void show(VBox box, boolean v) { box.setVisible(v); box.setManaged(v); }
 
     @FXML void handleSubmit() {
+        if (submitBtn != null) submitBtn.setDisable(true);
+
         String name     = nameField.getText().trim();
         String des      = descField.getText().trim();
         String priceStr = priceField.getText().trim();
         String category = categoryCombo.getValue();
 
         if (name.isEmpty() || des.isEmpty() || priceStr.isEmpty() || category == null) {
-            msg("Vui lòng điền đầy đủ thông tin cơ bản.", false); return;
+            msg("Vui lòng điền đầy đủ thông tin cơ bản.", false);
+            if (submitBtn != null) submitBtn.setDisable(false);
+            return;
         }
         double price;
         try { price = Double.parseDouble(priceStr); }
-        catch (NumberFormatException e) { msg("Giá không hợp lệ.", false); return; }
+        catch (NumberFormatException e) {
+            msg("Giá không hợp lệ.", false);
+            if (submitBtn != null) submitBtn.setDisable(false);
+            return;
+        }
 
         // Dùng Map<String, Object> để gửi cả String lẫn Number
         Map<String, Object> payload = new HashMap<>(Map.of(
@@ -69,14 +81,18 @@ public class ProductFormController {
         switch (category) {
             case "Art":
                 if (artistField.getText().isEmpty() || mediumField.getText().isEmpty()) {
-                    msg("Điền đầy đủ thông tin nghệ thuật.", false); return;
+                    msg("Điền đầy đủ thông tin nghệ thuật.", false);
+                    if (submitBtn != null) submitBtn.setDisable(false);
+                    return;
                 }
                 payload.put("artist", artistField.getText());
                 payload.put("medium", mediumField.getText());
                 break;
             case "Vehicle":
                 if (makeField.getText().isEmpty() || modelField.getText().isEmpty() || yearField.getText().isEmpty()) {
-                    msg("Điền đầy đủ thông tin xe.", false); return;
+                    msg("Điền đầy đủ thông tin xe.", false);
+                    if (submitBtn != null) submitBtn.setDisable(false);
+                    return;
                 }
                 payload.put("make",  makeField.getText());
                 payload.put("model", modelField.getText());
@@ -84,20 +100,29 @@ public class ProductFormController {
                 break;
             case "Electronics":
                 if (brandField.getText().isEmpty() || warrantyField.getText().isEmpty()) {
-                    msg("Điền đầy đủ thông tin điện tử.", false); return;
+                    msg("Điền đầy đủ thông tin điện tử.", false);
+                    if (submitBtn != null) submitBtn.setDisable(false);
+                    return;
                 }
                 payload.put("brand",          brandField.getText());
                 payload.put("warrantyMonths", Integer.parseInt(warrantyField.getText()));  // int
                 break;
         }
 
-        if (submitBtn != null) submitBtn.setDisable(true);
         new Thread(() -> {
             try {
                 Response res = ServerConnection.getInstance().send("CREATE_ITEM", payload);
                 javafx.application.Platform.runLater(() -> {
                     msg(res.getMessage(), res.isSuccess());
-                    if (submitBtn != null) submitBtn.setDisable(false);
+                    if (res.isSuccess()) {
+                        if (onSuccess != null) {
+                            javafx.animation.PauseTransition pause = new javafx.animation.PauseTransition(javafx.util.Duration.seconds(1));
+                            pause.setOnFinished(e -> onSuccess.run());
+                            pause.play();
+                        }
+                    } else {
+                        if (submitBtn != null) submitBtn.setDisable(false);
+                    }
                 });
             } catch (IOException e) {
                 javafx.application.Platform.runLater(() -> {
