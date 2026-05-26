@@ -92,7 +92,7 @@ public class Auction {
         bidHistory.add(bid);
         
         double remainingTime = endTime - System.currentTimeMillis();
-        if (remainingTime < 20000){
+        if (remainingTime < 60000){
             endTime += 60000;
             System.out.println("AntiSniping gia hạn thêm 60s");
 

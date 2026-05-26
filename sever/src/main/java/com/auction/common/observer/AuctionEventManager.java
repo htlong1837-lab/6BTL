@@ -36,7 +36,7 @@ public class AuctionEventManager {
         listeners.put(auctionId, new CopyOnWriteArrayList<>());
     }
     listeners.get(auctionId).add(listener);
-}
+    }
 
     // Client hủy theo dõi 
     public void unsubscribe(String auctionId, AuctionListener listener) {

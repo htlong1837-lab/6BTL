@@ -72,9 +72,27 @@ public class BiddingController {
             }
         }
 
+        JsonElement statusEl = auction.get("status");
+        String status = (statusEl != null && !statusEl.isJsonNull()) ? statusEl.getAsString() : "";
+
         JsonElement endTimeEl = auction.get("endTime");
-        if (endTimeEl != null && !endTimeEl.isJsonNull()) {
-            startCountdown(endTimeEl.getAsLong());
+        if ("FINISHED".equals(status)) {
+            if (countdown != null) countdown.stop();
+            timerLabel.setText("Đã kết thúc");
+            timerLabel.setStyle("-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #ef4444;");
+            // Nếu người dùng hiện tại là người thắng, đồng bộ số dư từ server
+            JsonElement hb = auction.get("highestBidder");
+            if (hb != null && !hb.isJsonNull()) {
+                String winnerId = hb.getAsJsonObject().get("id").getAsString();
+                if (winnerId.equals(SessionManager.getInstance().getUserId())) {
+                    syncBalance();
+                }
+            }
+        } else if (endTimeEl != null && !endTimeEl.isJsonNull()) {
+            long endTime = endTimeEl.getAsLong();
+            if (endTime > System.currentTimeMillis()) {
+                startCountdown(endTime);
+            }
         }
     }
 
@@ -84,9 +102,8 @@ public class BiddingController {
         countdown = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             long remaining = endTime - System.currentTimeMillis();
             if (remaining <= 0) {
-                timerLabel.setText("Đã kết thúc");
-                timerLabel.setStyle("-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #ef4444;");
                 countdown.stop();
+                refreshAuction(); // kiểm tra server: có thể đã extend (anti-sniping) hoặc thực sự kết thúc
                 return;
             }
             long hours   = remaining / 3_600_000;
@@ -97,7 +114,6 @@ public class BiddingController {
                 : String.format("%02d:%02d", minutes, seconds);
             timerLabel.setText(text);
 
-            // Đổi màu đỏ khi còn dưới 30 giây (bao gồm khi anti-snip chưa kịp extend)
             String color = remaining < 30_000 ? "#ef4444" : "#4ade80";
             timerLabel.setStyle("-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: " + color + ";");
         }));
@@ -146,6 +162,19 @@ public class BiddingController {
                         Platform.runLater(() -> updateUI(a));
                         break;
                     }
+                }
+            } catch (IOException ignored) {}
+        }).start();
+    }
+
+    private void syncBalance() {
+        new Thread(() -> {
+            try {
+                Response res = ServerConnection.getInstance().send("GET_BALANCE",
+                    Map.of("userId", SessionManager.getInstance().getUserId()));
+                if (res.isSuccess() && res.getData() != null) {
+                    double newBalance = gson.toJsonTree(res.getData()).getAsDouble();
+                    Platform.runLater(() -> SessionManager.getInstance().setBalance(newBalance));
                 }
             } catch (IOException ignored) {}
         }).start();
