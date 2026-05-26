@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.auction.bid.model.BidTransaction;
+import com.auction.exception.AutionException.AuctionClosedException;
+import com.auction.exception.AutionException.BidTooLowException;
 import com.auction.user.model.Seller;
 import com.auction.user.model.User;
 
@@ -67,24 +69,19 @@ public class Auction {
         }
     }
 
-// đặt giá 
-    public synchronized boolean placeBid(User bidder ,double amount ) {// chặn hành trường hợp 2 ng cùng đặt giá
-// neu phiên chưa chạy
-        if (status != AuctionStatus.RUNNING) {
-            System.out.println(" Phiên đấu giá chưa chạy");
-            return false;
+// đặt giá
+    public synchronized void placeBid(User bidder, double amount)
+            throws AuctionClosedException, BidTooLowException {
+        if (System.currentTimeMillis() > endTime) {
+            endAuction();
         }
 
-// nếu hết thời gian
-        if (System.currentTimeMillis() > endTime) {
-            endAuction(); // tí định nghĩa
-            return false;
-        }        
+        if (status != AuctionStatus.RUNNING) {
+            throw new AuctionClosedException("Phiên đấu giá đã kết thúc hoặc chưa bắt đầu.");
+        }
 
-// giá ko hợp lệ 
-        if ( amount <= currentPrice){
-            System.out.println("Giá đặt phải cao hơn giá hiện tại");
-            return false;
+        if (amount <= currentPrice) {
+            throw new BidTooLowException("Giá đặt phải cao hơn giá hiện tại: " + currentPrice + " VND");
         }
 
         currentPrice = amount;
@@ -111,9 +108,6 @@ public class Auction {
 
 
         System.out.println(bidder.getName() + " bid " + amount);
-
-
-        return true;
     }
 
     public synchronized void endAuction(){
