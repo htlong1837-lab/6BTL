@@ -16,8 +16,8 @@
          <items>
       
                                     <!-- Left branding panel -->
-            <VBox alignment="CENTER" prefHeight="640.0" prefWidth="237.0" spacing="16" style="-fx-background-color: linear-gradient(to bottom right, #0f172a, #1e3a5f);" stylesheets="@style.css">
-               <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: white; -fx-letter-spacing: 2;" text="HỆ THỐNG ĐẤU GIÁ" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS">
+            <VBox alignment="CENTER" prefHeight="432.0" prefWidth="237.0" spacing="16" style="-fx-background-color: linear-gradient(to bottom right, #0f172a, #1e3a5f);" stylesheets="@style.css">
+               <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: white; -fx-letter-spacing: 2;" text="HỆ THỐNG ĐẤU GIÁ" textAlignment="CENTER" textOverrun="CENTER_WORD_ELLIPSIS" wrapText="true">
                   <font>
                      <Font size="66.0" />
                   </font>
@@ -36,7 +36,7 @@
             </VBox>
       
                            <!-- Right login form -->
-            <VBox fx:id="loginBox" alignment="CENTER" prefHeight="512.0" prefWidth="373.0" spacing="14" style="-fx-background-color: white; -fx-padding: 50 50 50 50;">
+            <VBox fx:id="loginBox" alignment="CENTER" prefHeight="432.0" prefWidth="373.0" spacing="14" style="-fx-background-color: white; -fx-padding: 50 50 50 50;">
       
                               <Label style="-fx-font-size: 26; -fx-font-weight: bold; -fx-text-fill: #0f172a;" text="Đăng nhập">
                   <font>
