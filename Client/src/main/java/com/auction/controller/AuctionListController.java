@@ -1,6 +1,5 @@
 package com.auction.controller;
 
-import com.auction.client.NotificationPopup;
 import com.auction.client.ServerConnection;
 import com.auction.client.SessionManager;
 import com.auction.client.dto.Response;
@@ -8,13 +7,10 @@ import com.google.gson.*;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.*;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.fxml.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import java.io.IOException;
 import java.util.Map;
 
@@ -26,7 +22,6 @@ public class AuctionListController {
 
     private final Gson gson = new Gson();
     private final ObservableList<JsonObject> auctions = FXCollections.observableArrayList();
-    private Timeline banCheckTimer;
 
     @FXML
     public void initialize() {
@@ -66,34 +61,6 @@ public class AuctionListController {
 
         auctionTable.setItems(auctions);
         loadAuctions();
-        startBanCheck();
-    }
-
-    private void startBanCheck() {
-        banCheckTimer = new Timeline(new KeyFrame(Duration.seconds(4), e -> {
-            new Thread(() -> {
-                try {
-                    Response res = ServerConnection.getInstance().send("CHECK_SESSION",
-                        Map.of("userId", SessionManager.getInstance().getUserId()));
-                    if (!res.isSuccess()) {
-                        Platform.runLater(() -> {
-                            banCheckTimer.stop();
-                            SessionManager.getInstance().clear();
-                            NotificationPopup.showBanned(() -> {
-                                try {
-                                    Parent root = FXMLLoader.load(getClass()
-                                        .getResource("/com/client/view/LoginViewfinal.fxml"));
-                                    Stage stage = (Stage) auctionTable.getScene().getWindow();
-                                    stage.setScene(new Scene(root, 500, 700));
-                                } catch (Exception ex) { ex.printStackTrace(); }
-                            });
-                        });
-                    }
-                } catch (IOException ignored) {}
-            }).start();
-        }));
-        banCheckTimer.setCycleCount(Timeline.INDEFINITE);
-        banCheckTimer.play();
     }
 
     @FXML

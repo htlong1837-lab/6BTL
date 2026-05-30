@@ -108,23 +108,6 @@ public class AuctionSQLiteDAOImpl implements AuctionDAO {
     }
 
     @Override
-    public List<Auction> findBySellerId(String sellerId) {
-        List<Auction> result = new ArrayList<>();
-        try (PreparedStatement ps = conn().prepareStatement(
-                "SELECT * FROM auctions WHERE seller_id = ?")) {
-            ps.setString(1, sellerId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Auction a = mapRow(rs);
-                if (a != null) result.add(a);
-            }
-        } catch (SQLException e) {
-            System.err.println("[AuctionDAO] findBySellerId lỗi: " + e.getMessage());
-        }
-        return result;
-    }
-
-    @Override
     public void delete(Auction auction) {
         if (auction == null) return;
         try (PreparedStatement ps = conn().prepareStatement("DELETE FROM auctions WHERE id = ?")) {
