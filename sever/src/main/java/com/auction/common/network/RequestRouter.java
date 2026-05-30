@@ -81,6 +81,10 @@ public class RequestRouter {
                 case "GET_BALANCE":
                     return handleGetBalance(request.getPayload());
 
+                // ===== SESSION =====
+                case "CHECK_SESSION":
+                    return handleCheckSession(request.getPayload());
+
                 // ===== ADMIN =====
                 case "LIST_USERS":
                     return handleListUsers();
@@ -291,6 +295,15 @@ public class RequestRouter {
             auctionController.deleteRunningAuctionsBySeller(userId);
         }
         return Response.ok((banned ? "Đã khóa: " : "Đã mở khóa: ") + user.getName(), null);
+    }
+
+    private Response handleCheckSession(Object payload) {
+        Map<String, Object> map = toMap(payload);
+        String userId = (String) map.get("userId");
+        User user = userDAO.findById(userId);
+        if (user == null) return Response.fall("Tài khoản không tồn tại.");
+        if (user.isBanned()) return Response.fall("Tài khoản đã bị khóa.");
+        return Response.ok("OK", null);
     }
 
     private Response handleGetBalance(Object payload) {

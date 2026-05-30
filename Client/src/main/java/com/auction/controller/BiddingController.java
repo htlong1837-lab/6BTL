@@ -1,5 +1,6 @@
 package com.auction.controller;
 
+import com.auction.client.NotificationPopup;
 import com.auction.client.ServerConnection;
 import com.auction.client.SessionManager;
 import com.auction.client.dto.Response;
@@ -154,6 +155,21 @@ public class BiddingController {
     void refreshAuction() {
         new Thread(() -> {
             try {
+                // Kiểm tra tài khoản có bị khóa không
+                Response sessionRes = ServerConnection.getInstance().send("CHECK_SESSION",
+                    Map.of("userId", SessionManager.getInstance().getUserId()));
+                if (!sessionRes.isSuccess()) {
+                    Platform.runLater(() -> {
+                        stopPolling();
+                        NotificationPopup.showBanned(() -> {
+                            Stage stage = (Stage) bidHistoryList.getScene().getWindow();
+                            stage.close();
+                        });
+                    });
+                    return;
+                }
+
+                // Kiểm tra phiên còn tồn tại không
                 Response res = ServerConnection.getInstance().send("LIST_AUCTIONS", Map.of());
                 if (!res.isSuccess()) return;
                 JsonArray arr = gson.toJsonTree(res.getData()).getAsJsonArray();
@@ -169,12 +185,10 @@ public class BiddingController {
                 if (!found) {
                     Platform.runLater(() -> {
                         stopPolling();
-                        Alert alert = new Alert(Alert.AlertType.WARNING,
-                            "Phiên đấu giá này đã bị Admin xóa.", ButtonType.OK);
-                        alert.setTitle("Phiên đã bị xóa");
-                        alert.showAndWait();
-                        Stage stage = (Stage) bidHistoryList.getScene().getWindow();
-                        stage.close();
+                        NotificationPopup.showAuctionDeleted(() -> {
+                            Stage stage = (Stage) bidHistoryList.getScene().getWindow();
+                            stage.close();
+                        });
                     });
                 }
             } catch (IOException ignored) {}
