@@ -63,7 +63,7 @@ public class ServerConnection {
         catch (IOException ignored) {}
         System.out.println("[Client] Đã ngắt kết nối.");
     }
-    public Response send(String action, Map<String, Object> payload) throws IOException {
+    public synchronized Response send(String action, Map<String, Object> payload) throws IOException {
         if (!isConnected()) {
             connect();
         }
