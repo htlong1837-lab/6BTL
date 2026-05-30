@@ -10,6 +10,7 @@ import javafx.application.Platform;
 import javafx.collections.*;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.io.IOException;
 import java.util.Map;
@@ -172,6 +173,8 @@ public class BiddingController {
                             "Phiên đấu giá này đã bị Admin xóa.", ButtonType.OK);
                         alert.setTitle("Phiên đã bị xóa");
                         alert.showAndWait();
+                        Stage stage = (Stage) bidHistoryList.getScene().getWindow();
+                        stage.close();
                     });
                 }
             } catch (IOException ignored) {}
