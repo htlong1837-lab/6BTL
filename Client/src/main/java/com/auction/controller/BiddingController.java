@@ -156,12 +156,23 @@ public class BiddingController {
                 Response res = ServerConnection.getInstance().send("LIST_AUCTIONS", Map.of());
                 if (!res.isSuccess()) return;
                 JsonArray arr = gson.toJsonTree(res.getData()).getAsJsonArray();
+                boolean found = false;
                 for (JsonElement e : arr) {
                     JsonObject a = e.getAsJsonObject();
                     if (auctionId.equals(a.get("id").getAsString())) {
+                        found = true;
                         Platform.runLater(() -> updateUI(a));
                         break;
                     }
+                }
+                if (!found) {
+                    Platform.runLater(() -> {
+                        stopPolling();
+                        Alert alert = new Alert(Alert.AlertType.WARNING,
+                            "Phiên đấu giá này đã bị Admin xóa.", ButtonType.OK);
+                        alert.setTitle("Phiên đã bị xóa");
+                        alert.showAndWait();
+                    });
                 }
             } catch (IOException ignored) {}
         }).start();
