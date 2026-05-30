@@ -28,49 +28,87 @@ public class BiddingController {
     private final Gson gson = new Gson();
     private final ObservableList<String> history = FXCollections.observableArrayList();
     private Timeline countdown;
-    private Timeline pollTimer;
-    private Timeline banCheckTimer;
+    private volatile boolean pollingActive = false;
+    private Thread pollingThread;
 
     public void setOnBidSuccess(Runnable callback) { this.onBidSuccess = callback; }
 
     @FXML public void initialize() {
         bidHistoryList.setItems(history);
-        pollTimer = new Timeline(new KeyFrame(Duration.seconds(3), e -> refreshAuction()));
-        pollTimer.setCycleCount(Timeline.INDEFINITE);
-        pollTimer.play();
-        banCheckTimer = new Timeline(new KeyFrame(Duration.seconds(4), e -> checkBanStatus()));
-        banCheckTimer.setCycleCount(Timeline.INDEFINITE);
-        banCheckTimer.play();
     }
 
-    /** Được gọi từ AuctionListController khi mở phòng */
     public void setAuction(JsonObject auction) {
         this.auctionId = auction.get("id").getAsString();
         updateUI(auction);
+        startPollingThread();
     }
 
     public void stopPolling() {
-        if (pollTimer != null) pollTimer.stop();
-        if (banCheckTimer != null) banCheckTimer.stop();
+        pollingActive = false;
+        if (pollingThread != null) pollingThread.interrupt();
         if (countdown != null) countdown.stop();
     }
 
-    private void checkBanStatus() {
-        new Thread(() -> {
-            try {
-                Response res = ServerConnection.getInstance().send("CHECK_SESSION",
-                    Map.of("userId", SessionManager.getInstance().getUserId()));
-                if (!res.isSuccess()) {
-                    Platform.runLater(() -> {
-                        stopPolling();
-                        NotificationPopup.showBanned(() -> {
-                            Stage stage = (Stage) bidHistoryList.getScene().getWindow();
-                            stage.close();
+    private void startPollingThread() {
+        pollingActive = true;
+        pollingThread = new Thread(() -> {
+            int cycle = 0;
+            while (pollingActive) {
+                try {
+                    Thread.sleep(3000);
+                    if (!pollingActive) break;
+                    cycle++;
+
+                    // Mỗi 2 chu kỳ (6s) kiểm tra tài khoản bị khóa không
+                    if (cycle % 2 == 0) {
+                        Response banRes = ServerConnection.getInstance().send("CHECK_SESSION",
+                            Map.of("userId", SessionManager.getInstance().getUserId()));
+                        if (!banRes.isSuccess()) {
+                            Platform.runLater(() -> {
+                                stopPolling();
+                                NotificationPopup.showBanned(() -> {
+                                    Stage stage = (Stage) bidHistoryList.getScene().getWindow();
+                                    stage.close();
+                                });
+                            });
+                            break;
+                        }
+                    }
+
+                    // Mỗi chu kỳ kiểm tra phiên còn tồn tại và cập nhật UI
+                    Response res = ServerConnection.getInstance().send("LIST_AUCTIONS", Map.of());
+                    if (!res.isSuccess()) continue;
+
+                    JsonArray arr = gson.toJsonTree(res.getData()).getAsJsonArray();
+                    boolean found = false;
+                    for (JsonElement e : arr) {
+                        JsonObject a = e.getAsJsonObject();
+                        if (auctionId.equals(a.get("id").getAsString())) {
+                            found = true;
+                            Platform.runLater(() -> updateUI(a));
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        Platform.runLater(() -> {
+                            stopPolling();
+                            NotificationPopup.showAuctionDeleted(() -> {
+                                Stage stage = (Stage) bidHistoryList.getScene().getWindow();
+                                stage.close();
+                            });
                         });
-                    });
+                        break;
+                    }
+
+                } catch (InterruptedException e) {
+                    break;
+                } catch (IOException e) {
+                    // lỗi mạng tạm thời, thử lại chu kỳ sau
                 }
-            } catch (IOException ignored) {}
-        }).start();
+            }
+        });
+        pollingThread.setDaemon(true);
+        pollingThread.start();
     }
 
     private void updateUI(JsonObject auction) {
@@ -104,7 +142,6 @@ public class BiddingController {
             if (countdown != null) countdown.stop();
             timerLabel.setText("Đã kết thúc");
             timerLabel.setStyle("-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: #ef4444;");
-            // Nếu người dùng hiện tại là người thắng, đồng bộ số dư từ server
             JsonElement hb = auction.get("highestBidder");
             if (hb != null && !hb.isJsonNull()) {
                 String winnerId = hb.getAsJsonObject().get("id").getAsString();
@@ -122,24 +159,21 @@ public class BiddingController {
 
     private void startCountdown(long endTime) {
         if (countdown != null) countdown.stop();
-
         countdown = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             long remaining = endTime - System.currentTimeMillis();
             if (remaining <= 0) {
                 countdown.stop();
-                refreshAuction(); // kiểm tra server: có thể đã extend (anti-sniping) hoặc thực sự kết thúc
+                refreshAuction();
                 return;
             }
             long hours   = remaining / 3_600_000;
             long minutes = (remaining % 3_600_000) / 60_000;
             long seconds = (remaining % 60_000) / 1_000;
-            String text  = hours > 0
+            timerLabel.setText(hours > 0
                 ? String.format("%02d:%02d:%02d", hours, minutes, seconds)
-                : String.format("%02d:%02d", minutes, seconds);
-            timerLabel.setText(text);
-
-            String color = remaining < 30_000 ? "#ef4444" : "#4ade80";
-            timerLabel.setStyle("-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: " + color + ";");
+                : String.format("%02d:%02d", minutes, seconds));
+            timerLabel.setStyle("-fx-font-size: 22; -fx-font-weight: bold; -fx-text-fill: "
+                + (remaining < 30_000 ? "#ef4444" : "#4ade80") + ";");
         }));
         countdown.setCycleCount(Timeline.INDEFINITE);
         countdown.play();
@@ -157,7 +191,7 @@ public class BiddingController {
                 Response res = ServerConnection.getInstance().send("PLACE_BID", Map.of(
                     "bidderId",  SessionManager.getInstance().getUserId(),
                     "auctionId", auctionId,
-                    "bidAmount", amount          // gửi kiểu double, không phải String
+                    "bidAmount", amount
                 ));
                 Platform.runLater(() -> {
                     show(res.getMessage(), res.isSuccess());
@@ -180,23 +214,12 @@ public class BiddingController {
                 Response res = ServerConnection.getInstance().send("LIST_AUCTIONS", Map.of());
                 if (!res.isSuccess()) return;
                 JsonArray arr = gson.toJsonTree(res.getData()).getAsJsonArray();
-                boolean found = false;
                 for (JsonElement e : arr) {
                     JsonObject a = e.getAsJsonObject();
                     if (auctionId.equals(a.get("id").getAsString())) {
-                        found = true;
                         Platform.runLater(() -> updateUI(a));
-                        break;
+                        return;
                     }
-                }
-                if (!found) {
-                    Platform.runLater(() -> {
-                        stopPolling();
-                        NotificationPopup.showAuctionDeleted(() -> {
-                            Stage stage = (Stage) bidHistoryList.getScene().getWindow();
-                            stage.close();
-                        });
-                    });
                 }
             } catch (IOException ignored) {}
         }).start();
@@ -220,4 +243,3 @@ public class BiddingController {
         messageLabel.setText(msg);
     }
 }
-

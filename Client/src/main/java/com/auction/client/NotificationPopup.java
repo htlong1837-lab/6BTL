@@ -7,7 +7,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -28,7 +27,7 @@ public class NotificationPopup {
 
     private static void show(String title, String message, String color, Runnable onClose) {
         Stage popup = new Stage();
-        popup.initStyle(StageStyle.TRANSPARENT);
+        popup.initStyle(StageStyle.UNDECORATED);
         popup.setAlwaysOnTop(true);
 
         Label titleLabel = new Label(title);
@@ -64,7 +63,6 @@ public class NotificationPopup {
         box.setPrefWidth(340);
 
         Scene scene = new Scene(box);
-        scene.setFill(Color.TRANSPARENT);
         popup.setScene(scene);
         popup.show();
 
