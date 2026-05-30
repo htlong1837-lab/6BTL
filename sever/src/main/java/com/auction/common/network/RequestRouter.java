@@ -287,6 +287,9 @@ public class RequestRouter {
         if (user == null) return Response.fall("Không tìm thấy user: " + userId);
         user.setBanned(banned);
         userDAO.update(user);
+        if (banned && user instanceof Seller) {
+            auctionController.deleteRunningAuctionsBySeller(userId);
+        }
         return Response.ok((banned ? "Đã khóa: " : "Đã mở khóa: ") + user.getName(), null);
     }
 

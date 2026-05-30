@@ -89,6 +89,16 @@ public class AuctionService {
         auction.endAuction();
     }
 
+    public void deleteRunningAuctionsBySeller(String sellerId) {
+        for (Auction a : auctionDAO.findBySellerId(sellerId)) {
+            if (a.getStatus() == AuctionStatus.RUNNING) {
+                auctionDAO.updateStatus(a.getId(), AuctionStatus.FINISHED);
+                bidDAO.deleteByAuctionId(a.getId());
+                auctionDAO.delete(a);
+            }
+        }
+    }
+
     public void deleteAuction(String auctionId) throws AuctionNotFoundException {
         Auction auction = auctionDAO.findById(auctionId);
         if (auction == null) throw new AuctionNotFoundException("Không tìm thấy phiên đấu giá: " + auctionId);
