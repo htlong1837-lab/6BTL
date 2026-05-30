@@ -222,8 +222,7 @@ public class RequestRouter {
         try {
             Map<String, Object> map = toMap(payload);
             String auctionId = (String) map.get("auctionId");
-            Auction auction = auctionController.getAuctionById(auctionId);
-            auctionController.endAuction(auction);
+            auctionController.deleteAuction(auctionId);
             return Response.ok("Đã xóa phiên đấu giá.", null);
         } catch (com.auction.exception.AutionException.AuctionNotFoundException e) {
             return Response.fall(e.getMessage());

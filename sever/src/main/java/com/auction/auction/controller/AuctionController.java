@@ -33,4 +33,8 @@ public class AuctionController {
     public void endAuction(Auction auction) {
         auctionService.endAuction(auction);
     }
+
+    public void deleteAuction(String auctionId) throws AuctionNotFoundException {
+        auctionService.deleteAuction(auctionId);
+    }
 }
