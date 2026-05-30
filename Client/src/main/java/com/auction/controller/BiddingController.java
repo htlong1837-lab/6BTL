@@ -29,15 +29,18 @@ public class BiddingController {
     private final ObservableList<String> history = FXCollections.observableArrayList();
     private Timeline countdown;
     private Timeline pollTimer;
+    private Timeline banCheckTimer;
 
     public void setOnBidSuccess(Runnable callback) { this.onBidSuccess = callback; }
 
     @FXML public void initialize() {
         bidHistoryList.setItems(history);
-        // Tự động cập nhật giá và lịch sử đặt giá mỗi 3 giây
         pollTimer = new Timeline(new KeyFrame(Duration.seconds(3), e -> refreshAuction()));
         pollTimer.setCycleCount(Timeline.INDEFINITE);
         pollTimer.play();
+        banCheckTimer = new Timeline(new KeyFrame(Duration.seconds(4), e -> checkBanStatus()));
+        banCheckTimer.setCycleCount(Timeline.INDEFINITE);
+        banCheckTimer.play();
     }
 
     /** Được gọi từ AuctionListController khi mở phòng */
@@ -48,7 +51,26 @@ public class BiddingController {
 
     public void stopPolling() {
         if (pollTimer != null) pollTimer.stop();
+        if (banCheckTimer != null) banCheckTimer.stop();
         if (countdown != null) countdown.stop();
+    }
+
+    private void checkBanStatus() {
+        new Thread(() -> {
+            try {
+                Response res = ServerConnection.getInstance().send("CHECK_SESSION",
+                    Map.of("userId", SessionManager.getInstance().getUserId()));
+                if (!res.isSuccess()) {
+                    Platform.runLater(() -> {
+                        stopPolling();
+                        NotificationPopup.showBanned(() -> {
+                            Stage stage = (Stage) bidHistoryList.getScene().getWindow();
+                            stage.close();
+                        });
+                    });
+                }
+            } catch (IOException ignored) {}
+        }).start();
     }
 
     private void updateUI(JsonObject auction) {
@@ -155,21 +177,6 @@ public class BiddingController {
     void refreshAuction() {
         new Thread(() -> {
             try {
-                // Kiểm tra tài khoản có bị khóa không
-                Response sessionRes = ServerConnection.getInstance().send("CHECK_SESSION",
-                    Map.of("userId", SessionManager.getInstance().getUserId()));
-                if (!sessionRes.isSuccess()) {
-                    Platform.runLater(() -> {
-                        stopPolling();
-                        NotificationPopup.showBanned(() -> {
-                            Stage stage = (Stage) bidHistoryList.getScene().getWindow();
-                            stage.close();
-                        });
-                    });
-                    return;
-                }
-
-                // Kiểm tra phiên còn tồn tại không
                 Response res = ServerConnection.getInstance().send("LIST_AUCTIONS", Map.of());
                 if (!res.isSuccess()) return;
                 JsonArray arr = gson.toJsonTree(res.getData()).getAsJsonArray();

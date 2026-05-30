@@ -64,20 +64,22 @@ public class ServerConnection {
         System.out.println("[Client] Đã ngắt kết nối.");
     }
     public synchronized Response send(String action, Map<String, Object> payload) throws IOException {
-        if (!isConnected()) {
-            connect();
-        }
-
-        String json = gson.toJson(new Request(action, payload));//chuyển request thành json để gửi đi
-        out.println(json);//gửi request đến server
-
-        //chờ server phản hồi
-
-        String raw = in.readLine();//đọc response từ server
-        if (raw == null) throw new IOException("Server đóng kết nối bất ngờ.");
-        try{ return gson.fromJson(raw, Response.class);
-        } catch (JsonSyntaxException e) {
-            throw new IOException("Response không hợp lệ: " + raw);
+        if (!isConnected()) connect();
+        try {
+            String json = gson.toJson(new Request(action, payload));
+            out.println(json);
+            String raw = in.readLine();
+            if (raw == null) throw new IOException("Server đóng kết nối bất ngờ.");
+            try {
+                return gson.fromJson(raw, Response.class);
+            } catch (JsonSyntaxException e) {
+                throw new IOException("Response không hợp lệ: " + raw);
+            }
+        } catch (IOException e) {
+            // Reset để lần sau tự reconnect
+            try { if (socket != null) socket.close(); } catch (IOException ignored) {}
+            socket = null; out = null; in = null;
+            throw e;
         }
     }
 }
