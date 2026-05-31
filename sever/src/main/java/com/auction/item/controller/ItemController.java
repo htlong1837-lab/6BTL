@@ -16,11 +16,6 @@ public class ItemController {
         return itemService.addItem(item);
     }
 
-    // Chỉnh sửa sản phẩm
-    public String editItem(Item item) {
-        return itemService.updateItem(item);
-    }
-
     // Lấy danh sách tất cả sản phẩm
     public List<Item> listAllItems() {
         return itemService.getAllItems();

@@ -16,16 +16,6 @@ public class Bidder extends User {
     public boolean hasSufficientBalance(double amount) {
         return this.balance >= amount;
     }
-    public double withdraw(double amount) {
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Số tiền rút phải lớn hơn 0");
-        }
-        if (!hasSufficientBalance(amount)) {
-            throw new IllegalArgumentException("Số dư không đủ để rút");
-        }
-        this.balance -= amount;
-        return this.balance;
-    }
     @Override
     public void printInfo() {
         super.printInfo();

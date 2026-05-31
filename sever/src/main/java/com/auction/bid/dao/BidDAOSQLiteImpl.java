@@ -41,11 +41,6 @@ public class BidDAOSQLiteImpl implements BidDAO {
     }
 
     @Override
-    public List<BidTransaction> findByBidderId(String bidderId) {
-        return query("SELECT * FROM bids WHERE bidder_id = ?", bidderId);
-    }
-
-    @Override
     public BidTransaction findHighestBidByAuction(String auctionId) {
         String sql = "SELECT * FROM bids WHERE auction_id = ? ORDER BY amount DESC LIMIT 1";
         try (PreparedStatement ps = conn().prepareStatement(sql)) {

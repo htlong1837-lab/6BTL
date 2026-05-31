@@ -7,10 +7,6 @@ import com.auction.exception.AutionException.AuctionClosedException;
 import com.auction.exception.AutionException.BidTooLowException;
 import com.auction.user.model.Bidder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class BidService {
@@ -19,17 +15,10 @@ public class BidService {
     private final BidDAO bidDAO;
     private final BidLockManager lockManager;
 
-    private Map<String, List<String>> activeBids = new HashMap<>();    //user đang tham gia phiên nào
-
     public BidService(AuctionDAO auctionDAO, BidDAO bidDAO, BidLockManager lockManager) {
         this.auctionDAO  = auctionDAO;
         this.bidDAO      = bidDAO;
         this.lockManager = lockManager;
-    }
-
-    // Lấy danh sách (nếu chưa có sẽ tạo mới) để lưu trữ thông tin về phiên đấu giá mà user tham gia, thắng hoặc đã đặt giá
-    private List<String> getList(Map<String, List<String>> map, String userId) {
-        return map.computeIfAbsent(userId, k -> new ArrayList<>());
     }
 
     public String deposit(Bidder bidder, double amount) {
@@ -66,21 +55,10 @@ public class BidService {
             ));
             auctionDAO.save(auction);
 
-            List<String> active = getList(activeBids, bidder.getId());
-            if (!active.contains(auctionId)) active.add(auctionId);
-
             return "Đặt giá thành công! " + bidAmount + " VND";
         } finally {
             lock.unlock();
         }
-    }
-
-    public String withdrawBid(Bidder bidder, String auctionId) {
-        List<String> active = getList(activeBids, bidder.getId());
-        if (!active.contains(auctionId))
-            return "Bạn không tham gia phiên: " + auctionId;
-        active.remove(auctionId);
-        return "Đã rút khỏi phiên: " + auctionId;
     }
 
 }

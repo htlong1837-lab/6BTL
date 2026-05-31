@@ -26,7 +26,6 @@ public class BidServiceTest {
         BidLockManager lockManager = new BidLockManager();
         bidService = new BidService(auctionDAO, bidDAO, lockManager);
 
-        // Tạo một Bidder giả: id, name, email, passwordHash
         bidder = new Bidder("user-001", "TestUser", "hashed", "BIDDER");
         // Mặc định balance = 0 khi mới tạo
 
@@ -78,17 +77,13 @@ public class BidServiceTest {
         assertFalse(result.contains("thành công"));
     }
 
-    // ============================================================
-    // NHÓM TEST: RÚT KHỎI PHIÊN (withdrawBid)
-    // ============================================================
-
     @Test
-    @DisplayName("Rút khỏi phiên chưa tham gia - báo lỗi")
-    void withdrawBidNotParticipatingReturnsError() {
-        // Chưa đặt giá phiên nào cả, thử rút - phải báo lỗi
-        String result = bidService.withdrawBid(bidder, "auction-999");
+    @DisplayName("Đặt giá bằng 0 - báo lỗi")
+    void placeBidZeroAmountReturnsError() {
+        bidder.setBalance(1000000);
 
-        assertFalse(result.contains("Đã rút"),
-            "Không thể rút khỏi phiên chưa tham gia");
+        String result = bidService.placeBid(bidder, "auction-001", 0);
+
+        assertFalse(result.contains("thành công"));
     }
 }

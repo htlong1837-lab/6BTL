@@ -69,12 +69,6 @@ public class AuctionService {
         return auction;
     }
 
-    public void placeBid(Auction auction, User bidder, double amount)
-            throws com.auction.exception.AutionException.AuctionClosedException,
-                   com.auction.exception.AutionException.BidTooLowException {
-        auction.placeBid(bidder, amount);
-    }
-
     public List<Auction> getAllAuctions() {
         return auctionDAO.findAll();
     }

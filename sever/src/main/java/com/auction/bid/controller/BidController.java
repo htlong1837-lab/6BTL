@@ -13,7 +13,5 @@ public class BidController {
         return bidService.deposit(bidder, amount);
 
     }
-    public String handleWithdraw(Bidder bidder, String auctionId) {
-        return bidService.withdrawBid(bidder, auctionId);
-    }
+
 }

@@ -14,9 +14,6 @@ public interface BidDAO {
     /** Lấy tất cả lần đặt giá trong một phiên đấu giá */
     List<BidTransaction> findByAuctionId(String auctionId);
 
-    /** Lấy toàn bộ lịch sử đặt giá của một bidder */
-    List<BidTransaction> findByBidderId(String bidderId);
-
     /** Lấy lần đặt giá cao nhất trong một phiên (dùng cho logic xác định người thắng) */
     BidTransaction findHighestBidByAuction(String auctionId);
 

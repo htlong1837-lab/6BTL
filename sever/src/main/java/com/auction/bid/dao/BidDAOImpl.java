@@ -34,17 +34,6 @@ public class BidDAOImpl implements BidDAO {
         }
         return result;
     }
-    public List<BidTransaction> findByBidderId(String bidderId) {
-        List<BidTransaction> result = new ArrayList<>();
-        if (bidderId == null) return result;
-        for (BidTransaction tx : store) {
-            if (bidderId.equals(tx.getBidderId())) {
-                result.add(tx);
-            }
-        }
-        return result;
-    }
-
     public BidTransaction findHighestBidByAuction(String auctionId) {
         if (auctionId == null) return null;
         BidTransaction highest = null;

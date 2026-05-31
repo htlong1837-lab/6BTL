@@ -56,8 +56,6 @@ public class RequestRouter {
                     return handleCreateItem(request.getPayload());
                 case "LIST_ITEMS":
                     return handleListItems();
-                case "GET_ITEM":
-                    return handleGetItem(request.getPayload());
                 case "DELETE_ITEM":
                     return handleDeleteItem(request.getPayload());
 
@@ -72,8 +70,6 @@ public class RequestRouter {
                 // ===== BID =====
                 case "PLACE_BID":
                     return handlePlaceBid(request.getPayload());
-                case "WITHDRAW_BID":
-                    return handleWithdrawBid(request.getPayload());
                 case "DEPOSIT":
                     return handleDeposit(request.getPayload());
 
@@ -191,14 +187,6 @@ public class RequestRouter {
         return Response.ok("Danh sách sản phẩm", itemController.listAllItems());
     }
 
-    private Response handleGetItem(Object payload) {
-        Map<String, Object> map = toMap(payload);
-        Item item = itemController.getItem((String) map.get("id"));
-        return item != null
-            ? Response.ok("Sản phẩm", item)
-            : Response.fall("Không tìm thấy sản phẩm.");
-    }
-
     private Response handleDeleteItem(Object payload) {
         Map<String, Object> map = toMap(payload);
         String msg = itemController.deleteItem((String) map.get("id"));
@@ -262,23 +250,6 @@ public class RequestRouter {
         } catch (Exception e) {
             return Response.fall("Lỗi đặt giá: " + e.getMessage());
         }
-    }
-
-    // Payload: {bidderId, auctionId}
-    private Response handleWithdrawBid(Object payload) {
-        Map<String, Object> map = toMap(payload);
-        String bidderId  = (String) map.get("bidderId");
-        String auctionId = (String) map.get("auctionId");
-
-        User user = userDAO.findById(bidderId);
-        if (!(user instanceof Bidder)) return Response.fall("Người dùng không phải Bidder.");
-        Response banCheck = checkBanned(user);
-        if (banCheck != null) return banCheck;
-
-        String result = bidController.handleWithdraw((Bidder) user, auctionId);
-        return result.startsWith("Đã rút")
-            ? Response.ok(result, null)
-            : Response.fall(result);
     }
 
     private Response handleListUsers() {

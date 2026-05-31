@@ -25,17 +25,6 @@ public class ItemService {
         return itemDAO.findAll();
     }
 
-    public List<Item> getItemsBySeller(String sellerId) {
-        return itemDAO.findBySellerId(sellerId);
-    }
-
-    public String updateItem(Item item) {
-        if (itemDAO.findById(item.getId()) == null)
-            return "Sản phẩm không tồn tại.";
-        itemDAO.update(item);
-        return "Cập nhật sản phẩm thành công: " + item.getName();
-    }
-
     public String deleteItem(String id) {
         if (itemDAO.findById(id) == null)
             return "Sản phẩm không tồn tại.";

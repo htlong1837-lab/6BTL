@@ -313,5 +313,5 @@ Client sẽ tự động kết nối đến server Railway theo cấu hình tron
 
 | Tài liệu | Link |
 |---|---|
-| Báo cáo PDF | _[https://drive.google.com/file/d/1HgU5vSP9VUSc8MbiQFedgrsxTg5LxlVR/view?usp=sharing]_ |
-| Video demo | _[Chèn link tại đây]_ |
+| Báo cáo PDF | _[https://drive.google.com/file/d/1qAzFc6tIW_ujXp4CYnEOL7JoBB9Dqk88/view?usp=sharing]_ |
+| Video demo | _[https://drive.google.com/drive/folders/1Oe5RksL5Soj3fyfG-PxLkpdrZ6iBJKe6]_ |
