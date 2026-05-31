@@ -6,9 +6,10 @@ Hệ thống gồm 3 lớp networking cho phép Client (JavaFX) giao tiếp vớ
 
 ```
 ┌─ CLIENT (JavaFX App)─────────────────────────────────────┐
-│ (chưa implement - sẽ làm lần sau)                        │
 │                                                          │
-│ ServerConnection (Socket client kết nối tới server)      │
+│ ServerConnection (Singleton - kết nối tới server)        │
+│  └─ connect() → Socket tới localhost:5000                │
+│  └─ send(action, payload) → gửi JSON, nhận JSON          │
 │ ↓ gửi JSON Request                                       │
 └──────────────────────────────────────────────────────────┘
                             ↓ (socket stream)
@@ -16,7 +17,7 @@ Hệ thống gồm 3 lớp networking cho phép Client (JavaFX) giao tiếp vớ
 │ SeverMain                                                │
 │  └─ ServerSocket:5000 (lắng nghe localhost:5000)         │
 │      ↓ accept() → new Socket                             │
-│      └─ spawn thread → ClientHandler                     │
+│      └─ new Thread() → ClientHandler (1 thread/client)   │
 │                                                          │
 │ ClientHandler (xử lý 1 client connection)                │
 │  └─ BufferedReader in (đọc JSON từ socket)               │
@@ -46,26 +47,22 @@ Hệ thống gồm 3 lớp networking cho phép Client (JavaFX) giao tiếp vớ
 **Chức năng**: Là entry point của server - tạo ServerSocket lắng nghe client
 
 **Key Points**:
-- `ServerSocket(PORT=5000)` - Lắng nghe trên cổng 5000
+- `ServerSocket(PORT=5000)` - Lắng nghe trên cổng 5000 (hoặc đọc từ env `PORT`)
 - `serverSocket.accept()` - Blocking call chờ client kết nối
-- Khi có client → tạo Socket mới → spawn thread từ ExecutorService
-- `ExecutorService.newFixedThreadPool(10)` - Tối đa 10 client xử lý cùng lúc
+- Khi có client → tạo Socket mới → spawn `new Thread()` riêng cho mỗi client
 
 **Thread Model**:
 ```
 SeverMain (main thread)
   ├─ while(true) accept()  ← chờ client
   │    ↓ (client 1 kết nối)
-  │    └─ spawn thread từ pool → ClientHandler.handle() (thread-1)
+  │    └─ new Thread() → ClientHandler.handle() (thread-1)
   │    ↓ (client 2 kết nối)
-  │    └─ spawn thread từ pool → ClientHandler.handle() (thread-2)
-  │    ... (tối đa 10 thread cùng xử lý)
-  │
-  └─ Thread 1: ClientHandler.handle()  ← đọc/ghi JSON
-  └─ Thread 2: ClientHandler.handle()  ← đọc/ghi JSON
+  │    └─ new Thread() → ClientHandler.handle() (thread-2)
+  │    ... (không giới hạn số thread)
 ```
 
-**Ưu điểm**: Thread pool ngăn chặn quá tải - nếu >10 client, client thứ 11 phải chờ queue
+**Lưu ý**: Mỗi client được cấp 1 thread riêng, không dùng thread pool — số thread tăng theo số client kết nối đồng thời.
 
 ---
 
@@ -93,13 +90,14 @@ SeverMain (main thread)
 - Nếu controller throw exception → catch → return error response
 - Nếu client đóng socket → readLine() trả null → thoát loop → cleanup
 
-**Cleanup**:
+**Cleanup** (dùng try-with-resources):
 ```java
-finally {
-  out.close();
-  in.close();
-  clientSocket.close();  // ← QUAN TRỌNG: giải phóng socket resource
+try (socket;
+     PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+     BufferedReader in = new BufferedReader(...)) {
+    // xử lý
 }
+// socket, out, in tự đóng khi ra khỏi try block
 ```
 
 ---
@@ -126,8 +124,8 @@ finally {
   "message": "Đăng nhập thành công!",  ← thông báo
   "data": {                             ← kết quả (nếu có)
     "id": "user-001",
-    "name": "Tuan",
-    "email": "tuan@example.com",
+    "username": "Tuan",
+    "balance": 0.0,
     "role": "BIDDER"
   }
 }
@@ -137,25 +135,45 @@ finally {
 
 | Action | Payload | Response Data | Controller |
 |--------|---------|---------------|-----------|
-| REGISTER | {id, username, email, password, confirmPassword} | null | UserController.createAccount() |
-| LOGIN | {username, password} | User object | UserController.loginAccount() |
-| REGISTER_SELLER | {username, shopName} | null | UserController.registerAsSeller() |
-| CREATE_ITEM | {item object} | null | ItemController.createItem() |
+| REGISTER | {id, username, password, confirmPassword, role} | null | UserController.createAccount() |
+| LOGIN | {username, password} | {id, username, balance, role} | UserController.loginAccount() |
+| CREATE_ITEM | {type, id, name, des, startPrice, category, sellerId, ...type-fields} | Item object | ItemController.createItem() |
 | LIST_ITEMS | {} | List\<Item\> | ItemController.listAllItems() |
-| GET_ITEM | {id} | Item object | ItemController.getItem() |
 | DELETE_ITEM | {id} | null | ItemController.deleteItem() |
 | CREATE_AUCTION | {itemId, sellerId, durationMillis} | Auction | AuctionController.createAuction() |
-| LIST_AUCTIONS | {} | List\<Auction\> | AuctionController.listAuctions() |
-| PLACE_BID | {bidderId, auctionId, bidAmount} | string result | BidController.placeBid() |
-| WITHDRAW_BID | {bidderId, auctionId} | string result | BidController.withdrawBid() |
+| LIST_AUCTIONS | {} | List\<Auction\> | AuctionController.getAllAuctions() |
+| DELETE_AUCTION | {auctionId} | null | AuctionController.deleteAuction() |
+| PLACE_BID | {bidderId, auctionId, bidAmount} | null | BidController.handlePlaceBid() |
+| DEPOSIT | {bidderId, amount} | balance (số dư mới) | BidController.handleDeposit() |
+| GET_BALANCE | {userId} | balance (double) | userDAO.findById() |
+| LIST_USERS | {} | List\<{id, username, banned, role}\> | userDAO.findAll() |
+| BAN_USER | {userId, banned} | null | userDAO.update() |
 
 **Error Handling**:
 ```java
 try {
   switch(action) { ... }
 } catch(Exception e) {
-  return Response.fall("Lỗi: " + e.getMessage());
+  return Response.fall("Lỗi xử lý request: " + e.getMessage());
 }
+```
+
+---
+
+### 🔌 THÀNH PHẦN 4: ServerConnection.java (Client-side)
+
+**Chức năng**: Singleton quản lý kết nối từ client tới server
+
+**Key Points**:
+- `getInstance()` - Lấy instance duy nhất (Singleton)
+- `connect()` - Tạo Socket kết nối tới server (timeout 5s), đọc host/port từ `config.properties`
+- `send(action, payload)` - Gửi JSON request, đọc JSON response (timeout 10s)
+- `isConnected()` / `disconnect()` - Kiểm tra và đóng kết nối
+
+**Config** (`config.properties`):
+```properties
+server.host=localhost
+server.port=5000
 ```
 
 ---
@@ -168,7 +186,7 @@ CLIENT sends:
 
 SERVER:
 1. SeverMain.accept() nhận Socket từ client
-2. spawn ClientHandler thread
+2. new Thread() → ClientHandler
 3. ClientHandler.handle() gọi in.readLine()
 4. JsonHelper.fromJson() → Request(action=LOGIN, payload={...})
 5. router.route(request)
@@ -179,13 +197,13 @@ SERVER:
    → userDAO.findByUsername(...)
    → SQLite query
    → return User object (nếu password đúng) / throw exception
-7. Response(success=true, message="...", data=User)
-8. JsonHelper.toJson(response)
-9. out.println(jsonResponse)
-10. Client nhận JSON response → parse → hiển thị trên UI
+7. Tạo safeUser map (không gửi passwordHash về client)
+8. Response(success=true, message="...", data=safeUser)
+9. JsonHelper.toJson(response)
+10. out.println(jsonResponse)
 
 CLIENT receives:
-← {"success":true,"message":"Đăng nhập thành công!","data":{"id":"user-001","name":"Tuan",...}}
+← {"success":true,"message":"Đăng nhập thành công!","data":{"id":"user-001","username":"Tuan","balance":0.0,"role":"BIDDER"}}
 ```
 
 ---
@@ -198,31 +216,20 @@ CLIENT receives:
 
 **2. Socket Handling**:
 - Mỗi client có riêng socket → không share state giữa clients
-- Socket tự động close khi client disconnect
+- try-with-resources đảm bảo socket luôn được đóng khi client disconnect
 
 **3. Scalability**:
-- Hiện tại: Fixed thread pool 10 clients
-- Nếu cần scale: dùng Netty, NIO, hoặc virtual threads (Java 21+)
+- Hiện tại: 1 thread/client, không giới hạn
+- Nếu cần scale: dùng ExecutorService fixed pool, Netty, NIO, hoặc virtual threads (Java 21+)
 
 **4. Protocol**:
 - JSON qua socket text streams
 - Mỗi request = 1 dòng JSON (terminates with \n)
 - in.readLine() automatically handles \n
 
----
-
-### 📝 NEXT STEPS (Client-side)
-
-Để client có thể test networking, cần implement:
-
-1. **ServerConnection.java** (Singleton)
-   - Tạo Socket kết nối tới localhost:5000
-   - Send request JSON
-   - Receive response JSON
-
-2. **Sửa Client Controllers** (LoginController, BiddingController, etc.)
-   - Thay vì println + TODO
-   - Gọi ServerConnection.send(request) → nhận response → update UI
+**5. Ban Check**:
+- Các action CREATE_ITEM, CREATE_AUCTION, PLACE_BID, DEPOSIT đều kiểm tra `user.isBanned()` trước khi xử lý
+- Ban Seller → tự động hủy toàn bộ phiên đấu giá OPEN/RUNNING
 
 ---
 
@@ -232,7 +239,7 @@ Server:
 ```bash
 java -cp ... com.auction.common.network.SeverMain
 # [Server] Đang lắng nghe trên port 5000
-# [Server] Chờ client kết nối...
+# [Server] Client kết nối: 127.0.0.1   ← in khi có client connect
 ```
 
 Client (tạm thời dùng telnet để test):
@@ -241,5 +248,5 @@ telnet localhost 5000
 # Kết nối → gõ JSON request
 {"action":"LOGIN","payload":{"username":"Tuan","password":"Password1"}}
 # Server trả lại response JSON
-{"success":true,"message":"...","data":{...}}
+{"success":true,"message":"Đăng nhập thành công!","data":{"id":"user-001","username":"Tuan","balance":0.0,"role":"BIDDER"}}
 ```
