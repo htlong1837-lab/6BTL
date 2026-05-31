@@ -98,4 +98,20 @@ public class AuctionService {
         auctionDAO.delete(auction);
     }
 
+    // Hủy tất cả phiên OPEN/RUNNING của seller khi bị ban
+    public int cancelAuctionsBySeller(String sellerId) {
+        int count = 0;
+        for (Auction auction : auctionDAO.findAll()) {
+            if (auction.getSeller().getId().equals(sellerId)
+                    && (auction.getStatus() == AuctionStatus.OPEN
+                        || auction.getStatus() == AuctionStatus.RUNNING)) {
+                auctionDAO.updateStatus(auction.getId(), AuctionStatus.CANCELLED);
+                count++;
+                System.out.println("[Ban] Hủy phiên đấu giá: " + auction.getId()
+                        + " (" + auction.getItem().getName() + ")");
+            }
+        }
+        return count;
+    }
+
 }

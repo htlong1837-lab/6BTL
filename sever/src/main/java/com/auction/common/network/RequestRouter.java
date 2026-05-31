@@ -139,6 +139,14 @@ public class RequestRouter {
 
     //[Xoá handleRegister]
 
+    // Trả về Response lỗi nếu user đã bị ban, null nếu không bị ban
+    private Response checkBanned(User user) {
+        if (user != null && user.isBanned()) {
+            return Response.fall("Tài khoản đã bị khóa và không thể thực hiện thao tác này.");
+        }
+        return null;
+    }
+
     private Response handleCreateItem(Object payload) {
         Map<String, Object> map = toMap(payload);
         String type     = (String) map.get("type");
@@ -148,6 +156,10 @@ public class RequestRouter {
         double price    = ((Number) map.get("startPrice")).doubleValue();
         String category = (String) map.get("category");
         String sellerId = (String) map.get("sellerId");
+
+        User sellerUser = userDAO.findById(sellerId);
+        Response banCheck = checkBanned(sellerUser);
+        if (banCheck != null) return banCheck;
 
         ItemFactory factory;
         switch (type.toUpperCase()) {
@@ -204,6 +216,8 @@ public class RequestRouter {
 
             User user = userDAO.findById(sellerId);
             if (!(user instanceof Seller)) return Response.fall("Người dùng không phải Seller.");
+            Response banCheck = checkBanned(user);
+            if (banCheck != null) return banCheck;
 
             Auction auction = auctionController.createAuction(item, (Seller) user, duration);
             return Response.ok("Tạo phiên đấu giá thành công!", auction);
@@ -238,6 +252,8 @@ public class RequestRouter {
 
             User user = userDAO.findById(bidderId);
             if (!(user instanceof Bidder)) return Response.fall("Người dùng không phải Bidder.");
+            Response banCheck = checkBanned(user);
+            if (banCheck != null) return banCheck;
 
             String result = bidController.handlePlaceBid((Bidder) user, auctionId, amount);
             return result.contains("thành công")
@@ -256,6 +272,8 @@ public class RequestRouter {
 
         User user = userDAO.findById(bidderId);
         if (!(user instanceof Bidder)) return Response.fall("Người dùng không phải Bidder.");
+        Response banCheck = checkBanned(user);
+        if (banCheck != null) return banCheck;
 
         String result = bidController.handleWithdraw((Bidder) user, auctionId);
         return result.startsWith("Đã rút")
@@ -285,9 +303,22 @@ public class RequestRouter {
         boolean banned = Boolean.parseBoolean(map.get("banned").toString());
         User user = userDAO.findById(userId);
         if (user == null) return Response.fall("Không tìm thấy user: " + userId);
+        if (user instanceof com.auction.user.model.Admin)
+            return Response.fall("Không thể khóa tài khoản Admin.");
         user.setBanned(banned);
         userDAO.update(user);
-        return Response.ok((banned ? "Đã khóa: " : "Đã mở khóa: ") + user.getName(), null);
+
+        String msg = (banned ? "Đã khóa: " : "Đã mở khóa: ") + user.getName();
+
+        // Nếu ban seller → hủy toàn bộ phiên đấu giá OPEN/RUNNING ngay lập tức
+        if (banned && user instanceof Seller) {
+            int cancelled = auctionController.cancelAuctionsBySeller(userId);
+            if (cancelled > 0) {
+                msg += ". Đã hủy " + cancelled + " phiên đấu giá.";
+            }
+        }
+
+        return Response.ok(msg, null);
     }
 
     private Response handleGetBalance(Object payload) {
@@ -306,6 +337,8 @@ public class RequestRouter {
         User user = userDAO.findById(bidderId);
         if (!(user instanceof Bidder))
             return Response.fall("Không tìm thấy Bidder: " + bidderId);
+        Response banCheck = checkBanned(user);
+        if (banCheck != null) return banCheck;
 
         String result = bidController.handleDeposit((Bidder) user, amount);
         if (result.contains("thành công")) {
