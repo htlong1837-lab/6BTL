@@ -10,10 +10,12 @@
 2. [Công nghệ sử dụng](#2-công-nghệ-sử-dụng)
 3. [Kiến trúc hệ thống](#3-kiến-trúc-hệ-thống)
 4. [Design Patterns](#4-design-patterns)
-5. [Tính năng](#5-tính-năng)
+5. [Chức năng đã hoàn thành](#5-chức-năng-đã-hoàn-thành)
 6. [Cấu trúc thư mục](#6-cấu-trúc-thư-mục)
-7. [Hướng dẫn cài đặt & chạy](#7-hướng-dẫn-cài-đặt--chạy)
-8. [Giao thức Client–Server](#8-giao-thức-clientserver)
+7. [Vị trí file JAR](#7-vị-trí-file-jar)
+8. [Hướng dẫn cài đặt & chạy](#8-hướng-dẫn-cài-đặt--chạy)
+9. [Giao thức Client–Server](#9-giao-thức-clientserver)
+10. [Báo cáo & Demo](#10-báo-cáo--demo)
 
 ---
 
@@ -21,7 +23,7 @@
 
 Hệ thống cho phép nhiều người dùng đồng thời tham gia đấu giá sản phẩm qua mạng LAN hoặc Internet (Railway TCP Proxy). Hệ thống gồm hai module độc lập:
 
-- **Server** (`sever/`): Xử lý nghiệp vụ, quản lý phiên đấu giá, lưu dữ liệu SQLite, chạy nền liên tục.
+- **Server** (`sever/`): Xử lý nghiệp vụ, quản lý phiên đấu giá, lưu dữ liệu SQLite, deploy trên Railway — chạy nền liên tục, không cần chạy local.
 - **Client** (`Client/`): Giao diện JavaFX cho người dùng đăng nhập, đặt giá, quản lý sản phẩm.
 
 ---
@@ -39,6 +41,10 @@ Hệ thống cho phép nhiều người dùng đồng thời tham gia đấu gi�
 | Unit test | JUnit 5 + Mockito |
 | Đóng gói | maven-shade-plugin (fat JAR) |
 | Deploy server | Railway.com (TCP Proxy) |
+
+**Yêu cầu môi trường:**
+- JDK 21+
+- Apache Maven 3.8+
 
 ---
 
@@ -121,9 +127,9 @@ ItemBuilder (interface)
 Tách biệt logic nghiệp vụ khỏi tầng truy cập dữ liệu.
 
 ```
-UserDAO (interface) ← UserDAOSQLiteImpl
-ItemDAO (interface) ← ItemDAOSQLiteImpl
-BidDAO  (interface) ← BidDAOSQLiteImpl
+UserDAO    (interface) ← UserDAOSQLiteImpl
+ItemDAO    (interface) ← ItemDAOSQLiteImpl
+BidDAO     (interface) ← BidDAOSQLiteImpl
 AuctionDAO (interface) ← AuctionDAOSQLiteImpl
 ```
 
@@ -134,45 +140,41 @@ AuctionDAO (interface) ← AuctionDAOSQLiteImpl
 
 ---
 
-## 5. Tính năng
+## 5. Chức năng đã hoàn thành
 
-### 5.1 Quản lý người dùng
+### Quản lý người dùng
+- [x] Đăng ký tài khoản (Bidder / Seller)
+- [x] Đăng nhập / Đăng xuất
+- [x] Phân quyền theo vai trò (Admin / Seller / Bidder)
+- [x] Khóa / mở khóa tài khoản (Admin)
+- [x] Chặn mọi thao tác ngay khi tài khoản bị khóa
 
-| Vai trò | Quyền hạn |
-|---|---|
-| **Admin** | Khóa/mở khóa tài khoản người dùng |
-| **Seller** | Đăng sản phẩm, tạo phiên đấu giá, xem doanh thu |
-| **Bidder** | Nạp tiền, tham gia đấu giá, đặt giá |
+### Quản lý sản phẩm (Seller)
+- [x] Tạo sản phẩm theo danh mục: Art, Electronics, Vehicle
+- [x] Xem danh sách sản phẩm
+- [x] Xóa sản phẩm
 
-### 5.2 Vòng đời phiên đấu giá
+### Phiên đấu giá
+- [x] Tạo phiên đấu giá với thời gian tùy chỉnh
+- [x] Vòng đời phiên: `OPEN → RUNNING → FINISHED`
+- [x] Tự động kết thúc phiên theo thời gian
+- [x] Anti-sniping: gia hạn thêm 60s nếu có bid trong 60s cuối
+- [x] Hủy toàn bộ phiên OPEN/RUNNING khi seller bị ban
 
-```
-OPEN → RUNNING → FINISHED
-```
+### Đặt giá (Bidder)
+- [x] Đặt giá — phải cao hơn giá hiện tại
+- [x] Kiểm tra số dư đủ trước khi đặt
+- [x] Thread-safe: khóa per-auction bằng `ReentrantLock`
+- [x] Rút khỏi phiên đấu giá
 
-- **OPEN**: Phiên đã tạo, chưa bắt đầu.
-- **RUNNING**: Đang trong thời gian đấu giá.
-- **FINISHED**: Kết thúc — tự động chuyển tiền từ người thắng sang người bán.
+### Ví điện tử
+- [x] Nạp tiền vào ví (Bidder)
+- [x] Tự động trừ tiền người thắng, cộng doanh thu Seller khi phiên kết thúc
 
-**Anti-sniping**: Nếu có bid đặt trong vòng 20 giây cuối, thời gian phiên tự động gia hạn thêm 60 giây.
-
-### 5.3 Đặt giá (Bidding)
-
-- Kiểm tra số dư đủ trước khi đặt.
-- Thread-safe: dùng `ReentrantLock` per auction (`BidLockManager`).
-- Giá mới phải cao hơn giá hiện tại.
-- Client tự động làm mới kết quả mỗi 3 giây (poll timer).
-
-### 5.4 Ví điện tử
-
-- Bidder: nạp tiền (`deposit`), số dư tự động trừ khi thắng đấu giá.
-- Seller: doanh thu cộng dồn khi phiên kết thúc.
-
-### 5.5 Danh mục sản phẩm
-
-- Nghệ thuật (Art)
-- Điện tử (Electronics)
-- Phương tiện (Vehicle)
+### Hệ thống
+- [x] Giao tiếp Client–Server qua Socket TCP (JSON)
+- [x] Phục hồi phiên đang chạy sau khi server restart
+- [x] Deploy server lên Railway (không cần chạy local)
 
 ---
 
@@ -210,23 +212,29 @@ OPEN → RUNNING → FINISHED
 
 ---
 
-## 7. Hướng dẫn cài đặt & chạy
+## 7. Vị trí file JAR
 
-### Yêu cầu
+> Server chạy trên Railway — **không cần JAR server khi dùng.**
+> Chỉ cần build và chạy file JAR phía Client.
 
-- JDK 21+
-- Apache Maven 3.8+
+| File | Đường dẫn | Mô tả |
+|---|---|---|
+| `client.jar` | `Client/target/client.jar` | File chạy giao diện người dùng |
 
-### Bước 1: Build Server
+Build để tạo file JAR:
 
 ```bash
-cd sever
+cd Client
 mvn clean package -DskipTests
 ```
 
-Output: `sever/target/server.jar`
+---
 
-### Bước 2: Build Client
+## 8. Hướng dẫn cài đặt & chạy
+
+> Server đang chạy trên Railway — **chỉ cần chạy Client.**
+
+### Bước 1: Build Client
 
 ```bash
 cd Client
@@ -235,23 +243,24 @@ mvn clean package -DskipTests
 
 Output: `Client/target/client.jar`
 
-### Bước 3: Chạy Client
+### Bước 2: Chạy Client
 
 ```bash
 java -jar Client/target/client.jar
 ```
 
-Server đang chạy trên Railway.com — client tự kết nối, không cần chạy server local.
-
-### Chạy bằng Maven (không cần build JAR)
+Hoặc dùng Maven trực tiếp (không cần build JAR trước):
 
 ```bash
-cd Client && mvn javafx:run
+cd Client
+mvn javafx:run
 ```
+
+Client sẽ tự động kết nối đến server Railway theo cấu hình trong `Client/src/main/resources/config.properties`.
 
 ---
 
-## 8. Giao thức Client–Server
+## 9. Giao thức Client–Server
 
 ### Định dạng Request (Client → Server)
 
@@ -282,17 +291,27 @@ cd Client && mvn javafx:run
 
 ### Danh sách Action
 
-| Action | Mô tả |
+| Action | Vai trò | Mô tả |
+|---|---|---|
+| `REGISTER` | Tất cả | Đăng ký tài khoản mới |
+| `LOGIN` | Tất cả | Đăng nhập |
+| `LIST_ITEMS` | Tất cả | Lấy danh sách sản phẩm |
+| `CREATE_ITEM` | Seller | Tạo sản phẩm mới |
+| `DELETE_ITEM` | Seller | Xóa sản phẩm |
+| `CREATE_AUCTION` | Seller | Tạo phiên đấu giá |
+| `LIST_AUCTIONS` | Tất cả | Lấy danh sách phiên đấu giá |
+| `DELETE_AUCTION` | Seller/Admin | Xóa phiên đấu giá |
+| `PLACE_BID` | Bidder | Đặt giá |
+| `DEPOSIT` | Bidder | Nạp tiền vào ví |
+| `GET_BALANCE` | Bidder/Seller | Lấy số dư hiện tại |
+| `BAN_USER` | Admin | Khóa/mở khóa tài khoản |
+| `LIST_USERS` | Admin | Danh sách người dùng |
+
+---
+
+## 10. Báo cáo & Demo
+
+| Tài liệu | Link |
 |---|---|
-| `LOGIN` | Đăng nhập |
-| `REGISTER` | Đăng ký tài khoản mới |
-| `LIST_ITEMS` | Lấy danh sách sản phẩm |
-| `CREATE_ITEM` | Tạo sản phẩm mới (Seller) |
-| `CREATE_AUCTION` | Tạo phiên đấu giá mới |
-| `LIST_AUCTIONS` | Lấy danh sách phiên đấu giá |
-| `PLACE_BID` | Đặt giá trong phiên đấu giá |
-| `GET_AUCTION` | Lấy thông tin chi tiết phiên |
-| `DEPOSIT` | Nạp tiền vào ví (Bidder) |
-| `GET_BALANCE` | Lấy số dư hiện tại |
-| `BAN_USER` | Khóa/mở khóa tài khoản (Admin) |
-| `LIST_USERS` | Danh sách người dùng (Admin) |
+| Báo cáo PDF | _[Chèn link tại đây]_ |
+| Video demo | _[Chèn link tại đây]_ |
